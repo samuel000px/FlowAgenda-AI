@@ -17,6 +17,7 @@ from src.cascata import Atores, Passo, tratar_cancelamento
 from src.dados import carregar_cenarios
 from src.ferramentas import buscar_candidatos, confirmar_movimento, liberar_horario
 from src.interpretacao import interpretar
+from src.llm import ErroLLM
 from src.metrica import horas_vagas_esperadas
 from src.modelos import Cenario
 
@@ -181,4 +182,8 @@ Entre parênteses, a redução em relação a "ninguém faz nada".
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except ErroLLM as e:
+        console.print(f"[red]Parou: {e}[/red] O resultados.md anterior foi mantido.")
+        raise SystemExit(1)

@@ -1,6 +1,6 @@
 # Resultados
 
-Gerado por `python avaliar.py` em 27/10/2026 17:27, com o modelo `gemini-3.5-flash-lite`.
+Gerado por `python avaliar.py` em 27/10/2026 17:30, com o modelo `gemini-3.5-flash-lite`.
 
 > **Atenção:** são estimativas baseadas no próprio modelo de score, sobre **dados fictícios**, com
 > respostas das clientes roteirizadas. Não é uma medição no mundo real. A métrica está em
@@ -33,10 +33,13 @@ Entre parênteses, a redução em relação a "ninguém faz nada".
 
 ## Leitura
 
-- Onde a regra ingênua empata com o agente, a primeira cliente da fila cronológica era também a melhor
-  escolha, ou a cliente que o agente preferia recusou.
-- O agente ganha quando a ordem cronológica escolhe alguém cujo horário seria difícil de preencher
-  (cenários 3 e 6), quando outra cliente tem menos risco de falta (cenário 5) e quando a cascata
-  consegue trocar mais um buraco difícil por um fácil (cenário 2).
-- Uma rodada usa o Gemini de verdade. Se o modelo escolher diferente do anotado, a coluna "bateu com o
-  esperado" mostra "não" e o número reflete o que de fato aconteceu.
+- **Empates.** No cenário 1, a primeira da ordem cronológica (Elisa) recusou, e a regra ingênua chegou
+  na Beatriz do mesmo jeito. Se a Elisa tivesse aceitado, ficaria um buraco no fim do dia sem fila; o
+  agente nem chega a perguntar para ela (poda). No cenário 4, a preferida do agente (Larissa) recusou e
+  as duas estratégias terminaram com a Marina.
+- **Onde o agente ganha.** Quando a ordem cronológica escolhe alguém cujo horário seria difícil de
+  preencher (cenários 3 e 6), quando outra cliente tem menos risco de falta (cenário 5) e quando a cascata
+  troca mais um buraco difícil por um fácil (cenário 2). No cenário 3 a regra ingênua deixa a agenda
+  **pior** do que não fazer nada.
+- Cada rodada usa o Gemini de verdade, então o modelo pode escolher diferente numa próxima execução. Se
+  isso acontecer, a coluna "bateu com o esperado" mostra "não" e os números refletem o que de fato aconteceu.

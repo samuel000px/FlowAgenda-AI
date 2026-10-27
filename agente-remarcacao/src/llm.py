@@ -53,7 +53,7 @@ def _cliente() -> genai.Client:
         raise ErroLLM("GEMINI_API_KEY não encontrada. Copie .env.example para .env e coloque a chave.")
     # A camada gratuita limita chamadas por minuto (erro 429). Em vez de parar, esperamos e
     # tentamos de novo: 10 s, 20 s, 40 s.
-    tentativas = types.HttpRetryOptions(attempts=4, initial_delay=10, max_delay=60, http_status_codes=[429, 500, 503])
+    tentativas = types.HttpRetryOptions(attempts=4, initial_delay=10, max_delay=60, http_status_codes=[429, 500, 503, 504])
     return genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=TIMEOUT_MS, retry_options=tentativas))
 
 
