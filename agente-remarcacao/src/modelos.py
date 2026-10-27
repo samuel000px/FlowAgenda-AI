@@ -75,3 +75,39 @@ class Cenario:
             if s.status == "ocupado" and s.cliente_id == cliente_id:
                 return s
         return None
+
+    def antecedencia_h(self, slot: Slot) -> float:
+        """Quantas horas faltam, a partir de 'agora', para o horário começar."""
+        return (slot.inicio - self.agora).total_seconds() / 3600
+
+
+@dataclass(frozen=True)
+class Buraco:
+    """Horário vago do jeito que o score enxerga: quanto vale, quanto aviso tem e quanta fila."""
+
+    valor: float
+    antecedencia_h: float
+    fila: int
+
+
+@dataclass
+class Candidato:
+    """Uma cliente avaliada para ocupar o horário vago."""
+
+    cliente_id: str
+    nome: str
+    slot_atual_id: str
+    motivo: str | None  # None = pode receber proposta; senão, por que ficou de fora
+    taxa_falta: float | None = None
+    prob_aceitar: float | None = None
+    antecedencia_novo_h: float | None = None  # aviso que sobraria para preencher o horário dela
+    fila_novo: int | None = None
+    dificuldade_novo: float | None = None
+    ganho: float | None = None
+    risco: float | None = None
+    valor_esperado: float | None = None
+
+    @property
+    def elegivel(self) -> bool:
+        """Passou pelos filtros e pela poda."""
+        return self.motivo is None
