@@ -19,12 +19,17 @@ def test_extrair_json_falha_com_mensagem_clara():
 
 def test_modelo_nao_pode_escolher_cliente_fora_da_lista():
     with pytest.raises(ErroFormato, match="não estava na lista"):
-        _validar({"cliente_id": "C99", "justificativa": "x", "mensagem": "oi"}, {"C02"}, [])
+        _validar({"cliente_id": "C99", "justificativa": "x", "mensagem": "oi"}, {"C02": "Beatriz Alves"}, [])
 
 
 def test_modelo_pode_decidir_nao_mexer():
-    decisao = _validar({"cliente_id": None, "justificativa": "ninguém compensa"}, {"C02"}, [])
+    decisao = _validar({"cliente_id": None, "justificativa": "ninguém compensa"}, {"C02": "Beatriz Alves"}, [])
     assert decisao.cliente_id is None
+
+
+def test_nome_no_lugar_do_codigo_e_aceito_se_estiver_na_lista():
+    decisao = _validar({"cliente_id": "Beatriz Alves", "justificativa": "x", "mensagem": "oi"}, {"C02": "Beatriz Alves"}, [])
+    assert decisao.cliente_id == "C02"
 
 
 def test_interpretacao_rejeita_resultado_desconhecido():
