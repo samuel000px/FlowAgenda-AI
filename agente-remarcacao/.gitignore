@@ -1,0 +1,13 @@
+# chave da API: nunca vai para o repositório
+.env
+!.env.example
+
+# ambiente e caches do Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# logs das execuções do agente
+logs/
