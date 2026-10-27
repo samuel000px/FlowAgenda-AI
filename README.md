@@ -1,3 +1,8 @@
+> **Este repositório tem dois projetos.**
+> - [`agente-remarcacao/`](agente-remarcacao/README.md): agente que decide quem antecipar quando um
+>   horário é cancelado, com cascata, poda e aprovação humana (Python, Streamlit, Gemini).
+> - O **Encaixa**, descrito abaixo, de Samuel Almeida, em que o agente se inspirou.
+
 # Encaixa · Esmalteria
 
 Plataforma de agenda com painel do gerente, chat, simulador de clientes e recuperação de horários pela lista de espera. A demonstração usa 50 clientes fictícias e três profissionais.

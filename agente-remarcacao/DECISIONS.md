@@ -106,3 +106,11 @@ a não ser quando um item abaixo diz outra coisa.
 - Ficou de fora: a fórmula literal da seção 7.
 - Efeito nos dados: os cenários 2 e 3 foram ajustados para continuar provando o que prometem
   (no 2 a cascata agora puxa duas clientes; no 3 as candidatas estão amanhã cedo e faltam mais).
+
+## D13. Um aviso no topo do README da raiz
+
+- Decisão: o README da raiz (do Encaixa) ganhou um bloco curto no topo apontando para
+  `agente-remarcacao/`. O resto do texto do Samuel ficou igual.
+- Motivo: quem avalia abre o GitHub e vê primeiro o README da raiz. Sem o aviso, o projeto do agente
+  ficaria escondido numa subpasta.
+- Ficou de fora: substituir o README da raiz.
