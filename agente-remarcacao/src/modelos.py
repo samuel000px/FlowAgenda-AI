@@ -111,3 +111,13 @@ class Candidato:
     def elegivel(self) -> bool:
         """Passou pelos filtros e pela poda."""
         return self.motivo is None
+
+
+@dataclass
+class Decisao:
+    """O que o modelo escolheu. É só uma proposta: nada muda sem aprovação."""
+
+    cliente_id: str | None  # None = decidiu não mexer
+    justificativa: str
+    mensagem: str | None
+    log: list[dict]

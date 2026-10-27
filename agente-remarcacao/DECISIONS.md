@@ -74,3 +74,18 @@ a não ser quando um item abaixo diz outra coisa.
 - Decisão: `src/dados.py` lê os três JSON e para com uma mensagem clara se algo não bater
   (cliente que não existe, faltas maiores que consultas, hora fora do formato etc.).
 - Motivo: o plano pede um loader que valide, mas não diz onde. `modelos.py` fica só com as estruturas.
+
+## D10. Modo `--auto` no terminal aprova sozinho
+
+- Decisão: `python terminal.py S1 --auto` usa as respostas prontas do cenário e aprova o movimento
+  sem perguntar. A tela avisa "Aprovação automática (modo --auto)" e o log marca `automatica: true`.
+- Motivo: precisamos rodar os 6 cenários de uma vez para a avaliação (Fase 7). Sem `--auto`, a
+  pessoa responde como a cliente e aprova ou rejeita, como o plano pede.
+- Ficou de fora: exigir aprovação manual até na avaliação.
+
+## D11. O modelo só vê as candidatas elegíveis
+
+- Decisão: a ferramenta `buscar_candidatos` que o modelo chama devolve só quem passou nos filtros
+  e na poda. A tabela completa, com quem ficou de fora e por quê, é mostrada só para a pessoa.
+- Motivo: é a regra da seção 2. O modelo escolhe entre opções válidas e não precisa decidir o que é válido.
+- Ficou de fora: mandar todo mundo e pedir para o modelo ignorar as excluídas.

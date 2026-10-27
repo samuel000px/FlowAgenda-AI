@@ -1,6 +1,8 @@
 """Único lugar do projeto que conversa com o Gemini."""
 # Se um dia voltarmos para o Claude, só este arquivo muda (ver DECISIONS.md, D3).
+import json
 import os
+import re
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
@@ -11,7 +13,8 @@ from google.genai import errors, types
 
 load_dotenv()
 
-MAX_TOKENS = 1024
+# O modelo também gasta tokens "pensando"; com 1024 a resposta às vezes vinha cortada.
+MAX_TOKENS = 4096
 # 20 s é o mesmo limite do Encaixa (Samuel Almeida): a demo não pode ficar travada esperando.
 TIMEOUT_MS = 20_000
 MAX_PASSOS = 8
@@ -37,6 +40,10 @@ class Resultado:
 
 class ErroLLM(Exception):
     """Falha ao falar com o modelo, já com uma mensagem legível."""
+
+
+class ErroFormato(ErroLLM):
+    """O modelo respondeu, mas fora do formato combinado. Vale tentar de novo uma vez."""
 
 
 def _cliente() -> genai.Client:
@@ -83,7 +90,7 @@ def rodar_com_ferramentas(
         chamadas = resposta.function_calls or []
         if not chamadas:
             texto = resposta.text or ""
-            log.append({"passo": passo, "tipo": "resposta_final", "texto": texto})
+            log.append({"passo": passo, "tipo": "resposta_final", "texto": texto, "tokens": _tokens(resposta)})
             return Resultado(texto=texto, log=log)
 
         # Guardamos o pedido do modelo e respondemos com o resultado de cada ferramenta.
@@ -99,7 +106,40 @@ def rodar_com_ferramentas(
     raise ErroLLM(f"O modelo passou de {max_passos} passos sem terminar.")
 
 
-def _gerar(cliente: genai.Client, conversa: list, config: types.GenerateContentConfig):
+def gerar_json(sistema: str, pedido: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Uma chamada sem ferramentas que precisa voltar em JSON. Devolve (dados, registro do passo)."""
+    config = types.GenerateContentConfig(
+        system_instruction=sistema,
+        max_output_tokens=MAX_TOKENS,
+        response_mime_type="application/json",
+    )
+    resposta = _gerar(_cliente(), pedido, config)
+    texto = resposta.text or ""
+    return extrair_json(texto), {"tipo": "json", "texto": texto, "tokens": _tokens(resposta)}
+
+
+def extrair_json(texto: str) -> dict[str, Any]:
+    """Tira as cercas de markdown (```json) e lê o objeto JSON da resposta."""
+    limpo = re.sub(r"^```(?:json)?\s*|\s*```$", "", texto.strip())
+    inicio, fim = limpo.find("{"), limpo.rfind("}")
+    if inicio == -1 or fim == -1:
+        raise ErroFormato(f"O modelo não devolveu JSON: {texto[:200]!r}")
+    try:
+        dados = json.loads(limpo[inicio : fim + 1])
+    except json.JSONDecodeError as e:
+        raise ErroFormato(f"JSON inválido na resposta do modelo: {e}") from e
+    if not isinstance(dados, dict):
+        raise ErroFormato("O modelo devolveu JSON, mas não um objeto.")
+    return dados
+
+
+def _tokens(resposta) -> int | None:
+    """Total de tokens da chamada, para acompanhar o gasto da cota."""
+    uso = resposta.usage_metadata
+    return uso.total_token_count if uso else None
+
+
+def _gerar(cliente: genai.Client, conversa: list | str, config: types.GenerateContentConfig):
     """Uma chamada ao modelo, traduzindo erros de API e de rede."""
     try:
         return cliente.models.generate_content(model=_modelo(), contents=conversa, config=config)
