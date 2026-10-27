@@ -1,0 +1,4 @@
+# Copie este arquivo para .dev.vars para testar IA no computador.
+# A copia com a chave e ignorada pelo Git. Nunca coloque a chave neste exemplo.
+GEMINI_API_KEY=""
+GEMINI_MODEL="gemini-3.5-flash-lite"

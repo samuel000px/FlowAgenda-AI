@@ -1,0 +1,10 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "Encaixa: iniciar", "type": "npm", "script": "dev", "problemMatcher": [], "isBackground": true },
+    { "label": "Encaixa: testes", "type": "npm", "script": "test", "group": "test", "problemMatcher": [] },
+    { "label": "Encaixa: conferir tipos", "type": "npm", "script": "typecheck", "problemMatcher": ["$tsc"] },
+    { "label": "Encaixa: compilar", "type": "npm", "script": "build", "group": "build", "problemMatcher": [] },
+    { "label": "Encaixa: preparar banco local", "type": "npm", "script": "db:init", "problemMatcher": [] }
+  ]
+}
