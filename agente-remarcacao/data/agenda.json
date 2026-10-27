@@ -1,0 +1,84 @@
+{
+  "_comentario": "Uma agenda por cenário. Cada slot ocupado é o agendamento atual daquela cliente no cenário. Preços: manicure R$ 45, pé e mão R$ 80.",
+  "S1": {
+    "dias": {
+      "2026-10-28": {"ocupacao_pct": 70, "fila_espera": 0},
+      "2026-10-29": {"ocupacao_pct": 60, "fila_espera": 1},
+      "2026-10-30": {"ocupacao_pct": 75, "fila_espera": 2}
+    },
+    "slots": [
+      {"id": "S1-01", "data": "2026-10-28", "hora": "09:00", "duracao_min": 90, "tipo_atendimento": "pe_e_mao", "status": "ocupado", "cliente_id": "C19", "valor": 80},
+      {"id": "S1-02", "data": "2026-10-28", "hora": "10:30", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C14", "valor": 45},
+      {"id": "S1-03", "data": "2026-10-28", "hora": "13:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C01", "valor": 45},
+      {"id": "S1-04", "data": "2026-10-28", "hora": "17:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C06", "valor": 45},
+      {"id": "S1-05", "data": "2026-10-29", "hora": "10:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C03", "valor": 45},
+      {"id": "S1-06", "data": "2026-10-29", "hora": "14:00", "duracao_min": 90, "tipo_atendimento": "pe_e_mao", "status": "ocupado", "cliente_id": "C04", "valor": 80},
+      {"id": "S1-07", "data": "2026-10-29", "hora": "17:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C05", "valor": 45},
+      {"id": "S1-08", "data": "2026-10-30", "hora": "10:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C02", "valor": 45}
+    ]
+  },
+  "S2": {
+    "dias": {
+      "2026-10-28": {"ocupacao_pct": 65, "fila_espera": 0},
+      "2026-10-29": {"ocupacao_pct": 80, "fila_espera": 2}
+    },
+    "slots": [
+      {"id": "S2-01", "data": "2026-10-28", "hora": "10:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C02", "valor": 45},
+      {"id": "S2-02", "data": "2026-10-28", "hora": "15:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C17", "valor": 45},
+      {"id": "S2-03", "data": "2026-10-28", "hora": "16:30", "duracao_min": 90, "tipo_atendimento": "pe_e_mao", "status": "ocupado", "cliente_id": "C19", "valor": 80},
+      {"id": "S2-04", "data": "2026-10-29", "hora": "15:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C09", "valor": 45},
+      {"id": "S2-05", "data": "2026-10-29", "hora": "18:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C10", "valor": 45}
+    ]
+  },
+  "S3": {
+    "dias": {
+      "2026-10-28": {"ocupacao_pct": 60, "fila_espera": 0},
+      "2026-10-29": {"ocupacao_pct": 40, "fila_espera": 0}
+    },
+    "slots": [
+      {"id": "S3-01", "data": "2026-10-28", "hora": "11:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C13", "valor": 45},
+      {"id": "S3-02", "data": "2026-10-28", "hora": "16:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C18", "valor": 45},
+      {"id": "S3-03", "data": "2026-10-29", "hora": "11:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C11", "valor": 45},
+      {"id": "S3-04", "data": "2026-10-29", "hora": "14:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C12", "valor": 45}
+    ]
+  },
+  "S4": {
+    "dias": {
+      "2026-10-30": {"ocupacao_pct": 70, "fila_espera": 1},
+      "2026-10-31": {"ocupacao_pct": 85, "fila_espera": 2},
+      "2026-11-02": {"ocupacao_pct": 90, "fila_espera": 3}
+    },
+    "slots": [
+      {"id": "S4-01", "data": "2026-10-30", "hora": "09:30", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C06", "valor": 45},
+      {"id": "S4-02", "data": "2026-10-30", "hora": "14:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C01", "valor": 45},
+      {"id": "S4-03", "data": "2026-10-31", "hora": "10:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C14", "valor": 45},
+      {"id": "S4-04", "data": "2026-11-02", "hora": "10:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C13", "valor": 45}
+    ]
+  },
+  "S5": {
+    "dias": {
+      "2026-10-29": {"ocupacao_pct": 70, "fila_espera": 1},
+      "2026-11-02": {"ocupacao_pct": 90, "fila_espera": 3}
+    },
+    "slots": [
+      {"id": "S5-01", "data": "2026-10-29", "hora": "11:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C09", "valor": 45},
+      {"id": "S5-02", "data": "2026-10-29", "hora": "14:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C17", "valor": 45},
+      {"id": "S5-03", "data": "2026-11-02", "hora": "10:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C08", "valor": 45},
+      {"id": "S5-04", "data": "2026-11-02", "hora": "11:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C07", "valor": 45}
+    ]
+  },
+  "S6": {
+    "dias": {
+      "2026-10-31": {"ocupacao_pct": 80, "fila_espera": 1},
+      "2026-11-02": {"ocupacao_pct": 35, "fila_espera": 0},
+      "2026-11-03": {"ocupacao_pct": 95, "fila_espera": 4}
+    },
+    "slots": [
+      {"id": "S6-01", "data": "2026-10-31", "hora": "09:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C11", "valor": 45},
+      {"id": "S6-02", "data": "2026-10-31", "hora": "11:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C18", "valor": 45},
+      {"id": "S6-03", "data": "2026-10-31", "hora": "15:00", "duracao_min": 90, "tipo_atendimento": "pe_e_mao", "status": "ocupado", "cliente_id": "C04", "valor": 80},
+      {"id": "S6-04", "data": "2026-11-02", "hora": "10:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C16", "valor": 45},
+      {"id": "S6-05", "data": "2026-11-03", "hora": "10:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C15", "valor": 45}
+    ]
+  }
+}

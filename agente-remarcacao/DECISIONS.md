@@ -44,3 +44,33 @@ a não ser quando um item abaixo diz outra coisa.
 - Motivo: assim cada passo (ferramenta, argumentos, resultado) fica registrado no log e o limite
   de 8 voltas da seção 9.4 é garantido pelo nosso código.
 - Ficou de fora: deixar o SDK executar as funções sozinho, que é mais curto mas esconde os passos.
+
+## D6. Cada cenário tem a sua agenda
+
+- Decisão: `agenda.json` guarda uma agenda por cenário (horários e situação de cada dia). As
+  clientes são as mesmas para todos. O `agendamento_atual` da cliente não fica no cadastro:
+  sai do horário dela na agenda do cenário.
+- Motivo: com uma agenda só para a semana inteira, todo cenário teria as mesmas candidatas e
+  ficaria difícil montar, por exemplo, o cenário 3 (ninguém compensa) junto com o 2 (alguém compensa).
+  Separando, cada cenário prova uma coisa e dá para conferir a conta na mão.
+- Ficou de fora: uma agenda única de 7 dias com `agendamento_atual` dentro de `clientes.json`.
+  Os cenários juntos cobrem 28/10 a 03/11 (domingo fechado).
+
+## D7. Quem recusou não recebe outra proposta na mesma cascata
+
+- Decisão: a lista de recusadas passa de um nível da cascata para o outro.
+- Motivo: na vida real ninguém quer receber duas mensagens seguidas pedindo para mudar de horário.
+  No cenário 4 a Larissa recusa e não é chamada de novo para o buraco de sábado.
+- Ficou de fora: zerar as recusas a cada buraco novo.
+
+## D8. Dois tipos de serviço: manicure (45 min, R$ 45) e pé e mão (90 min, R$ 80)
+
+- Decisão: continua uma profissional só, mas com dois serviços.
+- Motivo: sem isso os filtros de tipo e de duração da seção 7.1 nunca eliminariam ninguém.
+- Ficou de fora: um serviço só.
+
+## D9. O loader fica em `src/dados.py`
+
+- Decisão: `src/dados.py` lê os três JSON e para com uma mensagem clara se algo não bater
+  (cliente que não existe, faltas maiores que consultas, hora fora do formato etc.).
+- Motivo: o plano pede um loader que valide, mas não diz onde. `modelos.py` fica só com as estruturas.
