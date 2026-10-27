@@ -23,3 +23,11 @@ if (rows.length===2) {
 } else {
   throw new Error('Banco parcialmente configurado. Nenhum dado foi apagado. Confira as migrações antes de continuar.');
 }
+
+const calendarTables = JSON.parse(wrangler(['--command',"SELECT name FROM sqlite_master WHERE type='table' AND name IN ('calendar_connections','calendar_oauth')",'--json'])).flatMap(item=>item.results||[]);
+if(calendarTables.length===0){
+  wrangler(['--file','drizzle/0001_foamy_klaw.sql','--json']);
+  console.log('Integração Google Agenda preparada.');
+}else if(calendarTables.length!==2){
+  throw new Error('Estrutura do calendário incompleta. Nenhum dado foi apagado.');
+}

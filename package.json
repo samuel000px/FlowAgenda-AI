@@ -15,7 +15,8 @@
     "test": "node --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit",
     "db:init": "node scripts/init-local-db.mjs",
-    "setup": "npm run install:ci && npm run build && npm run db:init"
+    "setup": "npm run install:ci && npm run build && npm run db:init",
+    "calendar:setup": "node scripts/calendar-setup.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

@@ -2,3 +2,10 @@
 # A copia com a chave e ignorada pelo Git. Nunca coloque a chave neste exemplo.
 GEMINI_API_KEY=""
 GEMINI_MODEL="gemini-3.5-flash-lite"
+
+# Google Calendar: OAuth Aplicativo da Web (somente no servidor).
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+GOOGLE_REDIRECT_URI="http://localhost:5173/api/google/callback"
+# Gerada por npm run calendar:setup. Nao compartilhe nem troque apos conectar.
+CALENDAR_ENCRYPTION_KEY=""
