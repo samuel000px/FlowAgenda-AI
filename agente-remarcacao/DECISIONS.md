@@ -114,3 +114,16 @@ a não ser quando um item abaixo diz outra coisa.
 - Motivo: quem avalia abre o GitHub e vê primeiro o README da raiz. Sem o aviso, o projeto do agente
   ficaria escondido numa subpasta.
 - Ficou de fora: substituir o README da raiz.
+
+## D14. Ponto de encaixe para o Google Agenda
+
+- Decisão: a interface `AgendaExterna` (`src/agenda_externa.py`) tem dois métodos, `carregar_slots` e
+  `registrar_movimento`. Toda mudança aprovada passa por `aplicar_movimento_aprovado`, que troca na
+  agenda local, avisa a agenda de fora e desfaz a troca local se a de fora falhar. O padrão é
+  `SemAgendaExterna`, que não envia nada.
+- Motivo: o Samuel vai ligar o Google Agenda em paralelo. Com a interface pronta, ele escreve um arquivo
+  novo (`src/agenda_google.py`) e não precisa mexer na cascata, na tela nem no agente, o que evita
+  conflito na hora de juntar. Os testes com uma agenda falsa garantem que só movimentos aprovados saem.
+- Também: o `.gitignore` (raiz e pasta do agente) ignora arquivos de credencial do Google, e um workflow
+  do GitHub roda o `pytest` em todo push e pull request que mexa no agente.
+- Ficou de fora: escrever a integração com o Google agora, sem saber o que ele já fez.

@@ -1,0 +1,22 @@
+name: Testes do agente
+
+on:
+  push:
+    paths: ["agente-remarcacao/**", ".github/workflows/testes-agente.yml"]
+  pull_request:
+    paths: ["agente-remarcacao/**", ".github/workflows/testes-agente.yml"]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agente-remarcacao
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      # os testes não chamam o Gemini nem o Google, então não precisam de chave
+      - run: pytest -q

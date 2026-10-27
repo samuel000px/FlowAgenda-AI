@@ -117,7 +117,7 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 63 testes da lógica, da cascata e da tela | Não |
+| `pytest` | 68 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
 | `streamlit run app.py` | A interface: agenda, chat simulado e raciocínio do agente | Sim |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
 | `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |
@@ -155,7 +155,7 @@ Todas as decisões, com o motivo e a alternativa descartada, estão em [DECISION
 ## Próximos passos
 
 - `CanalWhatsApp`, implementando a mesma interface `Canal`.
-- Google Calendar como fonte da agenda.
+- Google Agenda como fonte da agenda. O ponto de encaixe já existe (`src/agenda_externa.py`); o passo a passo está em [docs/integracao-google-agenda.md](docs/integracao-google-agenda.md).
 - Várias profissionais e serviços.
 - Mais fatores: valor do serviço, preferência de dia, histórico de remarcações.
 - Calibrar os pesos com dados reais de cancelamento e preenchimento.

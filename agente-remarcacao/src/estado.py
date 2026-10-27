@@ -12,10 +12,11 @@ As regras são as mesmas da cascata (src/cascata.py).
 import copy
 from dataclasses import dataclass
 
+from src.agenda_externa import AgendaExterna, SemAgendaExterna
 from src.agente import decidir as decidir_com_modelo
 from src.canal import CanalSimulado
 from src.cascata import MAX_PROF, TEXTO_LIMITE, Passo, pergunta_de_esclarecimento, sem_candidatas
-from src.ferramentas import buscar_candidatos, confirmar_movimento, liberar_horario
+from src.ferramentas import aplicar_movimento_aprovado, buscar_candidatos, liberar_horario
 from src.interpretacao import Interpretacao
 from src.interpretacao import interpretar as interpretar_com_modelo
 from src.modelos import Candidato, Cenario, Decisao
@@ -36,8 +37,15 @@ class Movimento:
 class Fluxo:
     """Estado de um cenário em andamento na tela."""
 
-    def __init__(self, cenario: Cenario, decidir=decidir_com_modelo, interpretar=interpretar_com_modelo):
+    def __init__(
+        self,
+        cenario: Cenario,
+        decidir=decidir_com_modelo,
+        interpretar=interpretar_com_modelo,
+        agenda_externa: AgendaExterna | None = None,
+    ):
         self.original = cenario
+        self.agenda_externa = agenda_externa or SemAgendaExterna()
         self.cenario = copy.deepcopy(cenario)
         self.decidir, self.interpretar = decidir, interpretar
         self.canal = CanalSimulado()
@@ -105,7 +113,7 @@ class Fluxo:
         """Botão "Aprovar e atualizar agenda": só aqui a agenda muda."""
         self._exigir("aguardando_aprovacao")
         resposta = self.canal.conversa(self.cliente_atual)[-1].texto
-        novo = confirmar_movimento(self.cenario, self.cliente_atual, self.slot_atual)
+        novo = aplicar_movimento_aprovado(self.cenario, self.cliente_atual, self.slot_atual, self.agenda_externa)
         passo = self._passo("aceitou", resposta)
         passo.novo_buraco_id = novo.id
         self.passos.append(passo)

@@ -2,6 +2,13 @@
 .env
 !.env.example
 
+# credenciais do Google Agenda (OAuth, conta de serviço, token salvo)
+credenciais/
+*credentials*.json
+*token*.json
+client_secret*.json
+service-account*.json
+
 # ambiente e caches do Python
 venv/
 .venv/

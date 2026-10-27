@@ -50,7 +50,7 @@ def carregar_clientes(pasta: Path = PASTA_DADOS) -> dict[str, Cliente]:
     return clientes
 
 
-def _carregar_agenda(bruto: dict, cenario_id: str, clientes: dict[str, Cliente]) -> tuple[list[Slot], dict[str, Dia]]:
+def montar_agenda(bruto: dict, cenario_id: str, clientes: dict[str, Cliente]) -> tuple[list[Slot], dict[str, Dia]]:
     """Monta os horários e os dias de um cenário, conferindo as referências."""
     dias = {data: Dia(**d) for data, d in bruto["dias"].items()}
     agenda: list[Slot] = []
@@ -90,7 +90,7 @@ def carregar_cenarios(pasta: Path = PASTA_DADOS) -> list[Cenario]:
         cid = bruto["id"]
         if cid not in agendas:
             raise ErroDados(f"Cenário {cid} não tem agenda em agenda.json.")
-        agenda, dias = _carregar_agenda(agendas[cid], cid, clientes)
+        agenda, dias = montar_agenda(agendas[cid], cid, clientes)
         cenario = Cenario(
             id=cid,
             nome=bruto["nome"],

@@ -5,8 +5,9 @@ Quem controla a profundidade e a poda é este código, nunca o modelo.
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
+from src.agenda_externa import AgendaExterna, SemAgendaExterna
 from src.canal import Canal
-from src.ferramentas import buscar_candidatos, confirmar_movimento
+from src.ferramentas import aplicar_movimento_aprovado, buscar_candidatos
 from src.interpretacao import Interpretacao
 from src.modelos import Candidato, Cenario, Decisao, Slot
 
@@ -37,6 +38,7 @@ class Atores:
     canal: Canal
     aprovar: Callable[[Cenario, Decisao, str], bool]  # a pessoa que aprova a mudança
     avisar: Callable[[str, dict], None] = field(default=lambda evento, dados: None)  # para mostrar na tela
+    agenda_externa: AgendaExterna = field(default_factory=SemAgendaExterna)  # ex.: Google Agenda
 
 
 def tratar_cancelamento(
@@ -80,7 +82,7 @@ def tratar_cancelamento(
     if not atores.aprovar(cenario, decisao, slot_id):
         passo.resultado = "rejeitado"
         return _encerrar(passos, atores, passo)
-    novo_buraco = confirmar_movimento(cenario, decisao.cliente_id, slot_id)
+    novo_buraco = aplicar_movimento_aprovado(cenario, decisao.cliente_id, slot_id, atores.agenda_externa)
     passo.resultado, passo.novo_buraco_id = "aceitou", novo_buraco.id
     passos.append(passo)
     atores.avisar("movimento", {"passo": passo, "novo_buraco": novo_buraco})

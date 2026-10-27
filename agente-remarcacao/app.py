@@ -11,7 +11,7 @@ import streamlit as st
 from src.cascata import MAX_PROF
 from src.dados import carregar_cenarios
 from src.estado import ETAPAS, Fluxo
-from src.ferramentas import liberar_horario
+from src.ferramentas import ErroMovimento, liberar_horario
 from src.filtros import MOTIVOS
 from src.llm import ErroLLM
 from src.metrica import horas_vagas_esperadas
@@ -62,7 +62,7 @@ def agir(acao, *args) -> None:
         with st.spinner("O agente está pensando..."):
             acao(*args)
         st.session_state.erro = None
-    except ErroLLM as e:
+    except (ErroLLM, ErroMovimento) as e:
         st.session_state.erro = f"{e} Nada foi alterado; tente de novo."
 
 

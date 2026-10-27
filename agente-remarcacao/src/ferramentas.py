@@ -5,6 +5,7 @@ modelo: o código chama depois que uma pessoa aprova.
 """
 from collections.abc import Collection
 
+from src.agenda_externa import AgendaExterna
 from src.filtros import MOTIVOS, motivo_de_exclusao
 from src.modelos import Buraco, Candidato, Cenario, Slot
 from src.score import dificuldade_de_preencher, ganho_e_risco, prob_aceitar, taxa_falta
@@ -79,3 +80,16 @@ def confirmar_movimento(cenario: Cenario, cliente_id: str, slot_id: str) -> Slot
     vago.status, vago.cliente_id = "ocupado", cliente_id
     origem.status, origem.cliente_id = "livre", None
     return origem
+
+
+def aplicar_movimento_aprovado(cenario: Cenario, cliente_id: str, slot_id: str, agenda_externa: AgendaExterna) -> Slot:
+    """Depois da aprovação: troca na agenda local e avisa a agenda de fora. Se a de fora falhar, desfaz."""
+    novo_buraco = confirmar_movimento(cenario, cliente_id, slot_id)
+    destino = cenario.slot(slot_id)
+    try:
+        agenda_externa.registrar_movimento(cliente_id, novo_buraco, destino)
+    except Exception as e:  # qualquer falha da agenda de fora: as duas agendas não podem ficar diferentes
+        destino.status, destino.cliente_id = "livre", None
+        novo_buraco.status, novo_buraco.cliente_id = "ocupado", cliente_id
+        raise ErroMovimento(f"Não deu para atualizar a agenda externa ({e}). Nada foi mudado.") from e
+    return novo_buraco
