@@ -1,76 +1,78 @@
 # Auditoria do código existente (Fase 0)
 
-Data: 27/10/2026. Alvo: o projeto **Encaixa · Esmalteria**, na raiz deste repositório
-(remote `github.com/samuel000px/FlowAgenda-AI`, commit `c50278a`), feito por
-**Samuel Almeida**. O código dele **continua intacto na raiz**; o novo projeto fica em `agente-remarcacao/`.
+27/10/2026. Projeto analisado: Encaixa · Esmalteria, do Samuel Almeida, que está na raiz
+deste repositório (`github.com/samuel000px/FlowAgenda-AI`, commit `c50278a`). O código dele
+não foi alterado. O nosso projeto fica em `agente-remarcacao/`.
 
-## Resumo
+## Visão geral
 
-O Encaixa é um app web (TypeScript, Next/Vinext, Cloudflare Workers + D1, Gemini) que,
-quando uma cliente cancela, oferece a vaga a alguém da **lista de espera**. O nosso agente
-resolve um problema vizinho, mas diferente: ele **antecipa uma cliente que já tem horário
-mais tarde**, decide por **valor esperado** e trata o buraco novo em **cascata**.
+O Encaixa é um app web em TypeScript (Next/Vinext, Cloudflare Workers, banco D1, Gemini).
+Quando uma cliente cancela, ele oferece a vaga para alguém da lista de espera.
 
-Por isso, quase nada é aproveitado como código. O que vale a pena trazer são as **regras e
-os cuidados** que ele já resolveu bem, reescritos em Python.
+O nosso agente faz outra coisa: antecipa uma cliente que já tem horário mais tarde, decide
+pelo valor esperado e, se o horário que ela deixou ficar vago, trata esse novo buraco do
+mesmo jeito (cascata).
+
+Então quase nada vem como código. O que vale trazer são algumas regras que ele já resolveu
+bem, reescritas em Python.
 
 ## O que roda
 
 | Verificação | Resultado |
 |---|---|
-| `node --test tests/*.test.mjs` (regras de negócio) | **16 de 16 passam** (Node 24.18) |
-| `npm run setup` / `npm run dev` (interface) | **Não rodado.** Exige instalar ~11 mil linhas de dependências e Cloudflare local; não é necessário para o nosso projeto. |
-| Chamada ao Gemini | **Não rodada.** Não existe `.dev.vars` com chave neste computador. |
+| `node --test tests/*.test.mjs` (regras de negócio) | 16 de 16 passam (Node 24.18) |
+| `npm run setup` / `npm run dev` (interface) | Não rodei. Precisa instalar as dependências e a Cloudflare local, e não usamos essa parte. |
+| Chamada ao Gemini | Não rodei. Não há `.dev.vars` com chave neste computador. |
 
-## Segredos
+## Chaves e segredos
 
-- Busquei no histórico (`git log -p`) por `api_key`, `secret`, `AIza`, `sk-ant`: **nenhuma chave encontrada**.
-  Só aparece `GEMINI_API_KEY=""` vazio em `.dev.vars.example`.
-- `.gitignore` já ignora `.env*` e `.dev.vars*`.
-- `.openai/hosting.json` tem um `project_id` de hospedagem. Não é segredo, mas é do colega: **não copiar**.
+- Procurei no histórico (`git log -p`) por `api_key`, `secret`, `AIza` e `sk-ant`. Nenhuma chave.
+  Só existe `GEMINI_API_KEY=""`, vazio, no `.dev.vars.example`.
+- O `.gitignore` dele já ignora `.env*` e `.dev.vars*`.
+- `.openai/hosting.json` tem um `project_id` da hospedagem dele. Não é segredo, mas não vamos copiar.
 
-## Compatibilidade com as decisões do plano (seção 2)
+## Comparação com as decisões do plano (seção 2)
 
-| Decisão do plano | Encaixa | Conflito? |
+| Plano | Encaixa | Conflito |
 |---|---|---|
-| Python + Streamlit | TypeScript + React | Sim: reescrever |
-| LLM só interpreta e escolhe; números no código | Igual: "deterministic tools own every write" | **Não**: mesma filosofia |
-| Filtros duros antes do LLM | Igual (`available()`) | **Não** |
-| Cascata com profundidade 2 e poda | Não existe | Sim: construir do zero |
-| Taxa de falta, prob. de aceitar, valor esperado | Não existe | Sim: construir do zero |
-| Aprovação humana antes de mudar a agenda | A cliente confirma direto, sem gerente | Sim: adicionar etapa |
-| Uma profissional, JSON | 3 profissionais, banco D1 | Sim: simplificar |
-| Canal simulado | Simulado (chat na tela, sem WhatsApp) | **Não** |
+| Python + Streamlit | TypeScript + React | Sim, reescrever |
+| Números no código, escolha no LLM | Igual: o modelo nunca grava nada sozinho | Não |
+| Filtros duros antes do LLM | Igual (`available()`) | Não |
+| Cascata com profundidade 2 e poda | Não tem | Sim, fazer do zero |
+| Taxa de falta, prob. de aceitar, valor esperado | Não tem | Sim, fazer do zero |
+| Aprovação humana antes de mudar a agenda | A cliente confirma direto | Sim, acrescentar |
+| Uma profissional, dados em JSON | 3 profissionais, banco D1 | Sim, simplificar |
+| Canal simulado | Simulado, sem WhatsApp | Não |
 
-## Tabela por módulo
+## Módulo por módulo
 
 | Módulo | O que faz | Avaliação | Motivo |
 |---|---|---|---|
-| `lib/salon.mjs` → `available()` | Testa se uma cliente da fila cabe na vaga: duração, profissional apta, janela `earliest/latest`, deslocamento (`agora + travel`), consentimento, não repetir quem recusou | **Adaptar** (ideia) | São quase os mesmos filtros duros da seção 7.1. Reescrever em `src/filtros.py`, citando a origem. |
-| `lib/salon.mjs` → `plan()` | Busca em feixe (beam search) que combina várias clientes curtas para ocupar mais minutos da vaga | **Descartar** | Resolve "encaixar várias da fila", fora do nosso escopo. Nossa escolha é score + LLM. |
-| `lib/salon.mjs` → `seek()` | Cria uma oferta; se não houver candidata, avisa o gerente uma vez | **Adaptar** (ideia) | O "não há candidata, explico e não faço nada" é o nosso caso "não compensa mexer". Também garante **uma oferta pendente por vaga**. |
-| `lib/salon.mjs` → `act('offer')` | Aceite: **revalida** tudo antes de gravar. Recusa: marca e busca a próxima | **Adaptar** (ideia) | `confirmar_movimento` também deve revalidar antes de mexer na agenda; recusa → plano B é o cenário 4. |
-| `lib/salon.mjs` → `tick()` | Relógio simulado, lembrete 30 min antes, expiração de ofertas | **Descartar** | O plano usa um `agora` fixo por cenário. Lembretes e expiração estão fora do escopo. |
-| `lib/salon.mjs` → `revise()` | Cliente pede outro horário dentro da vaga | **Descartar** | No nosso fluxo, "outro horário" só é **interpretado**; renegociar vai para "Próximos passos". |
-| `lib/salon.mjs` → `seed()` | 50 clientes fictícias, 3 profissionais | **Adaptar** (só nomes) | Podemos reutilizar alguns nomes fictícios; o resto do dataset é diferente (seção 6). |
-| `lib/agent.ts` | Uma chamada ao Gemini com **uma** função declarada, timeout de 20 s, `maxOutputTokens`, validação estrita do retorno, "contexto é dado, não instrução" | **Adaptar** | Como também vamos usar Gemini (ver `DECISIONS.md`), estes cuidados de robustez são exatamente os da seção 9.4. Portar o padrão para Python. |
-| `app/dashboard.tsx` | Interface do gerente e simulador de clientes (React) | **Descartar** | A nossa interface é Streamlit (seção 8). Serve só de inspiração para os textos do chat simulado. |
-| `app/api/room/route.ts` | API HTTP, salas com chave, cotas, controle de versão no banco | **Descartar** | Não teremos servidor nem multiusuário (seção 3). |
-| `db/`, `drizzle/` | Tabelas do banco D1 | **Descartar** | O plano usa JSON. |
-| `tests/salon.test.mjs` | 16 testes das regras | **Adaptar** (ideia) | Casos que valem copiar como teste em Python: "recusa avança para outra pessoa", "texto livre nunca confirma", "não duplicar oferta para a mesma vaga". |
-| `scripts/`, `worker/`, `vite.config.ts`, `wrangler`, `.openai/` | Instalação, build e hospedagem na Cloudflare | **Descartar** | Infraestrutura de outro stack. |
-| `.gitignore` | Ignora chaves, builds, bancos | **Reaproveitar** (padrões) | O nosso `.gitignore` copia os padrões de chave (`.env*`, `!.env.example`). |
+| `lib/salon.mjs` → `available()` | Vê se uma cliente da fila cabe na vaga: duração, profissional, janela de horário, deslocamento, consentimento, se já recusou | Adaptar a ideia | São quase os filtros da seção 7.1. Vira `src/filtros.py`. |
+| `lib/salon.mjs` → `plan()` | Busca em feixe que junta várias clientes curtas na mesma vaga | Descartar | Problema diferente do nosso. |
+| `lib/salon.mjs` → `seek()` | Cria a oferta. Sem candidata, avisa o gerente uma vez | Adaptar a ideia | É o nosso "não compensa mexer". Também só deixa uma oferta pendente por vaga. |
+| `lib/salon.mjs` → `act('offer')` | No aceite, confere tudo de novo antes de gravar. Na recusa, passa para a próxima | Adaptar a ideia | `confirmar_movimento` vai revalidar do mesmo jeito. A recusa é o cenário 4. |
+| `lib/salon.mjs` → `tick()` | Relógio simulado, lembrete 30 min antes, ofertas que expiram | Descartar | No plano o "agora" é fixo em cada cenário. |
+| `lib/salon.mjs` → `revise()` | Cliente pede outro horário dentro da vaga | Descartar | Para nós, "outro horário" só é interpretado. Fica para depois. |
+| `lib/salon.mjs` → `seed()` | 50 clientes fictícias e 3 profissionais | Adaptar só os nomes | O resto dos dados é diferente (seção 6). |
+| `lib/agent.ts` | Uma chamada ao Gemini com uma função, timeout de 20 s, limite de tokens, confere o formato da resposta | Adaptar | Também usamos Gemini (ver `DECISIONS.md`), e esses cuidados são os da seção 9.4. |
+| `app/dashboard.tsx` | Tela do gerente e simulador de clientes | Descartar | A nossa tela é em Streamlit. Dá para pegar ideias de texto do chat. |
+| `app/api/room/route.ts` | API, salas com chave, cotas, banco | Descartar | Não teremos servidor nem vários usuários. |
+| `db/`, `drizzle/` | Tabelas do banco | Descartar | Usamos JSON. |
+| `tests/salon.test.mjs` | 16 testes | Adaptar a ideia | Alguns casos viram teste em Python: recusa passa para outra pessoa, texto livre não confirma nada, sem oferta duplicada na mesma vaga. |
+| `scripts/`, `worker/`, `vite.config.ts`, `.openai/` | Instalação, build e hospedagem | Descartar | Infra de outro stack. |
+| `.gitignore` | Ignora chaves, builds e bancos | Reaproveitar | Copiamos os padrões de chave. |
 
-## O que será reaproveitado (para os Créditos do README)
+## O que aproveitamos (vai para os Créditos do README)
 
-Nenhuma linha de código é copiada. Reaproveitamos **ideias e regras** do Encaixa:
+Nenhuma linha de código foi copiada. Aproveitamos ideias do Encaixa:
 
-1. Os filtros de elegibilidade, sobretudo **deslocamento** ("consegue chegar a tempo") e **janela de horário**.
-2. **Revalidar antes de confirmar** e **uma oferta pendente por vaga**.
-3. **Recusa → próxima candidata, sem repetir quem recusou.**
-4. Os cuidados com o LLM: uma ação por chamada, timeout, limite de tokens, validação estrita do JSON,
-   e "o texto do cliente é dado, não instrução".
+1. Os filtros de elegibilidade, principalmente deslocamento e janela de horário.
+2. Conferir tudo de novo antes de confirmar, e uma oferta pendente por vaga.
+3. Recusou, passa para a próxima, sem repetir quem já recusou.
+4. Os cuidados com o LLM: uma ação por chamada, timeout, limite de tokens, conferir o formato
+   da resposta e tratar o texto do cliente como dado, não como instrução.
 5. Alguns nomes fictícios do `seed()`.
 
-Cada trecho em Python inspirado nisso leva um comentário curto apontando a origem, por exemplo:
+Onde o código em Python usar uma dessas ideias, um comentário curto indica a origem, por exemplo:
 `# regra de deslocamento baseada no Encaixa (Samuel Almeida)`.
