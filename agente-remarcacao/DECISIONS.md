@@ -89,3 +89,20 @@ a não ser quando um item abaixo diz outra coisa.
   e na poda. A tabela completa, com quem ficou de fora e por quê, é mostrada só para a pessoa.
 - Motivo: é a regra da seção 2. O modelo escolhe entre opções válidas e não precisa decidir o que é válido.
 - Ficou de fora: mandar todo mundo e pedir para o modelo ignorar as excluídas.
+
+## D12. Fórmula do valor esperado ajustada (muda a seção 7 do plano)
+
+- Decisão: `valor_esperado = p_aceitar × [valor_vago × (dif_vago − p_falta) − valor_dela × dif_dela]`,
+  onde `dif` é a `dificuldade_de_preencher` de cada horário. As funções `taxa_falta`, `prob_aceitar`
+  e `dificuldade_de_preencher` continuam iguais às do plano.
+- Motivo: a fórmula do plano (`valor × p_aceitar × p_comparecer − valor × dif_dela`) tinha dois problemas:
+  1. Supunha que o horário vago ficaria vazio com certeza se ninguém fosse puxado. Mas ele também
+     pode ser preenchido pela fila; a própria seção 10 mede isso com `dificuldade_de_preencher`.
+  2. Cobrava o risco do buraco novo mesmo quando a cliente recusa, e aí nenhum buraco novo existe.
+  Com a fórmula nova, o sinal do resultado segue exatamente a regra central do plano: só compensa
+  quando o buraco novo é mais fácil de preencher que o atual, descontado o risco de ela faltar.
+  E o score fica coerente com a métrica da Fase 7. Com a fórmula antiga, a regra ingênua "ganharia"
+  do agente justamente no cenário 3, onde não mexer é a decisão certa pela própria métrica.
+- Ficou de fora: a fórmula literal da seção 7.
+- Efeito nos dados: os cenários 2 e 3 foram ajustados para continuar provando o que prometem
+  (no 2 a cascata agora puxa duas clientes; no 3 as candidatas estão amanhã cedo e faltam mais).

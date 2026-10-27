@@ -45,6 +45,13 @@ def test_valor_esperado_negativo_quando_o_buraco_novo_e_dificil():
     assert valor_esperado(pouco_confiavel, vago, novo_dificil) < 0
 
 
+def test_nao_compensa_quando_o_horario_vago_ja_e_facil_de_preencher():
+    confiavel = cliente(consultas_total=12, propostas_recebidas=4, propostas_aceitas=3)
+    vago_facil = Buraco(valor=45, antecedencia_h=72, fila=3)  # a fila resolve sozinha
+    novo = Buraco(valor=45, antecedencia_h=72, fila=3)
+    assert valor_esperado(confiavel, vago_facil, novo) < 0  # só somaria o risco de ela faltar
+
+
 def test_valor_esperado_positivo_quando_o_buraco_novo_se_preenche_sozinho():
     confiavel = cliente(consultas_total=12, propostas_recebidas=4, propostas_aceitas=3)
     vago = Buraco(valor=45, antecedencia_h=2, fila=0)

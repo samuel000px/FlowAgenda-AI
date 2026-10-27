@@ -1,4 +1,4 @@
-"""Roda um cenário no terminal: cancelamento, decisão do agente, resposta da cliente e aprovação.
+"""Roda um cenário no terminal, com cascata: cancelamento, decisão, resposta, aprovação e o buraco seguinte.
 
 Uso:
     python terminal.py S1          você responde como a cliente e aprova
@@ -7,6 +7,7 @@ Uso:
 import argparse
 import copy
 import json
+from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 
@@ -17,8 +18,9 @@ from rich.table import Table
 
 from src.agente import decidir
 from src.canal import CanalSimulado
+from src.cascata import MAX_PROF, Atores, tratar_cancelamento
 from src.dados import carregar_cenario
-from src.ferramentas import buscar_candidatos, confirmar_movimento, liberar_horario
+from src.ferramentas import liberar_horario
 from src.filtros import MOTIVOS
 from src.interpretacao import interpretar
 from src.llm import ErroLLM
@@ -37,90 +39,67 @@ def main() -> None:
     try:
         rodar(opcoes.cenario.upper(), opcoes.auto)
     except ErroLLM as e:
-        console.print(f"[red]Parou: {e}[/red] A agenda não foi alterada.")
+        console.print(f"[red]Parou: {e}[/red] O que já tinha sido aprovado continua; o resto da agenda não mudou.")
         raise SystemExit(1)
 
 
-def rodar(cenario_id: str, automatico: bool) -> None:
-    """Um nível do fluxo (sem cascata): do cancelamento até a aprovação."""
+def rodar(cenario_id: str, automatico: bool) -> list:
+    """Roda a cascata inteira de um cenário e devolve os passos."""
     cenario = copy.deepcopy(carregar_cenario(cenario_id))
-    canal = CanalSimulado(cenario.respostas if automatico else None)
-    log: list[dict] = []
-    console.rule(f"Cenário {cenario.id}: {cenario.nome}")
+    console.rule(f"Cenário {cenario.id}: {cenario.nome} ({cenario.o_que_prova})")
 
     vago = cenario.slot(cenario.slot_cancelado_id)
     quem_cancelou = cenario.clientes[vago.cliente_id].nome
     liberar_horario(cenario, vago.id)
     console.print(
-        f"[bold]Cancelamento:[/bold] {quem_cancelou} liberou {vago.data} {vago.hora} "
+        f"[bold]Cancelamento:[/bold] {quem_cancelou} liberou {_quando(vago)} "
         f"({vago.duracao_min} min) com {cenario.antecedencia_h(vago):.0f}h de aviso."
     )
 
-    candidatos = buscar_candidatos(cenario, vago.id)
-    mostrar_candidatos(cenario, candidatos)
-    if not any(c.elegivel for c in candidatos):
-        console.print("[yellow]Ninguém passou nos filtros com valor esperado positivo. O agente não mexe.[/yellow]")
-        return salvar_log(cenario, log)
+    def perguntar(cliente_id: str) -> str:
+        return Prompt.ask(f"Responda como {cenario.clientes[cliente_id].nome}")
 
-    decisao = decidir(cenario, vago.id)
-    log.append({"etapa": "decisao", "cliente_id": decisao.cliente_id, "justificativa": decisao.justificativa, "passos": decisao.log})
-    console.print(Panel(decisao.justificativa, title="Decisão do agente (gerada pelo modelo)"))
-    if decisao.cliente_id is None:
-        console.print("[yellow]O agente decidiu não mexer.[/yellow]")
-        return salvar_log(cenario, log)
-
-    nome = cenario.clientes[decisao.cliente_id].nome
-    canal.enviar(decisao.cliente_id, decisao.mensagem)
-    console.print(f"[cyan]Agente → {nome}:[/cyan] {decisao.mensagem}")
-
-    resposta = obter_resposta(canal, decisao.cliente_id, nome, automatico)
-    interp = interpretar(decisao.mensagem, resposta)
-    if interp.resultado == "ambiguo":
-        # pergunta uma vez só; se continuar sem dar para entender, conta como recusa
-        pergunta = f"Desculpa, não entendi direito. Você consegue vir {vago.data[8:]}/{vago.data[5:7]} às {vago.hora}? Pode responder sim ou não."
-        canal.enviar(decisao.cliente_id, pergunta)
-        console.print(f"[cyan]Agente → {nome}:[/cyan] {pergunta}")
-        resposta = obter_resposta(canal, decisao.cliente_id, nome, automatico)
-        interp = interpretar(pergunta, resposta)
-        if interp.resultado == "ambiguo":
-            interp.resultado = "recusou"
-    log.append({"etapa": "interpretacao", "resposta": resposta, "resultado": interp.resultado, "observacao": interp.observacao})
-    console.print(f"[magenta]Interpretação do agente:[/magenta] {interp.resultado} ({interp.observacao})")
-
-    if interp.resultado != "aceitou":
-        console.print(f"{nome} não aceitou. A agenda continua como estava.")
-        return salvar_log(cenario, log)
-
-    if automatico:
-        console.print("[dim]Aprovação automática (modo --auto).[/dim]")
-        aprovado = True
-    else:
-        aprovado = Confirm.ask(f"Aprovar e mover {nome} para {vago.data} {vago.hora}?")
-    log.append({"etapa": "aprovacao", "aprovado": aprovado, "automatica": automatico})
-    if not aprovado:
-        console.print("Rejeitado. A agenda não mudou.")
-        return salvar_log(cenario, log)
-
-    novo_buraco = confirmar_movimento(cenario, decisao.cliente_id, vago.id)
-    dia = cenario.dias[novo_buraco.data]
-    console.print(
-        f"[green]Agenda atualizada.[/green] Novo horário livre: {novo_buraco.data} {novo_buraco.hora}, "
-        f"com {cenario.antecedencia_h(novo_buraco):.0f}h de aviso e {dia.fila_espera} na fila."
-    )
-    salvar_log(cenario, log)
-
-
-def obter_resposta(canal: CanalSimulado, cliente_id: str, nome: str, automatico: bool) -> str:
-    """Resposta pronta do cenário ou digitada por quem está testando."""
-    resposta = canal.receber(cliente_id)
-    if resposta is None:
+    def aprovar(cenario: Cenario, decisao, slot_id: str) -> bool:
+        nome, slot = cenario.clientes[decisao.cliente_id].nome, cenario.slot(slot_id)
         if automatico:
-            resposta = "..."  # sem resposta pronta: cai em ambíguo
-        else:
-            resposta = Prompt.ask(f"Responda como {nome}")
-        canal.responder(cliente_id, resposta)
-    console.print(f"[green]{nome}:[/green] {resposta}")
-    return resposta
+            console.print("[dim]Aprovação automática (modo --auto).[/dim]")
+            return True
+        return Confirm.ask(f"Aprovar e mover {nome} para {_quando(slot)}?")
+
+    canal = CanalSimulado(cenario.respostas if automatico else None, perguntar=None if automatico else perguntar)
+    atores = Atores(decidir, interpretar, canal, aprovar, avisar=lambda e, d: mostrar(cenario, canal, e, d))
+    passos = tratar_cancelamento(cenario, vago.id, atores)
+    salvar_log(cenario, passos)
+    return passos
+
+
+def mostrar(cenario: Cenario, canal: CanalSimulado, evento: str, dados: dict) -> None:
+    """Imprime cada evento da cascata."""
+    if evento == "candidatos":
+        slot = cenario.slot(dados["slot_id"])
+        console.print(f"\n[bold]Nível {dados['profundidade']} de {MAX_PROF}[/bold]: horário livre {_quando(slot)}")
+        mostrar_candidatos(cenario, dados["candidatos"])
+    elif evento == "decisao":
+        console.print(Panel(dados["decisao"].justificativa, title="Decisão do agente (gerada pelo modelo)"))
+    elif evento == "interpretacao":
+        cliente_id = dados["cliente_id"]
+        nome = cenario.clientes[cliente_id].nome
+        conversa = canal.conversa(cliente_id)
+        for m in conversa[-2:]:  # a última pergunta do agente e a resposta
+            quem = f"[cyan]Agente → {nome}[/cyan]" if m.de == "agente" else f"[green]{nome}[/green]"
+            console.print(f"{quem}: {m.texto}")
+        interp = dados["interpretacao"]
+        console.print(f"[magenta]Interpretação do agente:[/magenta] {interp.resultado} ({interp.observacao})")
+    elif evento == "movimento":
+        novo = dados["novo_buraco"]
+        console.print(
+            f"[green]Agenda atualizada.[/green] Novo horário livre: {_quando(novo)}, "
+            f"com {cenario.antecedencia_h(novo):.0f}h de aviso e {cenario.dias[novo.data].fila_espera} na fila."
+        )
+    elif evento == "fim":
+        passo = dados["passo"]
+        cor = {"nao_agir": "yellow", "limite": "yellow", "rejeitado": "red"}.get(passo.resultado, "white")
+        console.print(f"[{cor}]Fim: {passo.justificativa if passo.resultado != 'rejeitado' else 'rejeitado na aprovação; a agenda não mudou.'}[/{cor}]")
 
 
 def mostrar_candidatos(cenario: Cenario, candidatos: list[Candidato]) -> None:
@@ -131,22 +110,26 @@ def mostrar_candidatos(cenario: Cenario, candidatos: list[Candidato]) -> None:
     for c in candidatos:
         if c.motivo == "nao_posterior":
             continue  # quem já está antes do horário livre só polui a tabela
-        slot = cenario.slot(c.slot_atual_id)
         numeros = (
             [f"{c.taxa_falta:.0%}", f"{c.prob_aceitar:.0%}", f"{c.antecedencia_novo_h:.0f}h", str(c.fila_novo), f"R$ {c.valor_esperado:.2f}"]
             if c.valor_esperado is not None
             else ["-"] * 5
         )
         situacao = "Elegível" if c.elegivel else MOTIVOS[c.motivo]
-        tabela.add_row(c.nome, f"{slot.data[8:]}/{slot.data[5:7]} {slot.hora}", *numeros, situacao)
+        tabela.add_row(c.nome, _quando(cenario.slot(c.slot_atual_id)), *numeros, situacao)
     console.print(tabela)
 
 
-def salvar_log(cenario: Cenario, log: list[dict]) -> None:
+def _quando(slot) -> str:
+    """Ex.: 28/10 13:00."""
+    return f"{slot.inicio:%d/%m %H:%M}"
+
+
+def salvar_log(cenario: Cenario, passos: list) -> None:
     """Guarda cada passo em logs/ para depurar e para o README."""
     PASTA_LOGS.mkdir(exist_ok=True)
     caminho = PASTA_LOGS / f"{cenario.id}-{datetime.now():%Y%m%d-%H%M%S}.json"
-    caminho.write_text(json.dumps(log, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    caminho.write_text(json.dumps([asdict(p) for p in passos], ensure_ascii=False, indent=2, default=str), encoding="utf-8")
     console.print(f"[dim]Log salvo em {caminho.relative_to(PASTA_LOGS.parent)}[/dim]")
 
 

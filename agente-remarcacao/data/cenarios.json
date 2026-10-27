@@ -5,9 +5,12 @@
     "o_que_prova": "Filtro duro e chegada possível",
     "agora": "2026-10-28T11:00",
     "cancelamento": {"slot_id": "S1-03"},
-    "respostas": {"C02": "Opa, consigo sim! Chego em 15 min."},
+    "respostas": {
+      "C02": "Opa, consigo sim! Chego em 15 min.",
+      "C06": "Não, prefiro manter meu horário mesmo."
+    },
     "esperado": {
-      "resumo": "Ana cancela as 13h com 2h de aviso. Luana (2h30 de deslocamento) não chega a tempo, Daniela só pode depois das 16h e Camila faz pé e mão. Elisa ficaria com um buraco no fim do dia sem fila, então é podada. Beatriz é a escolhida.",
+      "resumo": "Ana cancela as 13h com 2h de aviso. Luana (2h30 de deslocamento) não chega a tempo, Daniela só pode depois das 16h e Camila faz pé e mão. Elisa deixaria um buraco no fim do dia, sem fila, então é podada. Beatriz é a escolhida.",
       "fora": {"C03": "chegada", "C04": "tipo", "C05": "janela", "C06": "valor_negativo"},
       "passos": [
         {"profundidade": 0, "slot_id": "S1-03", "escolha": "C02", "resposta": "aceitou"},
@@ -21,13 +24,17 @@
     "o_que_prova": "Troca um buraco difícil por um fácil",
     "agora": "2026-10-28T09:00",
     "cancelamento": {"slot_id": "S2-02"},
-    "respostas": {"C09": "Pode ser, hoje à tarde fica até melhor pra mim."},
+    "respostas": {
+      "C09": "Pode ser, hoje à tarde fica até melhor pra mim.",
+      "C10": "Consigo sim! Sábado ia ficar apertado mesmo."
+    },
     "esperado": {
-      "resumo": "Patrícia cancela as 15h de hoje. Helena sai de amanhã as 15h: o buraco novo tem 30h de aviso e 2 na fila, fácil de preencher. No buraco de amanhã, puxar a Ingrid não compensa, então a cascata para.",
-      "fora": {"C19": "tipo", "C10": "valor_negativo"},
+      "resumo": "Patrícia cancela as 15h de hoje, sem fila. Helena sai de amanhã as 15h (30h de aviso, 2 na fila). Esse buraco ainda vale a pena: Ingrid sai de sábado, dia lotado com 3 na fila, e vai para quinta. No sábado ninguém mais precisa ser puxado.",
+      "fora": {"C19": "tipo"},
       "passos": [
         {"profundidade": 0, "slot_id": "S2-02", "escolha": "C09", "resposta": "aceitou"},
-        {"profundidade": 1, "slot_id": "S2-04", "resultado": "nao_agir"}
+        {"profundidade": 1, "slot_id": "S2-04", "escolha": "C10", "resposta": "aceitou"},
+        {"profundidade": 2, "slot_id": "S2-05", "resultado": "nao_agir"}
       ]
     }
   },
@@ -35,11 +42,14 @@
     "id": "S3",
     "nome": "Cascata que não compensa",
     "o_que_prova": "Poda: decidir não agir",
-    "agora": "2026-10-28T09:00",
+    "agora": "2026-10-28T14:00",
     "cancelamento": {"slot_id": "S3-02"},
-    "respostas": {},
+    "respostas": {
+      "C11": "Pode ser!",
+      "C12": "Consigo."
+    },
     "esperado": {
-      "resumo": "Rafaela cancela as 16h. As únicas candidatas estão amanhã, um dia com 40% de ocupação e ninguém na fila. Puxar qualquer uma deixaria um buraco difícil de preencher, então o agente não mexe e explica.",
+      "resumo": "Rafaela cancela as 18h. As candidatas estão amanhã cedo, num dia com 40% de ocupação e ninguém na fila, e as duas faltam bastante. Puxar qualquer uma troca um buraco difícil por outro quase tão difícil e ainda soma o risco de falta. O agente não mexe e explica.",
       "fora": {"C11": "valor_negativo", "C12": "valor_negativo"},
       "passos": [
         {"profundidade": 0, "slot_id": "S3-02", "resultado": "nao_agir"}
@@ -72,7 +82,10 @@
     "o_que_prova": "Suavização da taxa de falta",
     "agora": "2026-10-29T10:00",
     "cancelamento": {"slot_id": "S5-02"},
-    "respostas": {"C07": "Ah, ótimo! Pode ser hoje sim."},
+    "respostas": {
+      "C07": "Ah, ótimo! Pode ser hoje sim.",
+      "C08": "Pode ser."
+    },
     "esperado": {
       "resumo": "Fernanda faltou na única vez que veio. Sem suavização ela seria 100% faltosa; com a suavização fica em 40%, perto da Gabriela (43%, 5 faltas em 10). Como a Fernanda nunca recusou proposta e a Gabriela aceitou só 1 de 6, a Fernanda é escolhida.",
       "fora": {},
@@ -88,7 +101,10 @@
     "o_que_prova": "Uso da ocupação do dia",
     "agora": "2026-10-31T08:00",
     "cancelamento": {"slot_id": "S6-02"},
-    "respostas": {"C15": "Pode, prefiro hoje!"},
+    "respostas": {
+      "C15": "Pode, prefiro hoje!",
+      "C16": "Pode sim."
+    },
     "esperado": {
       "resumo": "Rafaela cancela as 11h de sábado. Natália e Olívia têm o mesmo histórico. A Natália sai de terça, dia com 95% de ocupação e 4 na fila, então o buraco dela some rápido. A Olívia deixaria um buraco na segunda, dia vazio. Natália é a escolhida.",
       "fora": {"C04": "tipo"},

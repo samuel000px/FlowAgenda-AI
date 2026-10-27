@@ -22,10 +22,16 @@ def dificuldade_de_preencher(antecedencia_h: float, fila: int) -> float:
 
 def ganho_e_risco(cliente: Cliente, buraco_atual: Buraco, buraco_novo: Buraco) -> tuple[float, float]:
     """Quanto se espera ganhar no horário vago e quanto se arrisca perder no horário que ela deixa."""
-    p_comparecer = 1 - taxa_falta(cliente.faltas, cliente.consultas_total)
     p_aceitar = prob_aceitar(cliente.propostas_aceitas, cliente.propostas_recebidas)
-    ganho = buraco_atual.valor * p_aceitar * p_comparecer
-    risco = buraco_novo.valor * dificuldade_de_preencher(buraco_novo.antecedencia_h, buraco_novo.fila)
+    p_falta = taxa_falta(cliente.faltas, cliente.consultas_total)
+    dif_atual = dificuldade_de_preencher(buraco_atual.antecedencia_h, buraco_atual.fila)
+    dif_novo = dificuldade_de_preencher(buraco_novo.antecedencia_h, buraco_novo.fila)
+    # Se ela recusar, nada muda. Se aceitar:
+    # - o horário vago deixa de ter a chance dif_atual de ficar vazio e passa a ter só a chance de ela faltar;
+    # - o horário dela vira um buraco novo, com a chance dif_novo de ficar vazio.
+    # Ver DECISIONS.md, D12.
+    ganho = p_aceitar * buraco_atual.valor * (dif_atual - p_falta)
+    risco = p_aceitar * buraco_novo.valor * dif_novo
     return ganho, risco
 
 

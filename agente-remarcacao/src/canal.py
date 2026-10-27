@@ -27,9 +27,11 @@ class Canal(ABC):
 class CanalSimulado(Canal):
     """Nada sai do computador. As respostas vêm de quem está testando ou de respostas prontas."""
 
-    def __init__(self, respostas_prontas: dict[str, str] | None = None):
+    def __init__(self, respostas_prontas: dict[str, str] | None = None, perguntar=None):
         self.historico: list[Mensagem] = []
         self.respostas_prontas = dict(respostas_prontas or {})
+        # no terminal, quem testa digita a resposta; sem isso, receber() devolve None
+        self.perguntar = perguntar
 
     def enviar(self, cliente_id: str, texto: str) -> None:
         """Registra a mensagem do agente no histórico."""
@@ -46,6 +48,8 @@ class CanalSimulado(Canal):
             return conversa[-1].texto
         # sem resposta digitada: usa a resposta pronta do cenário, uma vez só
         pronta = self.respostas_prontas.pop(cliente_id, None)
+        if pronta is None and self.perguntar is not None:
+            pronta = self.perguntar(cliente_id)
         if pronta is not None:
             self.responder(cliente_id, pronta)
         return pronta
