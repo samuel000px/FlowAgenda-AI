@@ -16,7 +16,8 @@
     "typecheck": "tsc --noEmit",
     "db:init": "node scripts/init-local-db.mjs",
     "setup": "npm run install:ci && npm run build && npm run db:init",
-    "calendar:setup": "node scripts/calendar-setup.mjs"
+    "calendar:setup": "node scripts/calendar-setup.mjs",
+    "deploy": "node scripts/deploy.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
