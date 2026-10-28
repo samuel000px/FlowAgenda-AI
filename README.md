@@ -205,6 +205,10 @@ Os números do salão não ficam no código: entram pelo painel.
 
 Perguntas em aberto para o salão: `docs/perguntas-para-o-salao.md`.
 
+## Exemplos fictícios no localhost
+
+Execute `npm run exemplos:local` para criar uma área separada com 50 clientes fictícias, 3 profissionais e casos de agenda, remarcação, atendimento, finanças e estoque. O comando mostra o link e preserva os dados existentes. Não acessa o banco publicado nem conecta os exemplos ao WhatsApp ou Google Agenda. Veja o roteiro completo em [examples/README.md](examples/README.md). Para validar sem gravar: `npm run exemplos:check`.
+
 ## Dados da planilha antiga e estoque
 
 A planilha que o salão usava vira dados do sistema uma vez só. O arquivo `dados/santa-cor.json` (fora do Git, porque tem nomes e telefones de clientes) traz:

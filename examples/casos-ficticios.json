@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "description": "Somente pessoas e situações fictícias. Nenhum telefone, credencial ou dado da planilha real.",
+  "clients": [
+    "Ana Lima", "Beatriz Alves", "Camila Rocha", "Daniela Costa", "Elisa Martins", "Fernanda Melo",
+    "Gabriela Dias", "Helena Reis", "Ingrid Santos", "Julia Moraes", "Karina Silva", "Larissa Gomes",
+    "Marina Souza", "Natalia Barros", "Olivia Ramos", "Patricia Araujo", "Rafaela Nunes", "Sofia Martins",
+    "Isabela Costa", "Joana Ribeiro", "Luana Freitas", "Marta Oliveira", "Nicole Dias", "Paula Castro",
+    "Renata Mendes", "Sara Almeida", "Talita Braga", "Valeria Leal", "Yasmin Lopes", "Alice Teixeira",
+    "Bruna Pinheiro", "Clara Dantas", "Debora Pires", "Ester Monteiro", "Flavia Campos", "Giovana Moura",
+    "Heloisa Cruz", "Iara Lopes", "Jessica Duarte", "Livia Cardoso", "Mirela Siqueira", "Nara Azevedo",
+    "Priscila Vieira", "Raquel Brito", "Samara Cunha", "Taina Farias", "Vanessa Tavares", "Vitoria Sales",
+    "Wanda Maia", "Zelia Coelho"
+  ],
+  "staff": [
+    {"id": "EX-P1", "name": "Lia", "areas": ["Mãos e pés", "Alongamento e gel"], "commission": 40},
+    {"id": "EX-P2", "name": "Nina", "areas": ["Mãos e pés", "Alongamento e gel"], "commission": 40},
+    {"id": "EX-P3", "name": "Rafa", "areas": ["Cabelo", "Sobrancelha e depilação"], "commission": 45}
+  ],
+  "cases": [
+    {"tab": "Finanças", "case": "Quatro serviços pagos por Pix, cartão e dinheiro; uma despesa; repasse por profissional."},
+    {"tab": "Fechamento", "case": "Uma cliente atendida ainda sem pagamento registrado e uma falta."},
+    {"tab": "Aceitações", "case": "Dois pedidos futuros esperando a decisão da gerência."},
+    {"tab": "Remarcações", "case": "Um aceite aguardando aprovação, uma recusa seguida de nova proposta e uma vaga para analisar."},
+    {"tab": "Atendimento", "case": "Conversas locais do agente com clientes fictícias, sem envio de WhatsApp."},
+    {"tab": "Ações", "case": "Duas clientes aguardando atendimento humano; encerrar a conversa não cancela o agendamento."},
+    {"tab": "Estoque", "case": "Produtos com saldo suficiente, abaixo do mínimo e esgotado."}
+  ]
+}
