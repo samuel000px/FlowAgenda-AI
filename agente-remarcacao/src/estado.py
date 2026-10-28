@@ -17,6 +17,7 @@ from src.agente import decidir as decidir_com_modelo
 from src.canal import CanalSimulado
 from src.cascata import MAX_PROF, TEXTO_LIMITE, Passo, pergunta_de_esclarecimento, sem_candidatas
 from src.ferramentas import aplicar_movimento_aprovado, buscar_candidatos, liberar_horario
+from src.historico import Historico, SemHistorico
 from src.interpretacao import Interpretacao
 from src.interpretacao import interpretar as interpretar_com_modelo
 from src.modelos import Candidato, Cenario, Decisao
@@ -44,9 +45,11 @@ class Fluxo:
         decidir=decidir_com_modelo,
         interpretar=interpretar_com_modelo,
         agenda_externa: AgendaExterna | None = None,
+        historico: Historico | None = None,
     ):
         self.original = cenario
         self.agenda_externa = agenda_externa or SemAgendaExterna()
+        self.historico = historico or SemHistorico()  # onde as propostas ficam registradas
         self.cenario = copy.deepcopy(cenario)
         self.decidir, self.interpretar = decidir, interpretar
         self.canal = CanalSimulado()
@@ -103,9 +106,12 @@ class Fluxo:
         if interp.resultado == "ambiguo":
             interp.resultado = "recusou"
         if interp.resultado == "aceitou":
+            # conta como aceite mesmo se a dona do salão rejeitar depois: a cliente topou
+            self.historico.registrar(self.cliente_atual, "proposta_aceita", self.slot_atual)
             self.estado = "aguardando_aprovacao"
             return
         # recusou ou pediu outro horário: plano B na mesma vaga
+        self.historico.registrar(self.cliente_atual, "proposta_recusada", self.slot_atual)
         self.passos.append(self._passo("recusou", texto))
         self.recusados = self.recusados | {self.cliente_atual}
         self._calcular_candidatos()
@@ -116,6 +122,7 @@ class Fluxo:
         # avisa com educação que a proposta acabou, para ninguém aceitar depois e ficar sem o horário
         self.canal.enviar(self.cliente_atual, MENSAGEM_SEM_RESPOSTA)
         self.interpretacao = None
+        self.historico.registrar(self.cliente_atual, "proposta_sem_resposta", self.slot_atual)
         self.passos.append(self._passo("sem_resposta", ""))
         self.recusados = self.recusados | {self.cliente_atual}
         self._calcular_candidatos()

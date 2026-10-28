@@ -161,3 +161,18 @@ a não ser quando um item abaixo diz outra coisa.
   a ordem de prioridade já faz o que o salão pediu.
 - Novo cenário 7 (Profissional preferida). As clientes dos cenários 1 a 6 ficaram sem preferência, então
   os resultados deles não mudaram. Na métrica, o cenário 7 empata: ela não mede preferência.
+
+## D17. Registro de visitas, faltas e propostas em CSV, com "Fechar o dia"
+
+- Decisão: `src/historico.py` grava um acontecimento por linha em `registro/historico.csv`
+  (`data_hora, cliente_id, evento, slot_id`). Os números da cliente são o cadastro mais a soma do
+  registro. As propostas (aceita, recusada, sem resposta) são gravadas pelo próprio fluxo da tela; as
+  presenças (veio, faltou), pela dona do salão no painel "Fechar o dia". O registro fica fora do git e
+  só é usado com a chave "Usar e registrar histórico" ligada.
+- Motivo: sem a API do WhatsApp, o sistema não enxerga as conversas. A forma mais simples e confiável é
+  a dona do salão marcar presença no fim do dia (cerca de um minuto) e o sistema contar sozinho o que
+  ele mesmo faz, que são as propostas. Uma linha por evento nunca perde informação, é fácil de conferir
+  e vira uma aba do Google Planilhas sem mudança.
+- Ficou de fora: contar visitas pelo Google Agenda (depende da integração do Samuel), ler conversas
+  exportadas do WhatsApp (pouco confiável e ruim para a privacidade) e planilha editada à mão.
+- O terminal e a avaliação não gravam nada: rodam os cenários fictícios repetidas vezes.

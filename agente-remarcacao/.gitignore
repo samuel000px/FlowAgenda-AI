@@ -18,3 +18,6 @@ __pycache__/
 
 # logs das execuções do agente
 logs/
+
+# registro de visitas, faltas e propostas: dados de clientes reais
+registro/

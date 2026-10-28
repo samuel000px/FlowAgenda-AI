@@ -118,15 +118,27 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 78 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
+| `pytest` | 83 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
 | `streamlit run app.py` | A interface: agenda, chat simulado e raciocínio do agente | Sim |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
 | `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |
 | `python avaliar.py` | Roda os 7 cenários com as 3 estratégias e reescreve `resultados.md` | Sim |
 | `python prova_de_vida.py` | Confere se a chave funciona | Sim |
 
-Os cenários vão de `S1` a `S6`. Cada execução no terminal grava um log em `logs/`. A camada gratuita
+Os cenários vão de `S1` a `S7`. Cada execução no terminal grava um log em `logs/`. A camada gratuita
 do Gemini limita chamadas por minuto; quando isso acontece, o código espera e tenta de novo.
+
+### Registro de visitas, faltas e propostas
+
+No painel lateral da interface, ligue **"Usar e registrar histórico"**. A partir daí:
+
+- **as propostas se registram sozinhas**: toda cliente que aceita, recusa ou não responde vira uma linha no registro;
+- em **"Fechar o dia"**, escolha o dia e marque **Veio** ou **Faltou** em cada horário.
+
+Tudo vai para `registro/historico.csv`, uma linha por acontecimento (data, cliente, evento, horário).
+O arquivo abre no Excel e pode virar uma aba do Google Planilhas. Os números de cada cliente passam a
+ser o cadastro mais o registro. O arquivo fica fora do git, porque tem dados de clientes reais. Com o
+histórico desligado, que é o padrão, nada é gravado, e dá para demonstrar à vontade.
 
 ## Decisões de projeto
 

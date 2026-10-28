@@ -13,6 +13,7 @@ from src.dados import carregar_cenarios
 from src.estado import ETAPAS, Fluxo
 from src.ferramentas import ErroMovimento, liberar_horario
 from src.filtros import MOTIVOS
+from src.historico import Historico, aplicar
 from src.llm import ErroLLM
 from src.metrica import horas_vagas_esperadas
 
@@ -50,8 +51,17 @@ def fluxo_atual() -> Fluxo:
     """O fluxo fica em st.session_state para sobreviver às reexecuções do script."""
     cenarios = cenarios_por_id()
     escolhido = st.session_state.get("cenario_id", "S1")
-    if "fluxo" not in st.session_state or st.session_state.fluxo.original.id != escolhido:
-        st.session_state.fluxo = Fluxo(cenarios[escolhido])
+    com_historico = st.session_state.get("com_historico", False)
+    chave = (escolhido, com_historico)
+    if "fluxo" not in st.session_state or st.session_state.get("chave_fluxo") != chave:
+        cenario, historico = cenarios[escolhido], None
+        if com_historico:
+            # números da cliente = cadastro + o que já foi registrado
+            historico = Historico()
+            cenario = copy.copy(cenario)
+            cenario.clientes = aplicar(cenario.clientes, historico.eventos())
+        st.session_state.fluxo = Fluxo(cenario, historico=historico)
+        st.session_state.chave_fluxo = chave
         st.session_state.erro = None
     return st.session_state.fluxo
 
@@ -76,6 +86,14 @@ def quando(slot) -> str:
     return f"{DIAS[slot.inicio.weekday()]} {slot.inicio:%d/%m %H:%M}"
 
 
+# ---------- painel lateral: histórico ----------
+st.sidebar.toggle(
+    "Usar e registrar histórico",
+    key="com_historico",
+    help="Desligado, nada é gravado (bom para demonstrar). Ligado, as propostas e as presenças vão para "
+    "registro/historico.csv e entram nos números das clientes.",
+)
+
 # ---------- barra superior ----------
 cenarios = cenarios_por_id()
 ids = list(cenarios)
@@ -99,6 +117,35 @@ with topo[2]:
 
 if st.session_state.get("erro"):
     st.error(st.session_state.erro)
+
+with st.sidebar:
+    st.subheader("Fechar o dia")
+    if not st.session_state.get("com_historico"):
+        st.caption("Ligue o histórico acima para marcar quem veio e quem faltou.")
+    else:
+        registro = fluxo.historico
+        datas = sorted({s.data for s in fluxo.cenario.agenda})
+        dia = st.selectbox("Dia", datas, format_func=lambda d: f"{d[8:]}/{d[5:7]}")
+        for slot in sorted((s for s in fluxo.cenario.agenda if s.data == dia and s.status == "ocupado"), key=lambda s: s.hora):
+            cliente = fluxo.cenario.clientes[slot.cliente_id]
+            marcado = registro.presenca_marcada(slot.id)
+            st.markdown(f"**{slot.hora}** · {cliente.nome} · {fluxo.cenario.nome_profissional(slot.profissional_id)}")
+            if marcado:
+                st.caption("Veio ✔" if marcado == "veio" else "Faltou ✘")
+                continue
+            veio, faltou = st.columns(2)
+            if veio.button("Veio", key=f"veio-{slot.id}", use_container_width=True):
+                registro.registrar(slot.cliente_id, "veio", slot.id)
+                st.rerun()
+            if faltou.button("Faltou", key=f"faltou-{slot.id}", use_container_width=True):
+                registro.registrar(slot.cliente_id, "faltou", slot.id)
+                st.rerun()
+        eventos = registro.eventos()
+        st.caption(f"{len(eventos)} registros em {registro.arquivo.relative_to(registro.arquivo.parents[1])}. "
+                   "Os números novos valem a partir do próximo cenário (ou de Reiniciar).")
+        if eventos:
+            with st.expander("Últimos registros"):
+                st.dataframe(pd.DataFrame(eventos[-10:][::-1]), hide_index=True, use_container_width=True)
 
 col_agenda, col_chat, col_razao = st.columns([300, 420, 488], gap="medium")
 
