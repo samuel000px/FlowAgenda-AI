@@ -52,7 +52,13 @@ for (const [arquivo, nomes] of [['drizzle/0000_young_lizard.sql', ['rooms', 'lim
 }
 
 console.log('Publicando...');
-const saida = rodar(['deploy', '--config', CONFIG]);
+let saida;
+try { saida = rodar(['deploy', '--config', CONFIG]); } catch (e) {
+  const painel = e.message.match(/https:\/\/dash\.cloudflare\.com\/\S+\/workers\/onboarding/)?.[0];
+  if (!painel) throw e;
+  console.error(`\nFalta escolher o endereço *.workers.dev da conta (uma vez só). Abra ${painel}, escolha um nome e rode npm run deploy de novo.`);
+  process.exit(1);
+}
 const endereco = saida.match(/https:\/\/\S+\.workers\.dev/)?.[0];
 
 // A chave que assina o login é gerada aqui uma vez e nunca aparece na tela.
