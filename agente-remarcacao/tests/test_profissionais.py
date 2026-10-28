@@ -1,7 +1,7 @@
 """Várias profissionais: primeiro quem prefere a profissional do horário vago."""
 import copy
 
-import src.agente as agente
+from avaliacao_ia import escolha_com_ia as agente
 from src.dados import carregar_cenario
 from src.ferramentas import buscar_candidatos, liberar_horario
 from src.llm import Resultado

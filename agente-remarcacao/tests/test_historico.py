@@ -4,9 +4,10 @@ from datetime import datetime
 import pytest
 
 from src.dados import carregar_cenario, carregar_clientes
+from src.escolha import decidir_pelo_codigo
 from src.estado import Fluxo
 from src.historico import Historico, aplicar
-from tests.substituto import decidir_pelo_maior_valor, interpretar_por_palavras
+from tests.substituto import interpretar_por_palavras
 
 
 def test_registro_grava_uma_linha_por_evento_e_le_de_volta(tmp_path):
@@ -44,7 +45,7 @@ def test_numeros_da_cliente_sao_cadastro_mais_registro():
 
 def test_tela_registra_as_propostas_sozinha(tmp_path):
     h = Historico(tmp_path / "h.csv")
-    f = Fluxo(carregar_cenario("S4"), decidir_pelo_maior_valor, interpretar_por_palavras, historico=h)
+    f = Fluxo(carregar_cenario("S4"), decidir_pelo_codigo, interpretar_por_palavras, historico=h)
     f.pedir_decisao()
     f.responder("Ah, hoje não vou conseguir.")  # Larissa recusa
     f.pedir_decisao()
@@ -56,7 +57,7 @@ def test_tela_registra_as_propostas_sozinha(tmp_path):
 
 
 def test_sem_historico_nada_e_gravado():
-    f = Fluxo(carregar_cenario("S1"), decidir_pelo_maior_valor, interpretar_por_palavras)
+    f = Fluxo(carregar_cenario("S1"), decidir_pelo_codigo, interpretar_por_palavras)
     f.pedir_decisao()
     f.responder("Consigo sim!")
     assert f.historico.eventos() == []

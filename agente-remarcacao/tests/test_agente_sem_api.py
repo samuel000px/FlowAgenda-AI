@@ -1,7 +1,7 @@
 """Partes da Fase 4 que dá para testar sem chamar o Gemini."""
 import pytest
 
-from src.agente import _validar
+from avaliacao_ia.escolha_com_ia import _validar
 from src.canal import CanalSimulado
 from src.interpretacao import _validar as validar_interpretacao
 from src.llm import ErroFormato, extrair_json

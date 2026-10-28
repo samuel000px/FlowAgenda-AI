@@ -29,7 +29,7 @@ def main() -> None:
         )
     except ErroLLM as e:
         console.print(f"[red]Não rodou:[/red] {e}")
-        raise SystemExit(1)
+        raise SystemExit(1) from None
 
     for passo in resultado.log:
         console.print(passo)

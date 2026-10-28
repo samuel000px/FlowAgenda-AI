@@ -1,7 +1,20 @@
-> **Este repositório tem dois projetos.**
-> - [`agente-remarcacao/`](agente-remarcacao/README.md): agente que decide quem antecipar quando um
->   horário é cancelado, com cascata, poda e aprovação humana (Python, Streamlit, Gemini).
-> - O **Encaixa**, descrito abaixo, de Samuel Almeida, em que o agente se inspirou.
+# FlowAgenda
+
+**Cancelamento vira hora vazia. O FlowAgenda transforma hora vazia em hora recuperada.**
+
+Agenda para salões pequenos que se reorganiza sozinha quando alguém cancela: encontra quem pode vir
+antes, escreve a mensagem, entende a resposta e só mexe na agenda depois que a dona aprova.
+
+**[Conheça o FlowAgenda: como funciona, esquemas, resultados e como rodar](agente-remarcacao/README.md)**
+
+Este repositório tem duas partes:
+
+| Pasta | O que é |
+|---|---|
+| [`agente-remarcacao/`](agente-remarcacao/README.md) | O FlowAgenda: remarcação em cascata, página pública do salão e painel com senha (Python, Streamlit, Gemini). |
+| raiz (abaixo) | O **Encaixa · Esmalteria**, de Samuel Almeida, em que o FlowAgenda se inspirou (TypeScript, Cloudflare). |
+
+---
 
 # Encaixa · Esmalteria
 

@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytest
 
-import src.agente as agente
+from avaliacao_ia import escolha_com_ia as agente
 from src.cascata import MAX_PROF, tratar_cancelamento
 from src.dados import carregar_cenario, carregar_cenarios, carregar_clientes
 from src.ferramentas import buscar_candidatos, liberar_horario
@@ -55,7 +55,9 @@ def test_sem_aprovacao_a_agenda_nao_muda():
 
 
 def test_modelo_pode_decidir_nao_mexer():
-    nunca = lambda *_: Decisao(None, "prefiro não mexer", None, [])
+    def nunca(*_):
+        return Decisao(None, "prefiro não mexer", None, [])
+
     _, passos = rodar(carregar_cenario("S1"), decidir=nunca)
     assert [p.resultado for p in passos] == ["nao_agir"]
     assert passos[0].justificativa == "prefiro não mexer"

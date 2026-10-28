@@ -113,7 +113,9 @@ def main() -> None:
         base = resultados["nada"][0]
         for nome in totais:
             totais[nome] += resultados[nome][0]
-        reducao = lambda h: f"{(base - h) / base:.0%}" if base else "-"
+        def reducao(horas: float, base: float = base) -> str:
+            """Quanto caiu em relação a não fazer nada."""
+            return f"{(base - horas) / base:.0%}" if base else "-"
         ok = bate_com_esperado(resultados["agente"][1], cenario.esperado["passos"])
         linhas.append(
             f"| {cenario.id} {cenario.nome} | {base:.2f} | {resultados['ingenua'][0]:.2f} ({reducao(resultados['ingenua'][0])}) "
@@ -190,4 +192,4 @@ if __name__ == "__main__":
         main()
     except ErroLLM as e:
         console.print(f"[red]Parou: {e}[/red] O resultados.md anterior foi mantido.")
-        raise SystemExit(1)
+        raise SystemExit(1) from None

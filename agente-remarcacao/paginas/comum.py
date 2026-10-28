@@ -1,9 +1,20 @@
-"""Partes que as páginas do painel compartilham: senha e menu lateral."""
+"""Partes que as páginas compartilham: estilo, senha e menu lateral do painel."""
 import time
+from pathlib import Path
 
 import streamlit as st
 
-from src.acesso import senha_configurada, senha_confere
+from src.acesso import senha_confere, senha_configurada
+
+PASTA_ESTILOS = Path(__file__).resolve().parent / "estilos"
+
+
+def aplicar_css(nome: str) -> None:
+    """Lê paginas/estilos/<nome>.css e aplica na página."""
+    css = (PASTA_ESTILOS / f"{nome}.css").read_text(encoding="utf-8")
+    # Sem linhas em branco: no markdown do Streamlit, linha em branco pode quebrar o bloco <style>.
+    linhas = [linha for linha in css.splitlines() if linha.strip()]
+    st.markdown("<style>" + "\n".join(linhas) + "</style>", unsafe_allow_html=True)
 
 
 def exigir_senha() -> None:
@@ -13,6 +24,7 @@ def exigir_senha() -> None:
         return
     if st.session_state.get("autenticado"):
         return
+
     st.markdown("### Painel do salão")
     with st.form("entrar"):
         digitada = st.text_input("Senha", type="password")

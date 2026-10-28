@@ -1,7 +1,13 @@
 import pytest
 
 from src.modelos import Buraco, Cliente
-from src.score import dificuldade_de_preencher, disposicao_efetiva, prob_aceitar, taxa_falta, valor_esperado
+from src.score import (
+    dificuldade_de_preencher,
+    disposicao_efetiva,
+    prob_aceitar,
+    taxa_falta,
+    valor_esperado,
+)
 
 
 def cliente(**campos) -> Cliente:

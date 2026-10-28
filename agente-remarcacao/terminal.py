@@ -18,9 +18,9 @@ from rich.table import Table
 
 from src.canal import CanalSimulado
 from src.cascata import MAX_PROF, Atores, tratar_cancelamento
-from src.dados import carregar_cenario
+from src.dados import ErroDados, carregar_cenario
 from src.escolha import decidir_pelo_codigo
-from src.ferramentas import liberar_horario
+from src.ferramentas import ErroMovimento, liberar_horario
 from src.filtros import MOTIVOS
 from src.interpretacao import interpretar
 from src.llm import ErroLLM
@@ -33,14 +33,17 @@ PASTA_LOGS = Path(__file__).resolve().parent / "logs"
 def main() -> None:
     """Lê os argumentos e roda."""
     args = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    args.add_argument("cenario", help="S1 a S6")
+    args.add_argument("cenario", help="S1 a S8")
     args.add_argument("--auto", action="store_true", help="respostas prontas e aprovação automática")
     opcoes = args.parse_args()
     try:
         rodar(opcoes.cenario.upper(), opcoes.auto)
-    except ErroLLM as e:
+    except (ErroLLM, ErroMovimento) as e:
         console.print(f"[red]Parou: {e}[/red] O que já tinha sido aprovado continua; o resto da agenda não mudou.")
-        raise SystemExit(1)
+        raise SystemExit(1) from None
+    except ErroDados as e:
+        console.print(f"[red]{e}[/red]")
+        raise SystemExit(1) from None
 
 
 def rodar(cenario_id: str, automatico: bool) -> list:
@@ -59,7 +62,7 @@ def rodar(cenario_id: str, automatico: bool) -> list:
     def perguntar(cliente_id: str) -> str:
         return Prompt.ask(f"Responda como {cenario.clientes[cliente_id].nome}")
 
-    def aprovar(cenario: Cenario, decisao, slot_id: str) -> bool:
+    def aprovar(_cenario: Cenario, decisao, slot_id: str) -> bool:
         nome, slot = cenario.clientes[decisao.cliente_id].nome, cenario.slot(slot_id)
         if automatico:
             console.print("[dim]Aprovação automática (modo --auto).[/dim]")

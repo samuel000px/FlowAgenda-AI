@@ -58,8 +58,8 @@ Sem isso, tudo continua funcionando com `SemAgendaExterna`, que não envia nada 
 
 ## Regras que não podem quebrar
 
-1. **O modelo não ganha acesso ao Google.** Não crie ferramenta nova em `src/agente.py`. O modelo
-   continua só com `buscar_candidatos` e `propor_remarcacao` (um teste confere isso).
+1. **A IA não ganha acesso ao Google.** Ela só lê as respostas das clientes (`src/interpretacao.py`);
+   não dê a ela nenhuma função que mexa na agenda.
 2. **Só `registrar_movimento` escreve no Google**, e só depois da aprovação.
 3. **Os testes não chamam o Google.** Use uma agenda falsa, como a `AgendaFalsa` de
    `tests/test_agenda_externa.py`. Os testes rodam no GitHub sem nenhuma chave.

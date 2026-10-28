@@ -1,4 +1,8 @@
-"""O agente: recebe o horário vago, consulta as candidatas e escolhe uma (ou nenhuma)."""
+"""Experimento: a IA escolhendo a cliente. Não é usado pelo FlowAgenda.
+
+A escolha de verdade é feita pelo código (src/escolha.py, D25). Este arquivo fica para o
+avaliar_ia.py comparar as duas formas nos casos difíceis.
+"""
 from collections.abc import Collection
 
 from src.ferramentas import buscar_candidatos
@@ -36,18 +40,16 @@ DIAS = ["segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo"]
 def decidir(cenario: Cenario, slot_id: str, recusados: Collection[str] = (), profundidade: int = 0) -> Decisao:
     """Pede a decisão ao modelo. Se a resposta vier fora do formato, tenta mais uma vez."""
     log: list[dict] = []
-    for tentativa in (1, 2):
-        try:
-            return _uma_tentativa(cenario, slot_id, recusados, profundidade, log)
-        except ErroFormato as e:
-            log.append({"tipo": "erro_formato", "tentativa": tentativa, "erro": str(e)})
-            if tentativa == 2:
-                raise
-    raise AssertionError("não chega aqui")
+    try:
+        return _uma_tentativa(cenario, slot_id, recusados, profundidade, log)
+    except ErroFormato as e:
+        log.append({"tipo": "erro_formato", "erro": str(e)})
+        return _uma_tentativa(cenario, slot_id, recusados, profundidade, log)  # segunda e última tentativa
 
 
 def _uma_tentativa(cenario: Cenario, slot_id: str, recusados: Collection[str], profundidade: int, log: list[dict]) -> Decisao:
     """Uma rodada completa do laço de ferramentas."""
+    vago = cenario.slot(slot_id)
     candidatas = [c for c in buscar_candidatos(cenario, slot_id, recusados) if c.elegivel]
     # Regra do salão: primeiro quem prefere a profissional deste horário (ou tanto faz).
     # As outras só aparecem para o modelo quando não sobra ninguém desse grupo.
@@ -69,7 +71,7 @@ def _uma_tentativa(cenario: Cenario, slot_id: str, recusados: Collection[str], p
         rascunhos.append({"cliente_id": cliente_id, "slot_id": slot_id, "mensagem": mensagem})
         return {"ok": "Rascunho guardado. Nada foi enviado e a agenda não mudou."}
 
-    vago = cenario.slot(slot_id)
+    # As duas ferramentas que o modelo pode pedir. confirmar_movimento não está aqui de propósito.
     ferramentas = [
         Ferramenta(
             nome="buscar_candidatos",

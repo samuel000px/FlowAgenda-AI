@@ -6,10 +6,11 @@ import streamlit as st
 
 from src.salao import carregar_salao
 
-st.set_page_config(page_title=carregar_salao()["nome"], page_icon="💅", layout="wide")
+nome_do_salao = carregar_salao()["nome"]
+st.set_page_config(page_title=nome_do_salao, page_icon="💅", layout="wide")
 
 paginas = [
-    st.Page("paginas/inicio.py", title=carregar_salao()["nome"], default=True),
+    st.Page("paginas/inicio.py", title=nome_do_salao, default=True),
     st.Page("paginas/painel.py", title="Painel", url_path="painel"),
     st.Page("paginas/cadastro.py", title="Clientes e equipe", url_path="equipe"),
 ]

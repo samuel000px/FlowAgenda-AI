@@ -1,18 +1,20 @@
 import pytest
 
 from src.dados import carregar_cenario, carregar_cenarios
+from src.escolha import decidir_pelo_codigo
 from src.estado import Fluxo
-from tests.substituto import decidir_pelo_maior_valor, interpretar_por_palavras
+from src.llm import ErroLLM
+from tests.substituto import interpretar_por_palavras
 from tests.test_cascata import resumir
 
 
 def fluxo(cenario_id: str) -> Fluxo:
-    return Fluxo(carregar_cenario(cenario_id), decidir_pelo_maior_valor, interpretar_por_palavras)
+    return Fluxo(carregar_cenario(cenario_id), decidir_pelo_codigo, interpretar_por_palavras)
 
 
 @pytest.mark.parametrize("cenario", carregar_cenarios(), ids=lambda c: c.id)
 def test_clicando_os_botoes_chega_no_mesmo_resultado_da_cascata(cenario):
-    f = Fluxo(cenario, decidir_pelo_maior_valor, interpretar_por_palavras)
+    f = Fluxo(cenario, decidir_pelo_codigo, interpretar_por_palavras)
     while not f.terminou:
         if f.estado == "candidatos_calculados":
             f.pedir_decisao()
@@ -69,3 +71,15 @@ def test_nao_respondeu_encerra_com_educacao_e_passa_para_a_proxima():
     assert f.cenario.slot("S4-04").cliente_id == "C13"  # nada mudou para ela
     f.pedir_decisao()
     assert f.cliente_atual == "C14"  # uma de cada vez: só agora a Marina é chamada
+
+
+def test_se_a_ia_falhar_a_resposta_nao_fica_no_chat():
+    def falha(proposta, resposta):
+        raise ErroLLM("sem internet")
+
+    f = Fluxo(carregar_cenario("S1"), interpretar=falha)
+    f.pedir_decisao()
+    with pytest.raises(ErroLLM):
+        f.responder("Consigo sim!")
+    assert [m.de for m in f.canal.conversa("C02")] == ["agente"]  # só a proposta; nada duplicado depois
+    assert f.estado == "aguardando_resposta"

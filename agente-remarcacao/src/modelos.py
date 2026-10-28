@@ -130,7 +130,7 @@ class Candidato:
 
 @dataclass
 class Decisao:
-    """O que o modelo escolheu. É só uma proposta: nada muda sem aprovação."""
+    """Quem chamar e com qual mensagem. É só uma proposta: nada muda sem aprovação."""
 
     cliente_id: str | None  # None = decidiu não mexer
     justificativa: str

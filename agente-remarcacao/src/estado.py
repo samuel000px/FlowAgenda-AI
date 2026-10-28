@@ -14,9 +14,19 @@ from dataclasses import dataclass
 
 from src.agenda_externa import AgendaExterna, SemAgendaExterna
 from src.canal import CanalSimulado
+from src.cascata import (
+    MAX_PROF,
+    TEXTO_LIMITE,
+    Passo,
+    pergunta_de_esclarecimento,
+    sem_candidatas,
+)
 from src.escolha import decidir_pelo_codigo
-from src.cascata import MAX_PROF, TEXTO_LIMITE, Passo, pergunta_de_esclarecimento, sem_candidatas
-from src.ferramentas import aplicar_movimento_aprovado, buscar_candidatos, liberar_horario
+from src.ferramentas import (
+    aplicar_movimento_aprovado,
+    buscar_candidatos,
+    liberar_horario,
+)
 from src.historico import Historico, SemHistorico
 from src.interpretacao import Interpretacao
 from src.interpretacao import interpretar as interpretar_com_modelo
@@ -96,8 +106,9 @@ class Fluxo:
         """A pessoa responde como a cliente; o modelo interpreta."""
         self._exigir("aguardando_resposta")
         ultima_do_agente = [m for m in self.canal.conversa(self.cliente_atual) if m.de == "agente"][-1].texto
-        self.canal.responder(self.cliente_atual, texto)
+        # Interpreta antes de guardar: se a IA falhar, a resposta não fica no chat pela metade.
         interp = self.interpretar(ultima_do_agente, texto)
+        self.canal.responder(self.cliente_atual, texto)
         self.interpretacao = interp
         if interp.resultado == "ambiguo" and not self.ja_esclareceu:
             self.ja_esclareceu = True

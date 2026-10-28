@@ -6,9 +6,10 @@ import pytest
 from src.agenda_externa import AgendaExterna
 from src.cascata import tratar_cancelamento
 from src.dados import carregar_cenario
+from src.escolha import decidir_pelo_codigo
 from src.estado import Fluxo
 from src.ferramentas import ErroMovimento, liberar_horario
-from tests.substituto import atores_de_teste, decidir_pelo_maior_valor, interpretar_por_palavras
+from tests.substituto import atores_de_teste, interpretar_por_palavras
 
 
 class AgendaFalsa(AgendaExterna):
@@ -57,7 +58,7 @@ def test_recusa_e_rejeicao_nao_chegam_na_agenda_externa():
 def test_falha_na_agenda_externa_desfaz_a_troca_local():
     with pytest.raises(ErroMovimento, match="agenda externa"):
         rodar("S1", AgendaFalsa(falhar=True))
-    f = Fluxo(carregar_cenario("S1"), decidir_pelo_maior_valor, interpretar_por_palavras, AgendaFalsa(falhar=True))
+    f = Fluxo(carregar_cenario("S1"), decidir_pelo_codigo, interpretar_por_palavras, AgendaFalsa(falhar=True))
     f.pedir_decisao()
     f.responder("Consigo sim!")
     with pytest.raises(ErroMovimento):
@@ -69,7 +70,7 @@ def test_falha_na_agenda_externa_desfaz_a_troca_local():
 
 def test_tela_tambem_avisa_a_agenda_externa():
     agenda = AgendaFalsa()
-    f = Fluxo(carregar_cenario("S6"), decidir_pelo_maior_valor, interpretar_por_palavras, agenda)
+    f = Fluxo(carregar_cenario("S6"), decidir_pelo_codigo, interpretar_por_palavras, agenda)
     f.pedir_decisao()
     f.responder("Pode, prefiro hoje!")
     f.aprovar()

@@ -25,13 +25,13 @@ class Passo:
     justificativa: str = ""
     mensagem: str | None = None
     resposta: str | None = None
-    interpretacao: str | None = None  # o que o modelo entendeu (pode ser "outro_horario")
+    interpretacao: str | None = None  # o que a IA entendeu da resposta (pode ser "outro_horario")
     novo_buraco_id: str | None = None
 
 
 @dataclass
 class Atores:
-    """Quem participa do fluxo. Nos testes, um substituto sem LLM entra no lugar do agente."""
+    """Quem participa do fluxo. Nos testes, um substituto entra no lugar da IA que lê as respostas."""
 
     decidir: Callable[[Cenario, str, frozenset, int], Decisao]
     interpretar: Callable[[str, str], Interpretacao]
@@ -61,7 +61,7 @@ def tratar_cancelamento(
     if not any(c.elegivel for c in candidatos):
         return _encerrar(passos, atores, Passo(profundidade, slot_id, "nao_agir", justificativa=sem_candidatas(candidatos)))
 
-    # 5: o modelo escolhe entre as que sobraram e escreve a mensagem
+    # 5: escolhe a melhor das que sobraram e monta a mensagem (src/escolha.py)
     decisao = atores.decidir(cenario, slot_id, recusados, profundidade)
     atores.avisar("decisao", {"profundidade": profundidade, "slot_id": slot_id, "decisao": decisao})
     if decisao.cliente_id is None:

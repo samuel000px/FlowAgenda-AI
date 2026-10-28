@@ -3,8 +3,9 @@
 import json
 import os
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 import httpx
 from dotenv import load_dotenv
@@ -57,7 +58,7 @@ def _cliente() -> genai.Client:
     return genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=TIMEOUT_MS, retry_options=tentativas))
 
 
-def _modelo() -> str:
+def nome_do_modelo() -> str:
     """Nome do modelo, configurável no .env."""
     return os.getenv("GEMINI_MODEL") or "gemini-3.5-flash-lite"
 
@@ -145,7 +146,7 @@ def _tokens(resposta) -> int | None:
 def _gerar(cliente: genai.Client, conversa: list | str, config: types.GenerateContentConfig):
     """Uma chamada ao modelo, traduzindo erros de API e de rede."""
     try:
-        return cliente.models.generate_content(model=_modelo(), contents=conversa, config=config)
+        return cliente.models.generate_content(model=nome_do_modelo(), contents=conversa, config=config)
     except errors.APIError as e:
         if e.code == 429:
             raise ErroLLM("Limite da camada gratuita do Gemini atingido. Espere um pouco e tente de novo.") from e

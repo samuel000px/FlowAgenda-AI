@@ -3,7 +3,9 @@ import copy
 
 import pytest
 
+from avaliacao_ia.casos_decisao import casos
 from avaliar_ia import problemas_da_mensagem
+from src import llm
 from src.dados import carregar_cenario, carregar_cenarios
 from src.escolha import decidir_pelo_codigo
 from src.ferramentas import buscar_candidatos, liberar_horario
@@ -44,15 +46,14 @@ def test_mensagem_fala_hoje_e_o_dia_do_horario_dela():
 
 
 def test_empate_e_explicado():
-    from avaliacao_ia.casos_decisao import casos
-
     d2 = next(c for c in casos() if c.id == "D2").cenario
     d = decidir_pelo_codigo(d2, "V")
     assert "Empatada" in d.justificativa
 
 
 def test_nao_chama_a_ia(monkeypatch):
-    import src.agente as agente
+    def proibido():
+        pytest.fail("a escolha abriu conexão com a IA")
 
-    monkeypatch.setattr(agente, "rodar_com_ferramentas", lambda *a, **k: pytest.fail("chamou o modelo"))
+    monkeypatch.setattr(llm, "_cliente", proibido)
     assert decidir_pelo_codigo(cancelado("S2"), "S2-02").cliente_id == "C09"

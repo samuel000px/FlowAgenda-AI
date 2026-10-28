@@ -67,7 +67,7 @@ class SemHistorico(Historico):
     """Padrão nos testes, no terminal e na avaliação: não grava nada."""
 
     def __init__(self):
-        super().__init__(Path(os.devnull))
+        self.arquivo = None
 
     def registrar(self, cliente_id: str, evento: str, slot_id: str = "", quando: datetime | None = None) -> None:
         """Confere o evento, mas não grava."""

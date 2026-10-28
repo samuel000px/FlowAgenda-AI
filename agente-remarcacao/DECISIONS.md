@@ -284,3 +284,21 @@ a não ser quando um item abaixo diz outra coisa.
   nos oito cenários. Quando a profissional é outra, a mensagem diz: "Seria com a Nina, não com a Lia".
 - Ficou de fora: a IA escolhendo com o código conferindo quando ela discordar muito do valor esperado.
   Seria mais caro e, na prática, o código acabaria decidindo nos casos em que a IA erra.
+
+## D26. Revisão geral e simplificação do código
+
+- Revisão: nenhuma chave no histórico do git (só os exemplos "sua-chave" dos guias), nenhum arquivo
+  sensível versionado (`.env`, `data/salao.local.json`, `registro/`, `logs/`, credenciais), testes do
+  GitHub passando em todos os envios e o verificador `ruff` sem apontamentos.
+- Erros corrigidos:
+  - o painel quebrava com um horário livre na agenda original ou com um dia sem horários (os cenários
+    de hoje não tinham nenhum dos dois, mas o uso real terá);
+  - se a IA falhasse ao ler uma resposta, a resposta ficava no chat mesmo com a tela dizendo "nada foi
+    alterado", e aparecia duplicada ao tentar de novo. Agora a IA lê antes e a resposta só entra se der certo;
+  - o terminal mostrava erro técnico para cenário inexistente ou falha da agenda externa, e a ajuda
+    ainda dizia "S1 a S6".
+- Simplificação: o painel virou funções com nome (agenda, chat, decisão, fechar o dia); o CSS saiu do
+  Python para `paginas/estilos/`; textos das telas foram para `paginas/formatos.py` (testável sem
+  Streamlit); o experimento da IA escolhendo saiu de `src/` para `avaliacao_ia/escolha_com_ia.py`;
+  "tentar de novo uma vez" ficou escrito de forma direta; imports organizados no padrão.
+- O README ganhou uma seção "Estrutura do projeto" e dois fluxogramas simples no lugar de três detalhados.

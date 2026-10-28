@@ -1,109 +1,159 @@
-# Agente de remarcação
+# FlowAgenda
 
-**Cancelamento vira hora vazia. O agente transforma hora vazia em hora recuperada.**
+**Cancelamento vira hora vazia. O FlowAgenda transforma hora vazia em hora recuperada.**
+
+Agenda para salões pequenos que se reorganiza sozinha quando alguém cancela: encontra quem pode vir
+antes, escreve a mensagem, entende a resposta e só mexe na agenda depois que a dona aprova.
 
 <!-- GIF da demonstração: gravar e salvar em docs/demo.gif, depois trocar esta linha por ![Demonstração](docs/demo.gif) -->
 > GIF da demonstração: em breve.
 
-Dados fictícios · canal de mensagens simulado · nenhuma mensagem real é enviada.
+Hoje roda com dados fictícios e um WhatsApp simulado: nenhuma mensagem real é enviada.
 
 ---
 
 ## O problema
 
-Numa esmalteria pequena, com duas ou três manicures, cada cancelamento em cima da hora é um horário pago que some.
-A cliente que cancelou não perde nada, mas a manicure perde o atendimento e a esmalteria perde a receita.
-Muitas vezes há outra cliente marcada para daqui a alguns dias que toparia vir antes. Só que puxar essa
-cliente abre um **buraco novo** no horário dela. Então a pergunta certa não é "quem pode vir?", e sim:
+Num salão com duas ou três profissionais, a agenda costuma morar num caderno e no WhatsApp. Quando uma
+cliente cancela em cima da hora, o prejuízo é concreto:
 
-> Puxar quem, de qual dia, deixa a agenda **menos vazia** no fim?
+- **o horário pago some**: a profissional fica parada e o salão perde a receita daquele atendimento;
+- **remarcar dá trabalho**: a dona para o que está fazendo, procura no caderno, manda mensagem para uma,
+  espera, tenta outra;
+- **puxar a pessoa errada piora**: antecipar alguém abre um buraco novo no horário dela, que pode ser
+  mais difícil de preencher do que o primeiro;
+- **incomodar quem não quer**: quem escolheu um horário tarde de propósito não gosta de ser chamada
+  para antes.
 
-## Como o agente decide
+A pergunta certa não é "quem pode vir?", e sim:
+
+> Puxar quem, de qual dia, deixa a agenda **menos vazia** no fim, sem incomodar quem não quer?
+
+## A proposta
+
+Automatizar o agendamento e a remarcação, deixando cada parte com quem faz melhor:
+
+- **as contas e as regras ficam com o código**: quem pode, quem compensa, quem chamar primeiro. É sempre
+  o mesmo resultado, dá para testar e dá para explicar;
+- **a IA entra só onde há texto livre**: entender o que a cliente escreveu ("hj n", "só depois das 17h",
+  "quanto custa?");
+- **a dona do salão decide**: nada muda na agenda sem ela tocar em Aprovar, de preferência pelo celular.
+
+## Como vai funcionar
+
+```mermaid
+flowchart LR
+    whats["WhatsApp<br/>da cliente"] -->|"mensagem"| ia["IA<br/>entende o pedido"]
+    ia -->|"marcar ou cancelar"| codigo["FlowAgenda<br/>regras e contas"]
+    codigo -->|"proposta"| dona["Dona do salão<br/>aprova no celular"]
+    dona -->|"aprovado"| agenda["Google Agenda<br/>e Planilhas"]
+    agenda -->|"confirmação"| whats
+```
+
+1. A cliente escreve no WhatsApp: quer marcar, cancelar ou está respondendo a uma proposta.
+2. A IA lê a mensagem e diz o que ela quer. É o único passo que usa IA.
+3. O FlowAgenda aplica as regras: acha o horário livre ou, num cancelamento, decide quem chamar para antes.
+4. A dona do salão vê a proposta no celular e aprova (ou não).
+5. A agenda é atualizada e a cliente recebe a confirmação.
+
+Hoje os passos 2 a 4 já funcionam, com o WhatsApp simulado no painel e a agenda em arquivos. O WhatsApp
+de verdade, o Google Agenda e as Planilhas estão em construção (lista mais abaixo).
+
+## Por dentro de uma remarcação
+
+Quando um horário fica livre, o código passa por estas etapas. Se alguém for antecipada, o horário que
+ela deixou entra de novo no começo (a cascata), até dois níveis.
 
 ```mermaid
 flowchart TD
-    A[Cancelamento: horário livre + aviso em horas] --> B[Filtros duros<br/>serviço, duração, horário posterior,<br/>aviso mínimo do salão, cliente com nota 0, já recusou]
-    B --> C[Score<br/>taxa de falta, chance de aceitar,<br/>dificuldade de preencher, valor esperado]
-    C --> D{Poda<br/>alguém com valor esperado > 0?}
-    D -- não --> N[Decide não mexer e explica]
-    D -- sim --> E[Código escolhe a primeira da lista,<br/>justifica e monta a mensagem]
-    E --> F[Envio pelo canal simulado]
-    F --> G[LLM interpreta a resposta<br/>aceitou / recusou / outro horário / ambíguo]
-    G -- recusou --> B
-    G -- aceitou --> H[Aprovação humana]
-    H -- rejeitou --> R[Fim, agenda não muda]
-    H -- aprovou --> I[Código move a cliente]
-    I --> J{Profundidade <= 2?}
-    J -- sim --> K[O horário que ela deixou vira um novo cancelamento] --> B
-    J -- não --> L[Fim: limite de cascata]
+    livre["Horário livre"] --> filtros["Quem pode vir?<br/>filtros"]
+    filtros --> conta["Quem compensa?<br/>contas"]
+    conta -->|"ninguém"| fim["Não mexe"]
+    conta -->|"a melhor"| proposta["Proposta pelo WhatsApp"]
+    proposta -->|"recusou"| filtros
+    proposta -->|"aceitou"| aprova["Dona aprova"]
+    aprova --> troca["Agenda atualizada"]
+    troca -->|"o horário que ela deixou<br/>(até 2 vezes)"| livre
 ```
 
-**Os quatro fatores**, todos calculados pelo código em [`src/score.py`](src/score.py):
+### Como o código pesa cada candidata
+
+Tudo em [`src/score.py`](src/score.py), com testes:
 
 | Fator | Conta | Por quê |
 |---|---|---|
-| Taxa de falta | `(faltas + 1) / (consultas + 4)` | Suavizada: 1 falta em 1 consulta vira 40%, não 100%. |
-| Chance de aceitar | `(aceitas + 2 × nota/10) / (propostas + 2)` | Sem histórico, vale a nota de 0 a 10 que a própria cliente deu; com o tempo, o histórico manda. Nota 0 = nunca é chamada. |
-| Aviso que sobra | entra na dificuldade de preencher | Mais horas de aviso, mais fácil achar outra pessoa. |
-| Ocupação do dia | fila de espera do dia | Dia lotado, com fila, preenche o buraco novo rápido. |
+| Chance de faltar | `(faltas + 1) / (visitas + 4)` | Suavizada: 1 falta em 1 visita vira 40%, não 100%. |
+| Chance de aceitar | `(aceitas + 2 × nota/10) / (propostas + 2)` | Sem histórico, vale a nota de 0 a 10 que a própria cliente deu; com o tempo, o histórico manda. Nota 0: nunca é chamada. |
+| Dificuldade de preencher | `1 − [0,6 × aviso × procura + 0,4 × fila]` | Mais aviso e mais fila, mais fácil achar outra pessoa. Com a agenda vazia (pouca procura), aviso não ajuda. |
+| Escolheu tarde de propósito | nota cai para 2 | Quem marcou tarde havendo horário antes provavelmente não quer antecipar. |
 
-`dificuldade_de_preencher = 1 − [0,6 × min(aviso/48h, 1) × procura + 0,4 × min(fila/3, 1)]`, de 0 (fácil) a 1 (difícil),
-onde `procura = min(ocupação do dia / 80%, 1)`: com a agenda vazia, muito aviso não ajuda.
-Quem marcou tarde havendo horários livres antes entra com disposição 2 (a não ser que tenha dado nota 8 ou mais).
-
-**A regra central:** só compensa puxar alguém se o buraco novo for mais fácil de preencher do que o
-atual, descontado o risco de ela faltar. Em reais:
+A regra central, em reais:
 
 ```
-valor_esperado = chance_de_aceitar × [ valor_vago × (dificuldade_vago − taxa_falta) − valor_dela × dificuldade_dela ]
+valor esperado = chance de aceitar × [ valor do horário livre × (dificuldade dele − chance de faltar)
+                                       − valor do horário dela × dificuldade do horário dela ]
 ```
 
-Se ninguém tem valor esperado positivo, o agente **decide não mexer**, e isso também é uma decisão.
+Só compensa puxar alguém se o buraco novo for mais fácil de preencher do que o atual, descontado o
+risco de ela faltar. Se ninguém compensa, o FlowAgenda **decide não mexer**, e isso também é uma decisão.
 
-### Quem faz o quê
+## Quem faz o quê
 
 | Parte | Quem faz | Onde |
 |---|---|---|
-| Filtros duros, contas, poda | Código | `src/filtros.py`, `src/score.py`, `src/ferramentas.py` |
+| Filtros, contas e poda | Código | `src/filtros.py`, `src/score.py`, `src/ferramentas.py` |
 | Escolher a cliente, justificar e montar a mensagem | Código | `src/escolha.py` |
-| Entender a resposta da cliente | LLM | `src/interpretacao.py` |
-| Profundidade da cascata e plano B na recusa | Código | `src/cascata.py` (terminal), `src/estado.py` (tela) |
-| Mudar a agenda | Código, **só depois da aprovação humana** | `confirmar_movimento` em `src/ferramentas.py` |
+| Entender a resposta da cliente | IA | `src/interpretacao.py` |
+| Cascata e plano B na recusa | Código | `src/cascata.py` (terminal), `src/estado.py` (tela) |
+| Mudar a agenda | Código, **só depois da aprovação** | `aplicar_movimento_aprovado` em `src/ferramentas.py` |
+| Página pública e painel | Streamlit | `app.py`, `paginas/` |
+| Visitas, faltas e propostas | Código | `src/historico.py` |
 
-**A IA só entra para entender a resposta da cliente.** A escolha já foi feita pelo modelo
-(`src/agente.py`, com as ferramentas `buscar_candidatos` e `propor_remarcacao`), mas nos casos difíceis
-ele às vezes se afastou do valor esperado para pior, e os critérios que ensinaríamos a ele são os mesmos
-da conta. Por isso a escolha passou para o código (D25), com uma chamada à IA a menos por proposta.
-O `agente.py` continua no projeto para comparação em `python avaliar_ia.py`; ele nunca recebe
-`confirmar_movimento`, e um teste garante isso.
+## O que já funciona e o que vem
+
+- [x] Remarcação em cascata com filtros, conta, poda e plano B na recusa
+- [x] Várias profissionais, com a preferida da cliente primeiro
+- [x] Aprovação da dona antes de qualquer mudança
+- [x] IA interpretando respostas (120 de 120 certas nos testes difíceis)
+- [x] Página pública do salão com botão para o WhatsApp
+- [x] Painel e cadastro escondidos, com senha
+- [x] Registro de visitas, faltas e propostas ("Fechar o dia")
+- [ ] IA entendendo a intenção de qualquer mensagem (marcar, cancelar, responder)
+- [ ] Marcar horário novo a partir da mensagem, com aprovação
+- [ ] Google Agenda e Google Planilhas no lugar dos arquivos (encaixe pronto em `src/agenda_externa.py`)
+- [ ] WhatsApp de verdade: primeiro um botão "abrir no WhatsApp" com a mensagem pronta, depois a API oficial
+- [ ] Modo real: relógio de verdade no lugar dos cenários
+- [ ] Publicar o site (guia em [docs/hospedagem.md](docs/hospedagem.md))
 
 ## Resultados
 
-Sete cenários, três estratégias. A métrica é **horas vagas esperadas no fim** (menor é melhor):
-a chance de cada horário mexido acabar vazio, vezes a duração dele. Detalhes em [docs/metrica.md](docs/metrica.md).
+Oito cenários montados para provar cada regra, três estratégias. A métrica é **horas vagas esperadas
+no fim** (menor é melhor): a chance de cada horário mexido acabar vazio, vezes a duração dele.
+Detalhes em [docs/metrica.md](docs/metrica.md).
 
-| Cenário | O que prova | Ninguém faz nada | Regra ingênua | Agente |
+| Cenário | O que prova | Ninguém faz nada | Regra ingênua | FlowAgenda |
 |---|---|---|---|---|
 | 1 Aviso tardio | filtros duros e poda | 0,73 | 0,16 | 0,16 (empate) |
 | 2 Cascata que compensa | troca buraco difícil por fácil | 0,69 | 0,33 | **0,20** |
 | 3 Cascata que não compensa | decidir não agir | 0,71 | 0,80 (pior que nada) | **0,71** |
 | 4 Recusa | plano B | 0,59 | 0,44 | 0,44 (empate) |
-| 5 Cliente nova | suavização da taxa de falta | 0,61 | 0,32 | **0,30** |
+| 5 Cliente nova | suavização da chance de faltar | 0,61 | 0,32 | **0,30** |
 | 6 Dia lotado | uso da ocupação do dia | 0,62 | 0,36 | **0,06** |
 | 7 Profissional preferida | primeiro quem prefere a profissional do horário | 0,58 | 0,06 | 0,06 (empate) |
 | **Total** | | **4,55** | **2,48 (−46%)** | **1,94 (−57%)** |
 
-A "regra ingênua" oferece o horário em ordem cronológica para quem passa nos filtros duros, sem score,
-sem poda e sem cascata. Ela empata com o agente em três cenários, e a explicação está em
-[resultados.md](resultados.md), gerado por `python avaliar.py` com o Gemini.
+A "regra ingênua" é o que se faria à mão: oferecer em ordem cronológica para quem pode, sem conta e
+sem cascata. Ela empata em três cenários; a explicação está em [resultados.md](resultados.md).
 
-> **Pendente:** esta tabela é de antes da ocupação do dia entrar na conta (D22) e não tem o cenário 8.
-> A simulação sem IA mostra o agente terminando igual nos cenários 1 a 7; falta rodar `python avaliar.py`
-> de novo, quando a cota diária do Gemini voltar, para atualizar os números.
+> **Pendente:** esta tabela é de antes da ocupação do dia entrar na conta e não tem o cenário 8
+> (agenda com folga). A simulação sem IA mostra os cenários 1 a 7 terminando igual; falta rodar
+> `python avaliar.py` de novo quando a cota diária do Gemini voltar.
 
-> **Atenção:** são estimativas feitas com o próprio modelo de score, sobre **dados fictícios** e com
-> respostas das clientes roteirizadas. Servem para mostrar que as decisões são coerentes, não para
-> medir ganho no mundo real.
+> **Atenção:** são estimativas feitas com o próprio modelo de conta, sobre **dados fictícios** e com
+> respostas roteirizadas. Mostram que as decisões são coerentes, não medem ganho no mundo real.
+
+A parte de IA também tem um teste próprio, com 40 respostas estranhas e 12 situações armadilha, rodados
+três vezes: [docs/avaliacao-ia.md](docs/avaliacao-ia.md).
 
 ## Como rodar
 
@@ -127,102 +177,108 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 116 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
-| `streamlit run app.py` | O site: página pública do salão em `/`, painel em `/painel` e clientes e equipe em `/equipe` | Sim (no painel) |
+| `streamlit run app.py` | O site: página pública em `/`, painel em `/painel`, clientes e equipe em `/equipe` | Sim, para ler as respostas |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
-| `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |
-| `python avaliar.py` | Roda os 7 cenários com as 3 estratégias e reescreve `resultados.md` | Sim |
-| `python avaliar_ia.py` | Mede só a parte de IA com casos difíceis (respostas estranhas, empates, armadilhas) e escreve `docs/avaliacao-ia.md` | Sim |
+| `python terminal.py S1 --auto` | O mesmo, com respostas prontas e aprovação automática | Sim |
+| `pytest` | 121 testes | Não |
+| `python avaliar.py` | Os cenários nas 3 estratégias; reescreve `resultados.md` | Sim |
+| `python avaliar_ia.py` | Só a parte de IA, com casos difíceis; escreve `docs/avaliacao-ia.md` | Sim |
 | `python prova_de_vida.py` | Confere se a chave funciona | Sim |
 
-Os cenários vão de `S1` a `S7`. Cada execução no terminal grava um log em `logs/`. A camada gratuita
-do Gemini limita chamadas por minuto; quando isso acontece, o código espera e tenta de novo.
+Os cenários vão de `S1` a `S8`. A camada gratuita do Gemini limita chamadas por minuto e por dia;
+quando bate o limite por minuto, o código espera e tenta de novo.
 
-### Registro de visitas, faltas e propostas
+### No painel
 
-No painel lateral da interface, ligue **"Usar e registrar histórico"**. A partir daí:
+- **Remarcação**: escolha um cenário, toque em **Escolher e enviar proposta**, responda como a cliente
+  (Aceita, Recusa, Outro horário, texto livre ou **Não respondeu**) e aprove ou rejeite.
+- **Fechar o dia** (painel lateral, com "Usar e registrar histórico" ligado): marque **Veio** ou
+  **Faltou** em cada horário. Tudo vai para `registro/historico.csv`, uma linha por acontecimento, fora do git.
+- **Clientes e equipe**: os números de cada cliente e quem prefere qual profissional.
 
-- **as propostas se registram sozinhas**: toda cliente que aceita, recusa ou não responde vira uma linha no registro;
-- em **"Fechar o dia"**, escolha o dia e marque **Veio** ou **Faltou** em cada horário.
+### Página pública e celular
 
-Tudo vai para `registro/historico.csv`, uma linha por acontecimento (data, cliente, evento, horário).
-O arquivo abre no Excel e pode virar uma aba do Google Planilhas. Os números de cada cliente passam a
-ser o cadastro mais o registro. O arquivo fica fora do git, porque tem dados de clientes reais. Com o
-histórico desligado, que é o padrão, nada é gravado, e dá para demonstrar à vontade.
+Os dados públicos do salão (nome, WhatsApp, endereço, serviços) ficam em `data/salao.local.json`, fora
+do git; o `data/salao.json` do repositório tem dados de exemplo. Numa hospedagem, use o segredo
+`SALAO_JSON`. Para o painel pedir senha, configure `APP_SENHA`. O passo a passo para publicar está em
+[docs/hospedagem.md](docs/hospedagem.md).
 
-### O site: página pública e painel escondido
+## Estrutura do projeto
 
-- **`/`**: a página do salão para as clientes. Serviços e preços, quem atende, endereço, horário e o
-  botão **"Agendar pelo WhatsApp"**, que abre a conversa com o salão já com a mensagem escrita. Não
-  mostra nada das clientes nem tem link para o painel.
-- **`/painel`**: a remarcação, e **`/equipe`**: clientes e equipe. Não aparecem em nenhum menu da página
-  pública; só abre quem sabe o endereço e tem a senha.
-
-Os dados da página pública estão em `data/salao.json` e são de exemplo. Para usar os do salão de
-verdade sem mandar para o GitHub, crie `data/salao.local.json` só com o que muda, por exemplo
-`{"nome": "...", "whatsapp": "5511912345678", "endereco": "..."}`. Esse arquivo fica fora do git. Numa hospedagem
-como o Streamlit Cloud, onde esse arquivo não existe, cole o mesmo JSON no segredo `SALAO_JSON`.
-Preço e duração dos serviços são opcionais; os serviços podem ter um `grupo` (ex.: "Unhas", "Beleza").
-
-### Usar pelo celular
-
-Coloque uma senha em `APP_SENHA` (no `.env` ou nos segredos da hospedagem) e a interface passa a
-pedir senha na entrada. As três formas de hospedar (Streamlit Community Cloud, computador do salão com
-Tailscale, ou servidor pago), com o passo a passo de cada uma, estão em [docs/hospedagem.md](docs/hospedagem.md).
+```
+agente-remarcacao/
+├── app.py                 entrada do site: página pública, /painel e /equipe
+├── terminal.py            roda um cenário no terminal
+├── avaliar.py             compara as 3 estratégias nos cenários (resultados.md)
+├── avaliar_ia.py          mede só a parte de IA (docs/avaliacao-ia.md)
+├── prova_de_vida.py       confere se a chave do Gemini funciona
+│
+├── src/                   o FlowAgenda em si, sem tela
+│   ├── modelos.py         Cliente, Slot (horário), Dia, Cenario, Candidato, Decisao
+│   ├── dados.py           lê e confere os arquivos de data/
+│   ├── filtros.py         quem pode ser chamada
+│   ├── score.py           as contas (falta, aceitar, dificuldade, valor esperado)
+│   ├── ferramentas.py     busca e ordena candidatas; troca horários depois da aprovação
+│   ├── escolha.py         escolhe a cliente e monta justificativa e mensagem
+│   ├── cascata.py         remarcação completa de uma vez (terminal e avaliação)
+│   ├── estado.py          a mesma remarcação, um clique por vez (tela)
+│   ├── interpretacao.py   a IA lê a resposta da cliente
+│   ├── llm.py             único arquivo que fala com o Gemini
+│   ├── canal.py           WhatsApp (hoje simulado)
+│   ├── agenda_externa.py  encaixe para o Google Agenda
+│   ├── historico.py       visitas, faltas e propostas em CSV
+│   ├── metrica.py         horas vagas esperadas
+│   ├── salao.py           dados públicos do salão
+│   └── acesso.py          senha do painel
+│
+├── paginas/               as telas (Streamlit)
+│   ├── inicio.py          página pública
+│   ├── painel.py          remarcação e "Fechar o dia"
+│   ├── cadastro.py        clientes e equipe
+│   ├── comum.py           senha, menu e estilo compartilhados
+│   ├── formatos.py        textos curtos das telas (datas, situação do horário)
+│   └── estilos/           CSS de cada página
+│
+├── data/                  dados fictícios (clientes, agendas, cenários, salão)
+├── avaliacao_ia/          casos difíceis e o experimento da IA escolhendo
+├── tests/                 testes (não chamam a IA)
+└── docs/                  métrica, hospedagem, Google Agenda, avaliação da IA
+```
 
 ## Decisões de projeto
 
-- **Contas e escolha no código, interpretação na IA.** Taxa de falta, valor esperado, filtros e a escolha
-  precisam dar sempre o mesmo resultado e ser testados. A IA entra onde há texto livre de verdade: entender
-  o que a cliente respondeu ("hj n", "só depois das 17h", "quanto custa?"). Nos testes difíceis ela
-  acertou 120 de 120 interpretações (`docs/avaliacao-ia.md`).
-- **Poucos dados pessoais.** O cadastro tem só nome, visitas, faltas e a nota de 0 a 10. Para o modelo vai
-  só o primeiro nome, sem telefone nem anotações. Não guardamos distância: a própria cliente diz se
-  consegue chegar, e o salão define um aviso mínimo (`AVISO_MINIMO_H` no `.env`, padrão 1h).
-- **Primeiro a profissional preferida.** Cada horário é de uma profissional. Quem prefere a profissional
-  do horário vago (ou tanto faz) é chamada antes, mesmo com valor esperado um pouco menor; as outras só
-  aparecem para o modelo quando esse grupo acaba, e a mensagem diz com quem seria o atendimento.
-- **Uma proposta de cada vez.** O horário fica reservado para quem recebeu a proposta. Se ela não
-  responder, a dona do salão decide passar para a próxima (botão "Não respondeu"), e a cliente recebe
-  um aviso educado. Não existe "quem responder primeiro leva".
-- **Aprovação humana.** O agente só propõe. Mudar a agenda de alguém é uma decisão da dona do negócio,
-  e um erro do modelo não pode virar uma cliente desmarcada.
-- **Canal simulado.** O agente conversa com uma interface `Canal`. Hoje ela é um chat de mentira
-  (`CanalSimulado`). Ligar o WhatsApp é escrever outra implementação, sem mexer no agente.
+- **Contas e escolha no código, interpretação na IA.** A escolha da cliente já foi da IA. Nos testes
+  difíceis ela às vezes se afastou do valor esperado para pior, e os critérios que ensinaríamos a ela
+  são os mesmos da conta. Agora o código escolhe, e a IA só lê as respostas: uma chamada por proposta.
+- **Aprovação humana.** Mudar o horário de alguém é decisão da dona do salão. Um erro de leitura da IA
+  não pode virar uma cliente desmarcada.
+- **Uma proposta de cada vez.** O horário fica reservado para quem recebeu a proposta. Não existe
+  "quem responder primeiro leva".
+- **Poucos dados pessoais.** Para a IA vai só o primeiro nome, sem telefone nem anotações. Não
+  guardamos distância: a própria cliente diz se consegue chegar.
+- **Peças trocáveis.** O WhatsApp entra por uma interface `Canal` e o Google Agenda por uma interface
+  `AgendaExterna`. Trocar a peça não mexe no resto.
 - **Gemini em vez de Claude**, por custo (camada gratuita). Só `src/llm.py` fala com o modelo.
-- **A fórmula do valor esperado foi ajustada** em relação ao plano original, para ficar coerente com a
-  métrica de avaliação.
 
 Todas as decisões, com o motivo e a alternativa descartada, estão em [DECISIONS.md](DECISIONS.md).
 
 ## Limitações
 
-- Dados fictícios: 21 clientes, 3 profissionais e 7 cenários montados à mão.
-- Dois serviços, e todas as profissionais fazem os dois.
-- Os pesos da dificuldade de preencher (0,6/0,4, 48h, 3 pessoas) foram chutados, sem calibração com dados reais.
+- Dados fictícios: 23 clientes, 3 profissionais e 8 cenários montados à mão.
+- Os pesos da conta (0,6 e 0,4, 48h, 3 pessoas na fila, 80% de ocupação) foram chutados, sem calibração com dados reais.
 - A fila de espera é só um número; ninguém da fila é chamado de fato.
-- "Outro horário" é entendido, mas não renegociado: conta como recusa.
-- Canal simulado e respostas roteirizadas na avaliação.
-- O modelo pode escolher diferente entre uma execução e outra; o código só aceita escolhas da lista válida.
-
-## Próximos passos
-
-- `CanalWhatsApp`, implementando a mesma interface `Canal`.
-- Google Agenda como fonte da agenda. O ponto de encaixe já existe (`src/agenda_externa.py`); o passo a passo está em [docs/integracao-google-agenda.md](docs/integracao-google-agenda.md).
-- Profissionais com serviços diferentes (hoje todas fazem tudo).
-- Mais fatores: valor do serviço, preferência de dia, histórico de remarcações.
-- Calibrar os pesos com dados reais de cancelamento e preenchimento.
-- Renegociar quando a cliente pede outro horário.
+- "Outro horário" é entendido, mas ainda não renegociado: conta como recusa.
+- WhatsApp simulado e respostas roteirizadas na avaliação.
 
 ## Créditos
 
-Este projeto nasceu ao lado do **Encaixa · Esmalteria**, de **Samuel Almeida**, que está na raiz deste
+O FlowAgenda nasceu ao lado do **Encaixa · Esmalteria**, de **Samuel Almeida**, que está na raiz deste
 repositório. Nenhuma linha de código foi copiada (o Encaixa é TypeScript), mas várias ideias vieram dele:
 
 - os filtros de elegibilidade (serviço, duração, horário posterior);
 - conferir tudo de novo antes de confirmar uma mudança;
 - recusou, passa para a próxima, sem repetir quem já recusou;
-- os cuidados com o LLM: timeout, limite de tokens, conferir o formato da resposta e tratar o texto da
+- os cuidados com a IA: timeout, limite de tokens, conferir o formato da resposta e tratar o texto da
   cliente como dado, não como instrução;
 - os nomes das clientes e das profissionais fictícias.
 

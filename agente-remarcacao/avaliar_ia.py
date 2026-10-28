@@ -17,10 +17,10 @@ from pathlib import Path
 from rich.console import Console
 
 from avaliacao_ia.casos_decisao import casos
-from src.agente import decidir
+from avaliacao_ia.escolha_com_ia import decidir
 from src.ferramentas import buscar_candidatos
 from src.interpretacao import interpretar
-from src.llm import ErroLLM, _modelo
+from src.llm import ErroLLM, nome_do_modelo
 
 console = Console()
 PASTA = Path(__file__).resolve().parent
@@ -31,13 +31,13 @@ def problemas_da_mensagem(mensagem: str, nome_completo: str, hora: str, profissi
     """Regras que toda mensagem precisa cumprir. Devolve o que falhou (lista vazia = tudo certo)."""
     texto = mensagem.lower()
     falhas = []
-    if hora.split(":")[0] not in mensagem:
+    if hora.split(":", 1)[0] not in mensagem:
         falhas.append("não diz a hora")
     if profissional.lower() not in texto:
         falhas.append("não diz a profissional")
     if not re.search(r"\bmant(er|enha|ém|em)\b|continuar (com|no|na)|ficar (com|no|na)|seu horário (de|da|do)", texto):
         falhas.append("não oferece manter o horário")
-    sobrenome = nome_completo.split()[-1].lower()
+    sobrenome = nome_completo.rsplit(maxsplit=1)[-1].lower()
     if len(nome_completo.split()) > 1 and sobrenome in texto:
         falhas.append("usa o sobrenome")
     if re.search(r"quem responder primeiro|primeira a responder|primeiro a responder", texto):
@@ -150,7 +150,7 @@ def escrever(interp: list[dict], decisoes: list[dict], rodadas: int) -> None:
 
     texto = f"""# Avaliação da parte de IA
 
-Gerado por `python avaliar_ia.py` em {datetime.now():%d/%m/%Y %H:%M}, com o modelo `{_modelo()}`.
+Gerado por `python avaliar_ia.py` em {datetime.now():%d/%m/%Y %H:%M}, com o modelo `{nome_do_modelo()}`.
 Os casos estão em `avaliacao_ia/`. Nada aqui muda o agente: é uma medição.
 
 ## 1. Interpretação das respostas: {certos} de {len(interp)} certas

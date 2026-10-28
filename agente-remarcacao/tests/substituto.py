@@ -1,21 +1,12 @@
-"""Substituto determinístico do modelo. SÓ PARA TESTES.
+"""Substituto da IA para os testes: interpreta respostas por palavras-chave. SÓ PARA TESTES.
 
 Serve para testar a cascata sem gastar cota. Nunca usar o resultado disto como resultado do agente.
 """
 from src.canal import CanalSimulado
 from src.cascata import Atores
-from src.ferramentas import buscar_candidatos
+from src.escolha import decidir_pelo_codigo
 from src.interpretacao import Interpretacao
-from src.modelos import Cenario, Decisao
-
-
-def decidir_pelo_maior_valor(cenario: Cenario, slot_id: str, recusados, profundidade: int) -> Decisao:
-    """Escolhe a elegível com maior valor esperado (a primeira da lista)."""
-    elegiveis = [c for c in buscar_candidatos(cenario, slot_id, recusados) if c.elegivel]
-    if not elegiveis:
-        return Decisao(None, "substituto: ninguém elegível", None, [])
-    c = elegiveis[0]
-    return Decisao(c.cliente_id, f"substituto: maior valor esperado ({c.valor_esperado:.2f})", f"Oi {c.nome}, abriu um horário. Quer vir?", [])
+from src.modelos import Cenario
 
 
 def interpretar_por_palavras(proposta: str, resposta: str) -> Interpretacao:
@@ -28,7 +19,7 @@ def interpretar_por_palavras(proposta: str, resposta: str) -> Interpretacao:
     return Interpretacao("ambiguo", None, "sem palavra conhecida", [])
 
 
-def atores_de_teste(cenario: Cenario, aprovar: bool = True, decidir=decidir_pelo_maior_valor) -> Atores:
+def atores_de_teste(cenario: Cenario, aprovar: bool = True, decidir=decidir_pelo_codigo) -> Atores:
     """Atores com o substituto, as respostas prontas do cenário e aprovação fixa."""
     return Atores(
         decidir=decidir,

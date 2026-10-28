@@ -8,7 +8,13 @@ from collections.abc import Collection
 from src.agenda_externa import AgendaExterna
 from src.filtros import MOTIVOS, motivo_de_exclusao
 from src.modelos import Buraco, Candidato, Cenario, Slot
-from src.score import dificuldade_de_preencher, disposicao_efetiva, ganho_e_risco, prob_aceitar, taxa_falta
+from src.score import (
+    dificuldade_de_preencher,
+    disposicao_efetiva,
+    ganho_e_risco,
+    prob_aceitar,
+    taxa_falta,
+)
 
 
 class ErroMovimento(Exception):

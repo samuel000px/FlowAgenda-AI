@@ -1,5 +1,6 @@
 """A parte da avaliação que não depende do Gemini."""
 import avaliar
+from src.cascata import Passo
 from src.dados import carregar_cenario
 
 
@@ -14,8 +15,6 @@ def test_regra_ingenua_ignora_o_dia_lotado():
 
 
 def test_bate_com_esperado():
-    from src.cascata import Passo
-
     s3 = carregar_cenario("S3")
     assert avaliar.bate_com_esperado([Passo(0, "S3-02", "nao_agir")], s3.esperado["passos"])
     assert not avaliar.bate_com_esperado([Passo(0, "S3-02", "aceitou", "C11")], s3.esperado["passos"])

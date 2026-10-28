@@ -4,7 +4,13 @@ import shutil
 import pytest
 
 from src.dados import PASTA_DADOS, ErroDados
-from src.salao import carregar_salao, link_mapa, link_whatsapp, servicos_por_grupo, telefone_formatado
+from src.salao import (
+    carregar_salao,
+    link_mapa,
+    link_whatsapp,
+    servicos_por_grupo,
+    telefone_formatado,
+)
 
 
 def test_link_abre_a_conversa_com_a_mensagem_escrita():

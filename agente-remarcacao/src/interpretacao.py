@@ -37,17 +37,19 @@ class Interpretacao:
 def interpretar(proposta: str, resposta: str) -> Interpretacao:
     """Classifica a resposta. Se vier fora do formato, tenta mais uma vez e depois desiste."""
     pedido = json.dumps({"mensagem_enviada": proposta, "resposta_da_cliente": resposta}, ensure_ascii=False)
-    log = []
-    for tentativa in (1, 2):
-        try:
-            dados, passo = gerar_json(PROMPT_INTERPRETACAO, pedido)
-            log.append(passo)
-            return _validar(dados, log)
-        except ErroFormato as e:
-            log.append({"tipo": "erro_formato", "tentativa": tentativa, "erro": str(e)})
-            if tentativa == 2:
-                raise
-    raise AssertionError("não chega aqui")
+    log: list[dict] = []
+    try:
+        return _uma_tentativa(pedido, log)
+    except ErroFormato as e:
+        log.append({"tipo": "erro_formato", "erro": str(e)})
+        return _uma_tentativa(pedido, log)  # segunda e última tentativa
+
+
+def _uma_tentativa(pedido: str, log: list[dict]) -> Interpretacao:
+    """Uma chamada ao modelo e a conferência do JSON."""
+    dados, passo = gerar_json(PROMPT_INTERPRETACAO, pedido)
+    log.append(passo)
+    return _validar(dados, log)
 
 
 def _validar(dados: dict, log: list[dict]) -> Interpretacao:

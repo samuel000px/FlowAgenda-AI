@@ -3,7 +3,12 @@ import copy
 import pytest
 
 from src.dados import carregar_cenario, carregar_cenarios
-from src.ferramentas import ErroMovimento, buscar_candidatos, confirmar_movimento, liberar_horario
+from src.ferramentas import (
+    ErroMovimento,
+    buscar_candidatos,
+    confirmar_movimento,
+    liberar_horario,
+)
 from src.filtros import motivo_de_exclusao
 
 
