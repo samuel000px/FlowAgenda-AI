@@ -302,3 +302,11 @@ a não ser quando um item abaixo diz outra coisa.
   Streamlit); o experimento da IA escolhendo saiu de `src/` para `avaliacao_ia/escolha_com_ia.py`;
   "tentar de novo uma vez" ficou escrito de forma direta; imports organizados no padrão.
 - O README ganhou uma seção "Estrutura do projeto" e dois fluxogramas simples no lugar de três detalhados.
+
+## D27. O painel lembra o cenário ao trocar de página
+
+- Erro achado na demonstração: ir em "Clientes e equipe" e voltar recomeçava a remarcação em andamento.
+  O Streamlit apaga o valor de um seletor quando a página dele sai da tela; sem ele, o painel achava que
+  o cenário tinha mudado e criava um fluxo novo. O mesmo valia para a chave "Usar e registrar histórico".
+- Correção: `lembrar_escolha` e `guardar_escolha` em `paginas/painel.py` guardam uma cópia da escolha com
+  outro nome e devolvem ao voltar.
