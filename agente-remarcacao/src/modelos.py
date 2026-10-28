@@ -11,13 +11,16 @@ class Cliente:
     nome: str
     tipo_atendimento: str
     duracao_min: int
-    consultas_total: int
+    consultas_total: int  # visitas
     faltas: int
-    propostas_recebidas: int
+    propostas_recebidas: int  # contadas pelo próprio sistema
     propostas_aceitas: int
-    deslocamento_min: int
-    nota_livre: str
-    janela_preferida: dict[str, str] | None  # {"apos": "16:00"}, {"antes": "12:00"} ou None
+    disposicao: int  # 0 a 10, dita pela cliente: quanto toparia trocar para um horário antes. 0 = nunca chamar
+
+    @property
+    def primeiro_nome(self) -> str:
+        """Só o primeiro nome: é o que vai para o modelo e para a mensagem."""
+        return self.nome.split()[0]
 
 
 @dataclass

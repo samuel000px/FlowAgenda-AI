@@ -39,13 +39,10 @@ def carregar_clientes(pasta: Path = PASTA_DADOS) -> dict[str, Cliente]:
             raise ErroDados(f"{c.id}: faltas precisa ficar entre 0 e consultas_total.")
         if not 0 <= c.propostas_aceitas <= c.propostas_recebidas:
             raise ErroDados(f"{c.id}: propostas_aceitas precisa ficar entre 0 e propostas_recebidas.")
-        if c.duracao_min <= 0 or c.deslocamento_min < 0:
-            raise ErroDados(f"{c.id}: duração e deslocamento precisam ser positivos.")
-        if c.janela_preferida is not None:
-            if not c.janela_preferida or set(c.janela_preferida) - {"apos", "antes"}:
-                raise ErroDados(f"{c.id}: janela_preferida só aceita as chaves 'apos' e 'antes'.")
-            if not all(HORA.match(h) for h in c.janela_preferida.values()):
-                raise ErroDados(f"{c.id}: janela_preferida precisa estar no formato HH:MM.")
+        if c.duracao_min <= 0:
+            raise ErroDados(f"{c.id}: a duração precisa ser positiva.")
+        if not (isinstance(c.disposicao, int) and 0 <= c.disposicao <= 10):
+            raise ErroDados(f"{c.id}: disposicao precisa ser um número inteiro de 0 a 10.")
         clientes[c.id] = c
     return clientes
 

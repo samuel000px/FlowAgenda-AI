@@ -57,3 +57,15 @@ def test_botao_fora_de_hora_da_erro():
     f = fluxo("S1")
     with pytest.raises(RuntimeError, match="fora de hora"):
         f.aprovar()
+
+
+def test_nao_respondeu_encerra_com_educacao_e_passa_para_a_proxima():
+    f = fluxo("S4")
+    f.pedir_decisao()
+    assert f.cliente_atual == "C13"
+    f.sem_resposta()
+    assert "Seu horário continua o mesmo" in f.canal.conversa("C13")[-1].texto
+    assert f.passos[-1].resultado == "sem_resposta"
+    assert f.cenario.slot("S4-04").cliente_id == "C13"  # nada mudou para ela
+    f.pedir_decisao()
+    assert f.cliente_atual == "C14"  # uma de cada vez: só agora a Marina é chamada

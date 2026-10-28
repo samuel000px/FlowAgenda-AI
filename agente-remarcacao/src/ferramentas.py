@@ -46,7 +46,7 @@ def buscar_candidatos(cenario: Cenario, slot_id: str, recusados: Collection[str]
         if motivo is None:
             buraco_novo = buraco(cenario, slot)
             c.taxa_falta = taxa_falta(cliente.faltas, cliente.consultas_total)
-            c.prob_aceitar = prob_aceitar(cliente.propostas_aceitas, cliente.propostas_recebidas)
+            c.prob_aceitar = prob_aceitar(cliente.propostas_aceitas, cliente.propostas_recebidas, cliente.disposicao)
             c.antecedencia_novo_h = buraco_novo.antecedencia_h
             c.fila_novo = buraco_novo.fila
             c.dificuldade_novo = dificuldade_de_preencher(buraco_novo.antecedencia_h, buraco_novo.fila)

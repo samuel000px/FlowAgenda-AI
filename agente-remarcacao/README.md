@@ -22,7 +22,7 @@ cliente abre um **buraco novo** no horário dela. Então a pergunta certa não �
 
 ```mermaid
 flowchart TD
-    A[Cancelamento: horário livre + aviso em horas] --> B[Filtros duros<br/>serviço, duração, horário posterior,<br/>janela da cliente, chega a tempo, já recusou]
+    A[Cancelamento: horário livre + aviso em horas] --> B[Filtros duros<br/>serviço, duração, horário posterior,<br/>aviso mínimo do salão, cliente com nota 0, já recusou]
     B --> C[Score<br/>taxa de falta, chance de aceitar,<br/>dificuldade de preencher, valor esperado]
     C --> D{Poda<br/>alguém com valor esperado > 0?}
     D -- não --> N[Decide não mexer e explica]
@@ -43,7 +43,7 @@ flowchart TD
 | Fator | Conta | Por quê |
 |---|---|---|
 | Taxa de falta | `(faltas + 1) / (consultas + 4)` | Suavizada: 1 falta em 1 consulta vira 40%, não 100%. |
-| Chance de aceitar | `(aceitas + 1) / (propostas + 2)` | Quem nunca recebeu proposta começa em 50%. |
+| Chance de aceitar | `(aceitas + 2 × nota/10) / (propostas + 2)` | Sem histórico, vale a nota de 0 a 10 que a própria cliente deu; com o tempo, o histórico manda. Nota 0 = nunca é chamada. |
 | Aviso que sobra | entra na dificuldade de preencher | Mais horas de aviso, mais fácil achar outra pessoa. |
 | Ocupação do dia | fila de espera do dia | Dia lotado, com fila, preenche o buraco novo rápido. |
 
@@ -79,7 +79,7 @@ a chance de cada horário mexido acabar vazio, vezes a duração dele. Detalhes 
 
 | Cenário | O que prova | Ninguém faz nada | Regra ingênua | Agente |
 |---|---|---|---|---|
-| 1 Aviso tardio | filtro de chegada a tempo | 0,73 | 0,16 | 0,16 (empate) |
+| 1 Aviso tardio | filtros duros e poda | 0,73 | 0,16 | 0,16 (empate) |
 | 2 Cascata que compensa | troca buraco difícil por fácil | 0,69 | 0,33 | **0,20** |
 | 3 Cascata que não compensa | decidir não agir | 0,71 | 0,80 (pior que nada) | **0,71** |
 | 4 Recusa | plano B | 0,59 | 0,44 | 0,44 (empate) |
@@ -117,7 +117,7 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 68 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
+| `pytest` | 70 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
 | `streamlit run app.py` | A interface: agenda, chat simulado e raciocínio do agente | Sim |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
 | `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |
@@ -130,8 +130,14 @@ do Gemini limita chamadas por minuto; quando isso acontece, o código espera e t
 ## Decisões de projeto
 
 - **Contas no código, escolha no LLM.** Taxa de falta, valor esperado e filtros são contas que precisam
-  dar sempre o mesmo resultado e ser testadas. O modelo entra onde há texto para interpretar: as notas
-  das clientes ("só consigo depois das 16h"), a mensagem que vai para a cliente e a resposta dela.
+  dar sempre o mesmo resultado e ser testadas. O modelo entra onde há texto: escolher entre as candidatas que
+  sobraram, escrever a mensagem e entender a resposta da cliente.
+- **Poucos dados pessoais.** O cadastro tem só nome, visitas, faltas e a nota de 0 a 10. Para o modelo vai
+  só o primeiro nome, sem telefone nem anotações. Não guardamos distância: a própria cliente diz se
+  consegue chegar, e o salão define um aviso mínimo (`AVISO_MINIMO_H` no `.env`, padrão 1h).
+- **Uma proposta de cada vez.** O horário fica reservado para quem recebeu a proposta. Se ela não
+  responder, a dona do salão decide passar para a próxima (botão "Não respondeu"), e a cliente recebe
+  um aviso educado. Não existe "quem responder primeiro leva".
 - **Aprovação humana.** O agente só propõe. Mudar a agenda de alguém é uma decisão da dona do negócio,
   e um erro do modelo não pode virar uma cliente desmarcada.
 - **Canal simulado.** O agente conversa com uma interface `Canal`. Hoje ela é um chat de mentira
@@ -166,7 +172,7 @@ Todas as decisões, com o motivo e a alternativa descartada, estão em [DECISION
 Este projeto nasceu ao lado do **Encaixa · Esmalteria**, de **Samuel Almeida**, que está na raiz deste
 repositório. Nenhuma linha de código foi copiada (o Encaixa é TypeScript), mas várias ideias vieram dele:
 
-- os filtros de deslocamento ("chega a tempo?") e de janela de horário;
+- os filtros de elegibilidade (serviço, duração, horário posterior);
 - conferir tudo de novo antes de confirmar uma mudança;
 - recusou, passa para a próxima, sem repetir quem já recusou;
 - os cuidados com o LLM: timeout, limite de tokens, conferir o formato da resposta e tratar o texto da

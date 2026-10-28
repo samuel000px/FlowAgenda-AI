@@ -82,7 +82,8 @@ def descrever(cenario: Cenario, passos: list[Passo]) -> str:
     for p in passos:
         nome = cenario.clientes[p.cliente_id].nome.split()[0] if p.cliente_id else ""
         partes.append({"aceitou": f"{nome} aceitou", "recusou": f"{nome} recusou", "nao_agir": "não mexe",
-                       "limite": "limite", "rejeitado": f"{nome} rejeitada"}[p.resultado])
+                       "limite": "limite", "rejeitado": f"{nome} rejeitada",
+                       "sem_resposta": f"{nome} não respondeu"}[p.resultado])
     return " → ".join(partes)
 
 

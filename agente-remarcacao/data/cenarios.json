@@ -2,7 +2,7 @@
   {
     "id": "S1",
     "nome": "Aviso tardio",
-    "o_que_prova": "Filtro duro e chegada possível",
+    "o_que_prova": "Filtros duros e poda com pouco aviso",
     "agora": "2026-10-28T11:00",
     "cancelamento": {"slot_id": "S1-03"},
     "respostas": {
@@ -10,8 +10,8 @@
       "C06": "Não, prefiro manter meu horário mesmo."
     },
     "esperado": {
-      "resumo": "Ana cancela as 13h com 2h de aviso. Luana (2h30 de deslocamento) não chega a tempo, Daniela só pode depois das 16h e Camila faz pé e mão. Elisa deixaria um buraco no fim do dia, sem fila, então é podada. Beatriz é a escolhida.",
-      "fora": {"C03": "chegada", "C04": "tipo", "C05": "janela", "C06": "valor_negativo"},
+      "resumo": "Ana cancela as 13h com 2h de aviso. Luana e Daniela deram nota 0 para trocar de horário, então nem são chamadas, e Camila faz pé e mão. Elisa deixaria um buraco no fim do dia, sem fila, então é podada. Beatriz é a escolhida.",
+      "fora": {"C03": "nao_quer", "C04": "tipo", "C05": "nao_quer", "C06": "valor_negativo"},
       "passos": [
         {"profundidade": 0, "slot_id": "S1-03", "escolha": "C02", "resposta": "aceitou"},
         {"profundidade": 1, "slot_id": "S1-08", "resultado": "nao_agir"}

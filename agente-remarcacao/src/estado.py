@@ -23,6 +23,7 @@ from src.modelos import Candidato, Cenario, Decisao
 
 FINAIS = ("decidiu_nao_agir", "limite_atingido", "rejeitado")
 ETAPAS = ("Filtros duros", "Score", "Poda", "Decisão do agente", "Resposta interpretada", "Aprovação humana")
+MENSAGEM_SEM_RESPOSTA = "Oi! Como não conseguimos falar a tempo, vou seguir com a agenda. Seu horário continua o mesmo, tá? Até lá!"
 
 
 @dataclass
@@ -106,6 +107,16 @@ class Fluxo:
             return
         # recusou ou pediu outro horário: plano B na mesma vaga
         self.passos.append(self._passo("recusou", texto))
+        self.recusados = self.recusados | {self.cliente_atual}
+        self._calcular_candidatos()
+
+    def sem_resposta(self) -> None:
+        """Botão "Não respondeu, tentar outra": quem decide é a dona do salão, não um relógio."""
+        self._exigir("aguardando_resposta")
+        # avisa com educação que a proposta acabou, para ninguém aceitar depois e ficar sem o horário
+        self.canal.enviar(self.cliente_atual, MENSAGEM_SEM_RESPOSTA)
+        self.interpretacao = None
+        self.passos.append(self._passo("sem_resposta", ""))
         self.recusados = self.recusados | {self.cliente_atual}
         self._calcular_candidatos()
 

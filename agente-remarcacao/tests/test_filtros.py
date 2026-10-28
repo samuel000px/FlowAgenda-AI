@@ -20,15 +20,17 @@ def motivo(cenario, cliente_id, recusados=()):
     return motivo_de_exclusao(cenario.clientes[cliente_id], slot_dela, vago, cenario.agora, recusados)
 
 
-def test_aviso_tardio_elimina_quem_nao_chega_a_tempo():
+def test_quem_deu_nota_zero_nunca_e_chamada():
     s1 = cenario_cancelado("S1")
-    assert motivo(s1, "C03") == "chegada"  # Luana: 2h30 de deslocamento, 2h de aviso
-    assert motivo(s1, "C02") is None  # Beatriz mora perto
+    assert motivo(s1, "C03") == "nao_quer"  # Luana disse que não quer trocar de horário
+    assert motivo(s1, "C02") is None
 
 
-def test_janela_da_nota_livre_elimina():
-    s1 = cenario_cancelado("S1")
-    assert motivo(s1, "C05") == "janela"  # "só consigo depois das 16h" e a vaga é as 13h
+def test_aviso_menor_que_o_minimo_nao_tenta_ninguem():
+    s1 = cenario_cancelado("S1")  # 2h de aviso
+    vago, beatriz = s1.slot("S1-03"), s1.agendamento_atual("C02")
+    assert motivo_de_exclusao(s1.clientes["C02"], beatriz, vago, s1.agora, aviso_minimo_h=3) == "aviso_curto"
+    assert motivo_de_exclusao(s1.clientes["C02"], beatriz, vago, s1.agora, aviso_minimo_h=1) is None
 
 
 def test_servico_diferente_elimina():
@@ -93,7 +95,7 @@ def test_confirmar_movimento_troca_e_devolve_o_novo_buraco():
 
 def test_confirmar_movimento_recusa_mudanca_invalida():
     s1 = cenario_cancelado("S1")
-    with pytest.raises(ErroMovimento, match="Não chega a tempo"):
+    with pytest.raises(ErroMovimento, match="Não quer ser chamada"):
         confirmar_movimento(s1, "C03", "S1-03")
     confirmar_movimento(s1, "C02", "S1-03")
     with pytest.raises(ErroMovimento, match="não está mais livre"):

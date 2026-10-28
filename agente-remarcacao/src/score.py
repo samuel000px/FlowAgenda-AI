@@ -8,9 +8,11 @@ def taxa_falta(faltas: int, consultas: int) -> float:
     return (faltas + 1) / (consultas + 4)
 
 
-def prob_aceitar(aceitas: int, propostas: int) -> float:
-    """Chance de aceitar antecipar. Quem nunca recebeu proposta começa em 50%."""
-    return (aceitas + 1) / (propostas + 2)
+def prob_aceitar(aceitas: int, propostas: int, disposicao: int = 5) -> float:
+    """Chance de aceitar antecipar. Sem histórico, vale a nota que a cliente deu (0 a 10)."""
+    # A nota pesa como 2 propostas imaginárias; conforme chegam propostas reais, o histórico manda.
+    # Com nota 5 a conta fica igual à suavização do plano: (aceitas + 1) / (propostas + 2).
+    return (aceitas + 2 * disposicao / 10) / (propostas + 2)
 
 
 def dificuldade_de_preencher(antecedencia_h: float, fila: int) -> float:
@@ -22,7 +24,7 @@ def dificuldade_de_preencher(antecedencia_h: float, fila: int) -> float:
 
 def ganho_e_risco(cliente: Cliente, buraco_atual: Buraco, buraco_novo: Buraco) -> tuple[float, float]:
     """Quanto se espera ganhar no horário vago e quanto se arrisca perder no horário que ela deixa."""
-    p_aceitar = prob_aceitar(cliente.propostas_aceitas, cliente.propostas_recebidas)
+    p_aceitar = prob_aceitar(cliente.propostas_aceitas, cliente.propostas_recebidas, cliente.disposicao)
     p_falta = taxa_falta(cliente.faltas, cliente.consultas_total)
     dif_atual = dificuldade_de_preencher(buraco_atual.antecedencia_h, buraco_atual.fila)
     dif_novo = dificuldade_de_preencher(buraco_novo.antecedencia_h, buraco_novo.fila)

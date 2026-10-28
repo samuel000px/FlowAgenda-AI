@@ -127,3 +127,23 @@ a não ser quando um item abaixo diz outra coisa.
 - Também: o `.gitignore` (raiz e pasta do agente) ignora arquivos de credencial do Google, e um workflow
   do GitHub roda o `pytest` em todo push e pull request que mexa no agente.
 - Ficou de fora: escrever a integração com o Google agora, sem saber o que ele já fez.
+
+## D15. Cadastro enxuto pensado para o uso real
+
+- Decisão: a cliente tem só nome, serviço, visitas, faltas, propostas recebidas e aceitas, e uma
+  **nota de 0 a 10** que ela mesma dá ("se abrir um horário antes, quanto toparia trocar?").
+  Saíram o deslocamento, a nota livre e a janela de horário.
+  - `prob_aceitar = (aceitas + 2 × nota/10) / (propostas + 2)`: sem histórico vale a nota; com nota 5
+    a conta é igual à do plano. Nota 0 é filtro duro: nunca é chamada.
+  - No lugar do filtro de chegada a tempo, um aviso mínimo do salão (`AVISO_MINIMO_H`, padrão 1h).
+    A própria cliente responde se consegue chegar.
+  - Para o modelo vai só o primeiro nome, sem telefone nem anotações.
+  - Botão "Não respondeu, tentar outra": a dona do salão decide quando passar para a próxima, e a cliente
+    recebe um aviso educado. Não há prazo automático nem "quem responder primeiro leva".
+- Motivo: conversa com o autor sobre usar na esmalteria da tia. Manter distância atualizada é difícil
+  e enganoso (perto de casa não é perto do trabalho); notas livres carregam dados pessoais; e oferecer a
+  vaga e depois dar para outra pessoa seria injusto com a cliente.
+- Efeito nos dados: todas as clientes fictícias ficaram com nota 5 (os números não mudam), menos Luana
+  e Daniela, com nota 0. No cenário 1 elas agora ficam de fora por "não quer ser chamada".
+- Ficou de fora: um bônus extra para clientes fiéis (5+ visitas). A suavização já dá mais peso ao histórico
+  de quem vem sempre; a dona do salão ainda vai dizer se quer algo além disso.

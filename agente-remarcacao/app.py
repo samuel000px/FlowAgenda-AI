@@ -169,6 +169,9 @@ with col_chat:
         if coluna.button(rotulo, disabled=not esperando, use_container_width=True):
             agir(fluxo.responder, texto)
             st.rerun()
+    if st.button("Não respondeu, tentar outra", disabled=not esperando, use_container_width=True):
+        agir(fluxo.sem_resposta)
+        st.rerun()
     with st.form("resposta_livre", clear_on_submit=True):
         livre = st.text_input("Responder como a cliente", disabled=not esperando)
         if st.form_submit_button("Enviar", disabled=not esperando) and livre.strip():
@@ -195,6 +198,7 @@ with col_razao:
             linhas.append({
                 "Cliente": c.nome,
                 "Falta": f"{c.taxa_falta:.0%}" if c.taxa_falta is not None else "-",
+                "Disposição": f"{atual.clientes[c.cliente_id].disposicao}/10",
                 "Aceita": f"{c.prob_aceitar:.0%}" if c.prob_aceitar is not None else "-",
                 "Valor esperado": f"R$ {c.valor_esperado:.2f}" if c.valor_esperado is not None else "-",
                 "Resultado": resultado,

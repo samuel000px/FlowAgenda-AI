@@ -20,7 +20,7 @@ class Passo:
 
     profundidade: int
     slot_id: str
-    resultado: str  # "aceitou", "recusou", "rejeitado", "nao_agir" ou "limite"
+    resultado: str  # "aceitou", "recusou", "sem_resposta", "rejeitado", "nao_agir" ou "limite"
     cliente_id: str | None = None
     justificativa: str = ""
     mensagem: str | None = None
@@ -122,7 +122,7 @@ def sem_candidatas(candidatos: list[Candidato]) -> str:
         return f"Não compensa mexer: puxar qualquer uma deixaria a agenda pior. Valor esperado: {nomes}."
     recusaram = [c.nome for c in candidatos if c.motivo == "recusou"]
     if recusaram:
-        return f"Ninguém mais para chamar: {', '.join(recusaram)} já recusou nesta cascata."
+        return f"Ninguém mais para chamar: {', '.join(recusaram)} já recusou ou não respondeu nesta cascata."
     return "Não compensa mexer: nenhuma cliente pode ocupar este horário."
 
 

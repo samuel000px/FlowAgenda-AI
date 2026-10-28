@@ -7,8 +7,7 @@ from src.score import dificuldade_de_preencher, prob_aceitar, taxa_falta, valor_
 def cliente(**campos) -> Cliente:
     base = dict(
         id="X", nome="Teste", tipo_atendimento="manicure", duracao_min=45, consultas_total=10,
-        faltas=0, propostas_recebidas=0, propostas_aceitas=0, deslocamento_min=20,
-        nota_livre="", janela_preferida=None,
+        faltas=0, propostas_recebidas=0, propostas_aceitas=0, disposicao=5,
     )
     return Cliente(**{**base, **campos})
 
@@ -25,6 +24,13 @@ def test_quem_falta_muito_continua_com_taxa_alta():
 def test_prob_aceitar_sem_historico_e_meio_a_meio():
     assert prob_aceitar(0, 0) == pytest.approx(0.5)
     assert prob_aceitar(3, 3) == pytest.approx(0.8)
+
+
+def test_disposicao_da_cliente_vale_ate_o_historico_aparecer():
+    assert prob_aceitar(0, 0, disposicao=9) == pytest.approx(0.9)
+    assert prob_aceitar(0, 0, disposicao=2) == pytest.approx(0.2)
+    assert prob_aceitar(0, 3, disposicao=9) == pytest.approx(0.36)  # recusou 3 de 3: o histórico pesa
+    assert prob_aceitar(3, 3, disposicao=5) == prob_aceitar(3, 3)  # nota 5 = conta antiga
 
 
 def test_dificuldade_vai_de_zero_a_um():
