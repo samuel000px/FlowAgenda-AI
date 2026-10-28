@@ -150,3 +150,8 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .agenda-bloco.cancelado,.agenda-bloco.falta{opacity:.45;text-decoration:line-through}
 .agenda-agora{position:absolute;left:var(--hora);right:0;border-top:2px solid #d93025;z-index:2;pointer-events:none}
 .agenda-agora b{position:absolute;left:-6px;top:-6px;width:10px;height:10px;border-radius:50%;background:#d93025}
+
+/* Especialidades da profissional, por área */
+.staff-area{border:1px solid var(--line);border-radius:8px;padding:6px 14px 0;margin:0 0 12px}
+.staff-area legend{padding:0 6px}
+.staff-area legend .check-field{margin:0}

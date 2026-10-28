@@ -321,7 +321,7 @@ test('catálogo em quatro áreas, com os preços da planilha do salão',()=>{
   const c=catalog(s);
   assert.deepEqual(c.groups,['Mãos e pés','Alongamento e gel','Cabelo','Sobrancelha e depilação']);
   const preco=n=>c.services.find(v=>v.name===n).price;
-  assert.equal(preco('Manicure + Pedicure'),50);assert.equal(preco('Manutenção de alongamento'),100);assert.equal(preco('Sobrancelha'),35);
+  assert.equal(preco('Manicure + Pedicure'),50);assert.equal(preco('Manutenção de alongamento'),120);assert.equal(preco('Sobrancelha'),35);
   assert.ok(c.addons.some(a=>a.name==='Reposição de unha'&&a.group==='Alongamento e gel'));
 });
 
@@ -365,10 +365,10 @@ test('catálogo antigo ganha os serviços da planilha uma vez, já com quem faz 
   Object.assign(s.services.find(v=>v.id==='S20'),{price:65});Object.assign(s.services.find(v=>v.id==='S24'),{name:'Pó ou efeito sereia',price:20});
   delete s.catalogVersion;
   const nova=upgrade(s);
-  assert.equal(nova.catalogVersion,2);
+  assert.equal(nova.catalogVersion,3);
   for(const nome of ['Esmaltação permanente no pé','Esmaltação simples','Postiça','Ajuste de unha','Nariz','Orelha','Queixo','Brow lamination'])assert.ok(nova.services.some(v=>v.name===nome),nome);
   assert.equal(nova.services.find(v=>v.id==='S20').price,35);
-  assert.equal(nova.services.find(v=>v.id==='S24').price,30);
+  assert.equal(nova.services.find(v=>v.id==='S24').price,10,'pó: 20 → 30 (versão 2) → 10 (versão 3)');
   assert.ok(nova.staff.find(p=>p.id==='P1').services.includes('S36'),'quem faz mãos e pés ganha os novos de mãos e pés');
   assert.ok(!nova.staff.find(p=>p.id==='P3').services.includes('S36'),'quem só faz cabelo não');
   assert.ok(nova.staff.find(p=>p.id==='P4').services.includes('S40'));
@@ -376,4 +376,20 @@ test('catálogo antigo ganha os serviços da planilha uma vez, já com quem faz 
   assert.ok(site.includes('Postiça')&&site.includes('Nariz')&&site.includes('Esmaltação simples'));
   const total=nova.services.length;upgrade(nova);
   assert.equal(nova.services.length,total,'rodar de novo não duplica');
+});
+
+test('preços de jun/2026 em agendas já em uso: só muda o que ainda está no valor antigo',()=>{
+  const s=salao();const v=n=>s.services.find(x=>x.name===n);
+  Object.assign(v('Manutenção de alongamento'),{price:100});Object.assign(v('Banho de gel'),{price:110});
+  v('Escova').variants.forEach((o,i)=>{o.price=[35,45,60,70][i];});s.catalogVersion=2;
+  const nova=upgrade(s),w=n=>nova.services.find(x=>x.name===n);
+  assert.equal(nova.catalogVersion,3);assert.equal(w('Manutenção de alongamento').price,120);
+  assert.equal(w('Banho de gel').price,110,'preço editado no painel fica');
+  assert.deepEqual(w('Escova').variants.map(o=>o.price),[45,50,60,70]);
+  assert.equal(catalog(nova).services.find(x=>x.name==='Manutenção de alongamento')?.price??120,120);
+});
+
+test('painel não marca com quem não faz o serviço',()=>{
+  const s=salao();s.clients.push({id:'C1',name:'Ana',phone:'',consent:true,visits:0,missed:0,proposals:0,accepted:0});
+  assert.throws(()=>actAdmin(s,'book',{client_id:'C1',service_id:'S11',staff_id:'P1',date:TERCA,start:540},now),/Lia não faz Escova/);
 });
