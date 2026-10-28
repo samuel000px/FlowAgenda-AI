@@ -109,7 +109,7 @@ export default function Agendar(){
       <p className="resumo">{escolhido!.name} · {semana(data)}, {dia(data)} às {horario.time} · com {nome(pessoa||horario.staff[0])}</p>
       <label>Seu nome<input type="text" name="name" required minLength={2} maxLength={100} autoComplete="name"/></label>
       <label>Celular com DDD<input type="tel" name="phone" required inputMode="tel" autoComplete="tel" placeholder="(83) 99999-9999"/></label>
-      <label className="marcar"><input type="checkbox" name="earlier" defaultChecked/>Se abrir um horário mais cedo, quero ser avisada.</label>
+      <label className="marcar"><input type="checkbox" name="earlier"/>Se abrir um horário mais cedo, quero ser avisada.</label>
       {erro&&<p className="aviso" role="alert">{erro}</p>}
       <button className="botao" type="submit" disabled={ocupado}>{ocupado?'Enviando…':'Pedir este horário'}</button>
     </form>}

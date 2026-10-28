@@ -1,7 +1,8 @@
 import {env} from 'cloudflare:workers';
 import {tickAdmin,upgrade} from '../../../lib/flowagenda.mjs';
-import {byToken,cancelByToken,catalog,openDays,publicView,requestBooking,slots} from '../../../lib/agendamento.mjs';
+import {byToken,cancelByToken,catalog,changeWithWhatsApp,openDays,publicView,requestBooking,slots} from '../../../lib/agendamento.mjs';
 import {syncCalendar} from '../../../lib/google-calendar';
+import {connection,flushWhatsApp} from '../../../lib/whatsapp';
 import {sameOrigin} from '../../../lib/admin-auth';
 import {digest} from '../../../lib/calendar-core.mjs';
 export const dynamic='force-dynamic';
@@ -14,9 +15,11 @@ async function load(){
  return {row,state:tickAdmin(upgrade(JSON.parse(row.state)))};
 }
 // Duas clientes podem pedir ao mesmo tempo: se a versão mudou, relê e tenta de novo.
+// Mensagens novas da agente (como a proposta que um cancelamento gera) vão para a fila do WhatsApp.
 async function change(apply:(state:any)=>any){
+ const config=await connection(env,ROOM);
  for(let i=0;i<3;i++){
-  const {row,state}=await load(),result=apply(state);
+  const {row,state}=await load(),result=changeWithWhatsApp(state,apply,config);
   const done=await env.DB!.prepare('UPDATE rooms SET state=?,version=version+1,updated=? WHERE id=? AND version=?').bind(JSON.stringify(state),Date.now(),ROOM,row.version).run();
   if(done.meta.changes)return {state,result};
  }
@@ -40,6 +43,7 @@ export async function POST(req:Request){
   if(p.action==='cancel'){
    const {state,result}=await change(s=>cancelByToken(s,String(p.token||'')));
    if(result.status==='cancelled')await syncCalendar(env,ROOM);
+   await flushWhatsApp(env,ROOM);
    return json(publicView(state,result));
   }
   const {state,result}=await change(s=>requestBooking(s,p));

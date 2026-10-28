@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {actAdmin,seedAdmin,tickAdmin,upgrade} from '../lib/flowagenda.mjs';
-import {byToken,cancelByToken,catalog,openDays,phoneDigits,publicView,requestBooking,slots} from '../lib/agendamento.mjs';
+import {byToken,cancelByToken,catalog,changeWithWhatsApp,openDays,phoneDigits,publicView,requestBooking,slots} from '../lib/agendamento.mjs';
 
 // Segunda-feira, 26/10/2026, 8h em Brasília: a agenda abre na terça.
 const now=Date.parse('2026-10-26T08:00:00-03:00');
@@ -107,4 +107,38 @@ test('configurações recusam bloco ou horário inválidos',()=>{
   assert.throws(()=>actAdmin(s,'settings',{...base,hours:{2:[600,540]}},now),/funcionamento/);
   actAdmin(s,'settings',{...base,block:30,hours:{3:[540,1080]}},now);
   assert.deepEqual(openDays(s,now).slice(0,2),['2026-10-28','2026-11-04']);
+});
+
+// Cliente que a gerência já cadastrou: autorizou contato, tem nota 9 e prefere a Lia.
+const antiga=s=>(s.clients.push({id:'C1',name:'Maria Joaquina',phone:'(83) 99999-0000',consent:true,willingness:9,preferred:'P1',visits:30,missed:0,proposals:5,accepted:4}),s.clients[0]);
+
+test('pedido com o celular de uma cliente cadastrada não mexe no cadastro dela',()=>{
+  const s=salao(),c=antiga(s),a=pedido(s,{name:'Fulano',earlier:false,staff_id:'P2'});
+  assert.equal(a.client_id,'C1');
+  assert.deepEqual([c.consent,c.willingness,c.preferred,c.name],[true,9,'P1','Maria Joaquina']);
+  assert.equal(publicView(s,a,now).name,'Fulano','quem pediu não descobre o nome da dona do número');
+});
+
+test('o site nunca devolve a autorização de quem pediu para parar as mensagens',()=>{
+  const s=salao(),c=antiga(s);c.consent=false;
+  pedido(s,{earlier:true});
+  assert.equal(c.consent,false);
+});
+
+test('cliente nova só entra autorizada a antecipar se marcar a caixa',()=>{
+  const s=salao();
+  pedido(s,{earlier:false});
+  assert.deepEqual([s.clients[0].consent,s.clients[0].willingness],[false,0]);
+});
+
+test('a proposta criada pelo cancelamento no link entra na fila do WhatsApp',()=>{
+  const s=salao();
+  for(let i=0;i<5;i++){s.clients.push({id:'C'+i,name:'Cliente '+i,phone:'8399999100'+i,consent:true,willingness:10,preferred:'P1',visits:30,missed:0,proposals:5,accepted:5});actAdmin(s,'book',{client_id:'C'+i,service_id:'S1',staff_id:'P1',date:'2026-11-07',start:780+45*i},now);}
+  const a=pedido(s,{name:'Zé',phone:'83988887777',earlier:false});actAdmin(s,'request_accept',{id:a.id},now);
+  const config={enabled:true,verified:true,mode:'business',restricted:false,allowed:[],phoneId:'1',templates:{enabled:false}};
+  s.whatsappLastInbound=Object.fromEntries(s.clients.map(c=>[c.phone,now-1000]));
+  changeWithWhatsApp(s,st=>cancelByToken(st,a.token,now),config,now);
+  const proposta=s.messages.find(m=>m.offer_id);
+  assert.ok(proposta,'o cancelamento preparou uma proposta');
+  assert.equal(proposta.whatsapp?.status,'queued');
 });
