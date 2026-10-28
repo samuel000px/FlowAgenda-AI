@@ -117,3 +117,36 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .notice.google-setup{display:block}
 .google-setup ol{margin:8px 0 8px 18px;padding:0;display:flex;flex-direction:column;gap:6px}
 .google-setup code{word-break:break-all}
+
+/* Agenda em grade (estilo Google Agenda): uma coluna por profissional. */
+.segmented{display:inline-flex;gap:4px}
+.segmented button{padding:8px 12px}
+.agenda-filtro{display:flex;flex-wrap:wrap;gap:8px;padding:0 20px 14px}
+.agenda-check{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #eadfe0;border-radius:999px;font-size:13px;cursor:pointer;background:#fff;user-select:none}
+.agenda-check input{accent-color:#8a4f5c;margin:0}
+.agenda-check i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.agenda-check small{color:#9a8a8d;font-size:11px}
+.agenda-grade{--hora:56px;overflow-x:auto;border-top:1px solid #f0e6e7}
+.agenda-cabecalho,.agenda-corpo{display:grid;grid-template-columns:var(--hora) repeat(var(--colunas),minmax(150px,1fr));min-width:calc(var(--hora) + var(--colunas) * 150px)}
+.agenda-cabecalho{position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid #eadfe0}
+.agenda-cabecalho>div{display:flex;align-items:center;gap:6px;padding:10px 8px;border-left:1px solid #f0e6e7;font-size:13px}
+.agenda-cabecalho i{width:10px;height:10px;border-radius:50%;flex:none}
+.agenda-cabecalho small{color:#9a8a8d;margin-left:auto;font-size:11px}
+.agenda-corpo{position:relative}
+.agenda-horas{grid-column:1;grid-row:1;position:relative}
+.agenda-corpo{margin-top:10px;margin-bottom:10px}
+.agenda-horas span{position:absolute;right:8px;transform:translateY(-50%);font-size:11px;color:#9a8a8d}
+.agenda-linha{position:absolute;left:var(--hora);right:0;border-top:1px solid #efe6e7;pointer-events:none}
+.agenda-linha.meia{border-top-style:dashed;border-top-color:#f5eeef}
+.agenda-coluna{position:relative;grid-row:1;border-left:1px solid #f0e6e7}
+.agenda-bloco{position:absolute;left:4px;right:4px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1px;padding:4px 8px;border:0;border-left:4px solid var(--cor);border-radius:6px;
+  background:color-mix(in srgb,var(--cor) 16%,#fff);color:#3a2a2d;text-align:left;font-weight:400;font-size:12px;line-height:1.25;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.agenda-bloco:hover{background:color-mix(in srgb,var(--cor) 26%,#fff)}
+.agenda-bloco strong{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.agenda-bloco span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;color:#5d4a4e}
+.agenda-bloco em{font-style:normal;font-size:11px;color:#7d6a6e}
+.agenda-bloco.pedido{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--cor) 12%,#fff) 0 8px,#fff 8px 14px);border-left-style:dashed}
+.agenda-bloco.feito{opacity:.75}
+.agenda-bloco.cancelado,.agenda-bloco.falta{opacity:.45;text-decoration:line-through}
+.agenda-agora{position:absolute;left:var(--hora);right:0;border-top:2px solid #d93025;z-index:2;pointer-events:none}
+.agenda-agora b{position:absolute;left:-6px;top:-6px;width:10px;height:10px;border-radius:50%;background:#d93025}

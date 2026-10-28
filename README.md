@@ -233,3 +233,7 @@ O plano grátis dá 10 ms de processamento por pedido, e o cadastro inteiro é l
 ### Sessões
 
 O login da gerência e o das funcionárias duram 8 horas, mas são renovados enquanto o painel está aberto e em uso: ninguém é derrubada no meio do expediente. Se o link das funcionárias tiver sido criado com outra chave do servidor, Equipe e serviços mostra "Gerar novo link" no lugar de pedir a senha.
+
+### Agenda em grade
+
+A Agenda do painel mostra o dia como no Google Agenda: uma coluna por profissional, horários de meia em meia hora e cada atendimento como um bloco na cor que a profissional tem no Google (a mesma regra da sincronização). As caixas acima da grade mostram ou escondem cada profissional, e a escolha fica guardada no navegador. Pedido aguardando aceite aparece listrado; cancelado e falta, riscados. Clicar num horário futuro abre "Gerenciar"; nos outros, abre a conversa da cliente. O botão "Lista" volta para a tabela.
