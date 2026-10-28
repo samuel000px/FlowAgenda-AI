@@ -199,6 +199,8 @@ Execute `npm run exemplos:local` para criar uma área separada com 50 clientes f
 
 Para ver uma semana inteira funcionando junto, `npm run exemplos:semana` cria outra área separada com 5 profissionais fictícias e cerca de 150 atendimentos de 25 a 31/10/2026 (`-- --inicio AAAA-MM-DD` muda a semana). Os dias que já passaram vêm fechados, com pagamentos, faltas e um sem pagamento; os próximos trazem pedidos do site em Aceitações, uma proposta de remarcação e outra para aprovar, sábado lotado com duas clientes na espera, duas conversas para responder no WhatsApp, aniversariantes e estoque baixo. Ninguém tem telefone e nada é enviado. O comando mostra o link (`/painel#room=...`); entre com a senha de `APP_SENHA` do `.dev.vars`. Com `npm run exemplos:semana -- --remote`, a mesma semana vai para o site publicado, numa área nova e separada: a agenda real, o `/agendar` e o WhatsApp não mudam. Entre pelo link mostrado com a senha do painel; para a área das funcionárias, crie o link em Equipe e serviços dentro dessa área.
 
+Para ver a agenda de verdade cheia, `npm run agenda-falsa -- --remote` coloca cerca de 150 atendimentos de 25 a 31/10/2026 na agenda do salão, com a equipe e o catálogo reais. As clientes se chamam "Cliente Falso 1", "Cliente Falso 2"... e não têm telefone, então nada é enviado. Não há cancelamentos nem propostas de remarcação, para o motor não chamar clientes reais. `npm run agenda-falsa -- --remote --apagar` tira tudo de uma vez (clientes, horários, lista de espera e avisos). Sem `--remote`, vale para o banco local.
+
 ## Dados da planilha antiga e estoque
 
 A planilha que o salão usava vira dados do sistema uma vez só. O arquivo `dados/santa-cor.json` (fora do Git, porque tem nomes e telefones de clientes) traz:
