@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&family=Pinyon+Script&display=swap');
+
+/* Página pública do salão. As cores seguem o site que a Santa Cor já usava; tudo fica dentro de
+   .vitrine para não mexer no visual do painel. */
+.vitrine-fundo{min-height:100vh;padding:1.5rem 1rem 2rem;background:linear-gradient(oklch(0.95 0.02 12) 0%,oklch(0.93 0.028 8) 50%,oklch(0.94 0.025 15) 100%) fixed}
+.vitrine{
+  --malva:oklch(0.48 0.05 15);--cobre:oklch(0.68 0.08 40);
+  --malva-70:oklch(0.48 0.05 15 / .7);--malva-60:oklch(0.48 0.05 15 / .6);
+  --sombra:0 8px 24px -10px oklch(0.68 0.08 40 / .28),inset 0 0 0 1px oklch(1 0 0 / .4),0 20px 40px -20px oklch(0.68 0.075 12 / .3);
+  max-width:28rem;margin:0 auto;color:var(--malva);
+  font-family:'Jost',system-ui,sans-serif;font-weight:400;font-size:16px;line-height:1.55;
+}
+.vitrine h1,.vitrine h2,.vitrine h3,.vitrine strong,.vitrine blockquote{font-family:'Cormorant Garamond',Georgia,serif;letter-spacing:normal}
+.vitrine p{margin:0;line-height:1.55}
+.vitrine em{font-style:italic;color:var(--cobre)}
+.vitrine a{text-decoration:none}
+.vitrine svg{width:1.25rem;height:1.25rem}
+
+/* Rótulos pequenos espaçados, como "NOSSOS DIFERENCIAIS". */
+.vitrine .rotulo{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cobre);font-weight:500}
+
+/* Topo: logo redondo, nome, especialidade, frase e selos. */
+.vitrine .topo{text-align:center;padding:1rem 0 2rem}
+.vitrine .logo{width:8.5rem;height:8.5rem;margin:0 auto 1.5rem;border-radius:50%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#fff,oklch(0.93 0.028 8));
+  box-shadow:0 0 0 6px oklch(1 0 0 / .7),var(--sombra)}
+.vitrine .mono{font-family:'Pinyon Script',cursive;font-size:2.6rem;line-height:1;color:var(--cobre)}
+.vitrine .logo-nome{font-family:'Cormorant Garamond',serif;font-size:1.1rem;letter-spacing:.12em;text-transform:uppercase;color:var(--malva)}
+.vitrine .logo.pequeno{width:5rem;height:5rem;margin-bottom:.75rem}
+.vitrine .logo.pequeno .mono{font-size:1.8rem}
+.vitrine .selo{display:flex;align-items:center;justify-content:center;gap:.5rem;font-size:.7rem;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--cobre);font-weight:500}
+.vitrine .selo::before,.vitrine .selo::after{content:"";width:2.5rem;height:1px;background:currentColor;opacity:.5}
+.vitrine .topo h1{font-size:3rem;font-weight:500;line-height:1.05;margin:.75rem 0 0;color:var(--malva)}
+.vitrine .topo h1 em{display:block;font-size:2.25rem;font-weight:300;margin-top:.25rem}
+.vitrine .especialidade{font-size:.875rem;font-weight:500;color:oklch(0.48 0.05 15 / .8);margin-top:1rem}
+.vitrine .frase{font-size:.9rem;color:var(--malva-70);max-width:24rem;margin:1rem auto 0}
+.vitrine .selos{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;margin-top:1.5rem}
+.vitrine .selos span{font-size:.75rem;padding:.35rem .85rem;border-radius:999px;color:var(--malva);
+  background:linear-gradient(135deg,oklch(1 0 0 / .7),oklch(1 0 0 / .45));border:.8px solid oklch(1 0 0 / .6)}
+
+/* Cartões clicáveis em pilha. */
+.vitrine .cartoes{display:flex;flex-direction:column;gap:.75rem}
+.vitrine .cartao{display:flex;align-items:center;gap:1rem;padding:1rem 1.5rem;border-radius:28px;
+  background:linear-gradient(135deg,oklch(1 0 0 / .75),oklch(1 0 0 / .55));
+  border:.8px solid oklch(0.68 0.08 40 / .35);box-shadow:var(--sombra);color:var(--malva);transition:transform .3s}
+.vitrine .cartao:hover{transform:translateY(-2px)}
+.vitrine .cartao:focus-visible{outline:2px solid var(--cobre);outline-offset:3px}
+.vitrine .icone{flex:none;width:3rem;height:3rem;border-radius:1rem;display:grid;place-items:center;color:var(--malva);
+  background:linear-gradient(to bottom right,oklch(0.925 0.028 12),oklch(0.885 0.038 8));box-shadow:inset 0 2px 4px oklch(1 0 0 / .6)}
+.vitrine .textos{flex:1;min-width:0;display:flex;flex-direction:column}
+.vitrine .cartao strong{font-size:1.25rem;font-weight:600;color:var(--malva);line-height:1.25}
+.vitrine .cartao small{font-size:.75rem;letter-spacing:.025em;color:var(--malva-60);margin-top:.125rem}
+.vitrine .seta{color:var(--cobre);opacity:.6;transition:transform .5s,opacity .5s}
+.vitrine .cartao:hover .seta{opacity:1;transform:translateX(4px)}
+
+/* Seções e blocos de texto. */
+.vitrine section,.vitrine .bloco{margin-top:3rem}
+.vitrine section>.rotulo{text-align:center}
+.vitrine h2{font-size:2rem;font-weight:400;text-align:center;color:var(--malva);margin:.4rem 0 1.25rem;line-height:1.2}
+.vitrine .grade{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.vitrine .caixa{padding:1.25rem 1rem;border-radius:40px;color:var(--cobre);
+  background:linear-gradient(135deg,oklch(1 0 0 / .7),oklch(1 0 0 / .45));border:.8px solid oklch(1 0 0 / .6);box-shadow:var(--sombra)}
+.vitrine .caixa svg{margin-left:.25rem}
+.vitrine .caixa p{font-family:'Cormorant Garamond',serif;font-size:1.1rem;line-height:1.3;color:var(--malva);margin-top:.75rem}
+.vitrine .bloco{padding:2rem 1.5rem;border-radius:28px;text-align:center;
+  background:linear-gradient(135deg,oklch(1 0 0 / .75),oklch(1 0 0 / .55));border:.8px solid oklch(1 0 0 / .6);box-shadow:var(--sombra)}
+.vitrine .bloco h2{margin-bottom:.75rem}
+.vitrine .bloco>p:last-child{font-size:.9rem;color:var(--malva-70)}
+.vitrine .bloco.escuro{background:linear-gradient(160deg,oklch(0.42 0.05 15),oklch(0.3 0.03 20));border-color:transparent;color:#F6E6E6}
+.vitrine .bloco.escuro h2{color:#fff}
+.vitrine .bloco.escuro em,.vitrine .bloco.escuro .rotulo{color:oklch(0.78 0.08 40)}
+.vitrine .bloco.escuro>p:last-child{color:oklch(0.92 0.02 12)}
+.vitrine .estrelas{color:var(--cobre);font-size:1.2rem;letter-spacing:.2em}
+.vitrine .depoimento blockquote{font-size:1.3rem;font-style:italic;color:var(--malva);margin:.75rem 0 1rem;padding:0;border:none}
+.vitrine .bloco>.assinatura{display:flex;align-items:center;justify-content:center;gap:.75rem;font-size:.7rem;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--cobre)}
+.vitrine .assinatura::before,.vitrine .assinatura::after{content:"";width:2rem;height:1px;background:currentColor;opacity:.5}
+
+/* Lista completa de serviços (só quando o cartão "Todos os Serviços" aponta para cá). */
+.vitrine #servicos{text-align:left}
+.vitrine #servicos h3{font-size:1.4rem;font-weight:500;color:var(--malva);margin:1rem 0 .25rem}
+.vitrine #servicos ul{list-style:none;margin:0;padding:0}
+.vitrine #servicos li{display:flex;gap:.75rem;padding:.3rem 0;margin:0}
+.vitrine #servicos li::before{content:"✦";color:var(--cobre);font-size:.7rem;padding-top:.3rem}
+.vitrine #servicos .nome{flex:1}
+.vitrine #servicos .dur{color:var(--malva-60)}
+.vitrine #servicos .preco{font-weight:500}
+
+/* Rodapé. "Acesso da equipe" fica no lugar e no tamanho da antiga linha de crédito. */
+.vitrine .whats{margin-top:3rem}
+.vitrine .rodape{text-align:center;padding:3.5rem 0 2rem;color:var(--malva-70)}
+.vitrine .rodape p{font-size:.75rem;margin:.5rem 0 0}
+.vitrine .rodape .rodape-nome{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--malva);margin-top:0}
+.vitrine .hora{display:inline-flex;align-items:center;gap:.5rem;margin-top:.75rem;color:var(--malva-60)}
+.vitrine .hora svg{width:.9rem;height:.9rem}
+.vitrine .rodape .hora p{margin:0}
+.vitrine .rodape .miudo{font-size:.7rem;color:oklch(0.48 0.05 15 / .5);margin-top:1.5rem}
+.vitrine .equipe{display:inline-block;margin-top:.25rem;font-size:.7rem;font-weight:500;color:var(--cobre)}

@@ -23,6 +23,18 @@ Abra o endereço mostrado no terminal (normalmente http://localhost:5173). O ace
 
 O Streamlit original continua independente: consulte o README dentro de `agente-remarcacao`.
 
+O site tem dois endereços: `/` é a página pública da Santa Cor, com os cartões que levam ao WhatsApp, e `/painel` é a administração, com senha. O único caminho da página para o painel é a linha "Acesso da equipe", no rodapé. Os textos e links da página vêm de `agente-remarcacao/data/salao.json` (exemplo) com `agente-remarcacao/data/salao.local.json` por cima, quando esse arquivo existe no computador que publica; ele fica fora do Git.
+
+## Publicar no Cloudflare
+
+Uma vez só: crie uma conta grátis em cloudflare.com e rode `npx wrangler login`. Depois, para publicar ou atualizar:
+
+```sh
+npm run deploy
+```
+
+Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o app `santa-cor` e gera a chave que assina o login. No fim ele mostra o endereço (`https://santa-cor.<sua-conta>.workers.dev`) e quais segredos faltam. Cadastre a senha e a chave do Gemini, uma vez, com `npx wrangler secret put APP_SENHA --name santa-cor` e `npx wrangler secret put GEMINI_API_KEY --name santa-cor`. Nenhum dado publicado é apagado nas atualizações.
+
 ## Organizar a operação
 
 1. Em **Configurações**, informe o nome da esmalteria e a antecedência mínima.

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Santa Cor · Administração",
-  description: "Agenda, atendimento e gestão da sua esmalteria.",
+  title: "Santa Cor Esmalteria",
+  description: "Agendamentos e atendimento da Santa Cor Esmalteria.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

@@ -328,3 +328,15 @@ a não ser quando um item abaixo diz outra coisa.
   serviços (5583993782040).
 - As fotos e o logo do site original não foram copiados; o logo virou o monograma num círculo.
 - Motivo: o autor pediu a página igual à que o salão já divulga, com o acesso ao painel escondido no fim.
+
+## D29. Um só site no Cloudflare: página pública e painel juntos
+
+- Decisão: a página pública passou a existir também dentro do app do painel (o da raiz do repositório),
+  em `/`, e o painel foi para `/painel`. Assim o salão tem um endereço só, publicado no Cloudflare com
+  `npm run deploy`, sem precisar manter o Streamlit no ar.
+- Os dados da página continuam em `data/salao.json` e `data/salao.local.json`, os mesmos do Streamlit. O app
+  lê os dois na hora de montar, então o arquivo real precisa estar no computador que publica. As regras dos
+  cartões (`cartoes_da_pagina`) foram copiadas para `lib/vitrine.mjs`, com testes iguais aos do Python.
+- Cloudflare em vez da Vercel: o painel já usa o banco D1 e o formato de app do Cloudflare, e o plano grátis
+  pode ser usado por um negócio. Na Vercel seria preciso trocar o banco e pagar o plano Pro.
+- O Streamlit continua funcionando para testes locais e para a avaliação da IA.
