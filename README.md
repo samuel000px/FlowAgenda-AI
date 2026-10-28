@@ -61,7 +61,7 @@ Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o ap
 ## Painel da gerência
 
 - **Receita prevista** soma o valor de cada atendimento confirmado do dia escolhido na agenda (o valor gravado na hora de marcar, com desconto e adicionais) e tira as faltas registradas. Pedidos do site ainda não aceitos não entram.
-- **Responder WhatsApp** conta as conversas cuja última mensagem é da cliente e que o atendimento automático não resolveu (por exemplo, quem pediu para falar com alguém). Com uma ou mais, o cartão fica em alerta e aparece um aviso que leva ao Atendimento; some quando alguém da equipe responde.
+- **Pedidos de atendimento** conta os pedidos abertos na fila compartilhada. O cartão e o aviso levam à aba **Ações**.
 - **Lista de espera** fica numa faixa acima da agenda, que usa a largura toda. Quem demonstrou interesse numa data cheia aparece primeiro, marcado como prioridade, e cada entrada avisa quando abre uma vaga daquele serviço no dia.
 
 ## Organizar a operação
@@ -72,7 +72,7 @@ Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o ap
 4. Em **Clientes**, cadastre contato, profissional preferida e se ela gostaria de antecipar caso apareça um horário mais cedo (sim ou não).
 5. Cadastre horários em **Agenda → Novo agendamento**.
 6. Um cancelamento libera uma vaga e prepara uma proposta quando há candidata elegível e benefício esperado positivo.
-7. Em **Atendimento**, acompanhe o WhatsApp conectado em Integrações ou registre retornos de outros canais. Na conexão Meta, propostas novas são enviadas aos participantes autorizados quando existe uma janela de conversa ativa. Uma resposta ambígua gera um pedido de esclarecimento; uma segunda ambiguidade encerra aquela proposta.
+7. Em **Remarcações**, acompanhe propostas e abra o histórico em **Ver conversa**. Pedidos de ajuda ficam em **Ações**, compartilhados com as funcionárias. A integração oficial continua processando as respostas de remarcação pelo WhatsApp.
 8. O aceite da cliente aguarda **Remarcações → Aprovar alteração**. Só então o horário muda; a vaga de origem pode gerar até dois desdobramentos. Recusas e encerramento sem resposta podem preparar a próxima proposta.
 9. Em **Fechamento**, registre presenças e faltas após o atendimento. O histórico alimenta os cálculos e pode ser exportado em CSV.
 
@@ -180,13 +180,13 @@ Arquivos principais: `app/staff-portal.tsx` (interface), `app/staff.css` (estilo
 ## Ações e Finanças
 
 - **Agenda → Novo agendamento** permite escolher uma cliente existente ou cadastrar uma nova e salvar junto com o horário. A aba Clientes mantém consulta e edição.
-- **Ações → Testar conversa** demonstra as opções Agendar, Cancelar e Falar com atendente sem enviar mensagens. Cancelar no exemplo apenas orienta sobre o link exclusivo do agendamento; não cancela uma reserva. Falar com atendente cria um pedido de exemplo compartilhado com a equipe.
-- O webhook oficial já encaminha mensagens que exigem intervenção humana à fila de pedidos. A demonstração não ativa envio automático do menu inicial. O menu automático de saudação mencionado pelo colaborador não constava no código recebido nesta atualização.
-- Cada pedido pode ser assumido por uma pessoa. Outra funcionária não pode assumir ou encerrar o pedido ocupado; a administração pode encerrá-lo. Novas mensagens após o encerramento abrem um novo pedido. Não se trata de encaminhar mensagens automaticamente para um WhatsApp pessoal: o botão abre a conversa na conta conectada ao aparelho.
+- **/atendimento** é a página pública para a cliente informar nome, WhatsApp com DDD e motivo do contato, autorizando a resposta. O botão **Falar com a equipe** da página inicial leva a ela.
+- O formulário cria um pedido real em **Ações** e no **Atendimento** das funcionárias, na agenda principal (`flowagenda`). A resposta pública contém apenas a confirmação de envio. A API valida os dados, limita a frequência, evita repetição em tentativas do mesmo pedido e protege gravações simultâneas. Não cria clientes, altera reservas nem dispara mensagens. O webhook oficial também alimenta essa fila.
+- Cada pedido pode ser assumido por uma pessoa. Outra funcionária não pode assumir ou encerrar o pedido ocupado; a administração pode assumir ou encerrar o pedido. Novas mensagens após o encerramento abrem um novo pedido. Não se trata de encaminhar mensagens automaticamente para um WhatsApp pessoal: o botão abre a conversa na conta conectada ao aparelho.
 - **Finanças**, exclusiva da administração, separa receita prevista de pagamentos registrados. Após marcar comparecimento em Fechamento, confirme o recebimento por Pix, dinheiro ou cartão. O pagamento entra na data local em que foi registrado, mesmo que o serviço seja de outro dia.
 - Registre as despesas do dia para obter o saldo recebido menos despesas. Esse saldo não é uma demonstração de lucro e não inclui despesas ainda não lançadas. Registros ficam no banco da agenda, sem nova migração.
 
-As conexões Google Agenda e WhatsApp ficam em **Configurações → Integrações**. Os atalhos da central de atendimento abrem essa mesma seção.
+As conexões Google Agenda e WhatsApp ficam em **Configurações → Integrações**. A antiga aba Atendimento da administração foi retirada; a equipe responde aos pedidos em Ações.
 
 ## Finanças
 

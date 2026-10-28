@@ -14,7 +14,9 @@
 .staff-day-controls button{min-width:48px}
 .staff-tabs button{position:relative}
 .staff-shell .field small{line-height:1.5}
-.staff-shell .check-field{padding:12px 0;cursor:pointer}
+.staff-shell .check-field{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:flex-start;gap:10px;padding:12px 0;cursor:pointer;line-height:1.5}
+.staff-shell .check-field input[type=checkbox]{flex:0 0 22px;width:22px;min-width:22px;height:22px;margin:0}
+.staff-shell .check-field>span{flex:1;min-width:0}
 .staff-shell .staff-suggestion h2{overflow-wrap:anywhere}
 @media(max-width:760px){
  .staff-entry{max-width:520px;padding:32px 20px max(28px,env(safe-area-inset-bottom))}
@@ -35,7 +37,7 @@
  .staff-main .page-heading{margin-bottom:22px}
  .staff-main .page-heading h1{font-size:27px}
  .staff-main .page-heading p{font-size:14px;line-height:1.6}
- .staff-tabs{position:fixed;bottom:0;left:0;right:0;z-index:35;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0;padding:8px max(12px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 22px #36232609}
+ .staff-tabs{position:fixed;bottom:0;left:0;right:0;z-index:35;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:0;padding:8px max(12px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 22px #36232609}
  .staff-tabs button{display:flex;flex-direction:column;gap:5px;min-height:60px;padding:8px 2px;border:0;border-radius:12px;font-size:12px;background:transparent;color:#766268}
  .staff-tabs button.selected{background:var(--green-light);color:var(--green)}
  .staff-tabs button.selected::before{content:'';width:20px;height:3px;border-radius:3px;background:var(--green);position:absolute;top:0}
@@ -94,7 +96,7 @@
 .staff-booking form{display:grid;gap:22px;margin-top:18px}
 .staff-booking .field{margin:0}
 .staff-booking .field>span{font-size:14px}
-.staff-booking select,.staff-booking input{width:100%;box-sizing:border-box}
+.staff-booking select,.staff-booking input:not([type=checkbox]){width:100%;min-width:0;box-sizing:border-box}
 .staff-step{border:0;padding:0;margin:0;min-width:0}
 .staff-step legend{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:10px;line-height:1.4}
 .staff-chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -147,3 +149,39 @@
 .closing-methods legend{font-size:13px;font-weight:600;margin-bottom:8px}
 .closing-methods button{flex:1;min-width:90px}
 .closing-methods button[aria-pressed="true"]{background:#8a4f5c;border-color:#8a4f5c;color:#fff}
+
+/* Keep long names, checkboxes and actions inside the phone viewport. */
+.staff-main,.staff-main>*,.staff-booking form,.staff-booking .field{min-width:0}
+.staff-shell button,.staff-shell .button{white-space:normal;overflow-wrap:anywhere}
+.staff-shell .staff-tabs button{overflow-wrap:normal}
+.staff-found button>strong,.staff-picked>div{min-width:0;flex:1}
+.staff-picked .text-button{flex-shrink:0}
+@media(max-width:760px){
+ .staff-tabs button{font-size:11px;min-width:0;line-height:1.3}
+ .staff-tabs button>span:not(.badge){white-space:nowrap}
+ .staff-main .support-grid{grid-template-columns:minmax(0,1fr)}
+ .staff-main .support-card,.staff-main .support-intro{padding:20px 16px}
+ .staff-main .support-buttons{display:grid;grid-template-columns:minmax(0,1fr)}
+ .staff-main .support-buttons button{width:100%}
+ .staff-shell .support-card small,.staff-shell .support-detail p{overflow-wrap:anywhere}
+ .staff-appointment-list.always .staff-appointment{grid-template-columns:64px minmax(0,1fr);gap:12px}
+ .staff-appointment-list.always .staff-appointment>button{grid-column:2;width:100%}
+ .staff-shell .modal-backdrop{padding:12px;z-index:60;align-items:center}
+ .staff-shell .modal{width:100%;min-width:0;max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain}
+ .staff-shell .modal-content{padding:20px 16px;min-width:0}
+ .staff-shell .modal .panel-heading{padding:16px;gap:12px}
+ .staff-shell .modal .panel-heading h2{min-width:0;overflow-wrap:anywhere}
+ .staff-shell .modal .icon-button{flex-shrink:0;min-width:44px}
+ .staff-shell .modal-actions{display:flex;flex-direction:column-reverse;gap:10px}
+ .staff-shell .modal-actions button{width:100%}
+ .staff-shell .closing-methods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ .staff-shell .closing-methods button{min-width:0;padding:10px 6px}
+ .staff-found button{flex-wrap:wrap;gap:4px 12px}
+ .staff-found strong{flex-basis:100%}
+}
+@media(max-width:359px){
+ .staff-tabs{padding-inline:4px;gap:0}
+ .staff-tabs button{font-size:10px}
+ .staff-topbar .brand{font-size:16px;gap:8px}
+ .staff-topbar strong{max-width:110px}
+}

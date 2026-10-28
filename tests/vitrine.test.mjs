@@ -7,10 +7,10 @@ const exemplo=JSON.parse(readFileSync(new URL('../agente-remarcacao/data/salao.j
 
 test('a página tem os seis cartões, com agendar e serviços dentro do site',()=>{
   const cartoes=cartoesDaPagina(juntarSalao(exemplo,{instagram:'santacor',avaliacoes:'https://g.page/r/santacor/review'}));
-  assert.deepEqual(cartoes.map(c=>c.titulo),['Agendar','Todos os serviços','WhatsApp','Instagram','Localização','Avaliações']);
+  assert.deepEqual(cartoes.map(c=>c.titulo),['Agendar','Todos os serviços','Falar com a equipe','Instagram','Localização','Avaliações']);
   assert.equal(cartoes[0].endereco,'/agendar');
   assert.equal(cartoes[1].endereco,'/servicos');
-  assert.equal(cartoes[2].endereco,'https://wa.me/5511900000000?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20quero%20marcar%20um%20servi%C3%A7o.');
+  assert.equal(cartoes[2].endereco,'/atendimento');
   assert.equal(cartoes[5].endereco,'https://g.page/r/santacor/review');
 });
 

@@ -22,7 +22,7 @@
     {"tab": "Fechamento", "case": "Uma cliente atendida ainda sem pagamento registrado e uma falta."},
     {"tab": "Aceitações", "case": "Dois pedidos futuros esperando a decisão da gerência."},
     {"tab": "Remarcações", "case": "Um aceite aguardando aprovação, uma recusa seguida de nova proposta e uma vaga para analisar."},
-    {"tab": "Atendimento", "case": "Conversas locais do agente com clientes fictícias, sem envio de WhatsApp."},
+    {"tab": "Remarcações → Ver conversa", "case": "Conversas locais do agente com clientes fictícias, sem envio de WhatsApp."},
     {"tab": "Ações", "case": "Duas clientes aguardando atendimento humano; encerrar a conversa não cancela o agendamento."},
     {"tab": "Estoque", "case": "Produtos com saldo suficiente, abaixo do mínimo e esgotado."}
   ]
