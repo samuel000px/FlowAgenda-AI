@@ -1,17 +1,27 @@
-"""Página pública do salão: serviços, equipe, horário e o botão para agendar pelo WhatsApp.
+"""Página pública do salão: serviços, endereço e o botão para agendar pelo WhatsApp.
 
-Não mostra nada das clientes e não tem link para o painel.
+Não mostra nada das clientes e não tem link para o painel. O visual segue a identidade da Santa Cor:
+fundo perolado, nome em caixa alta com serifa clássica, monograma manuscrito e dourado rosé.
 """
 from html import escape
 
 import streamlit as st
 
-from src.dados import carregar_profissionais
-from src.salao import carregar_salao, link_whatsapp
+from src.salao import carregar_salao, link_mapa, link_whatsapp, servicos_por_grupo, telefone_formatado
 
 salao = carregar_salao()
-equipe = list(carregar_profissionais().values())
 agendar = link_whatsapp(salao["whatsapp"], salao["mensagem_whatsapp"])
+
+
+def item(s: dict) -> str:
+    """Um serviço; duração e preço só aparecem se estiverem no cadastro."""
+    extra = "".join(
+        f'<span class="{classe}">{valor}</span>'
+        for classe, valor in (("dur", f"{s['duracao_min']} min" if s.get("duracao_min") else ""),
+                              ("preco", f"R$ {s['preco']}" if s.get("preco") else ""))
+        if valor
+    )
+    return f'<li><span class="nome">{escape(s["nome"])}</span>{extra}</li>'
 
 
 def juntar(nomes: list[str]) -> str:
@@ -19,93 +29,107 @@ def juntar(nomes: list[str]) -> str:
     return nomes[0] if len(nomes) == 1 else f"{', '.join(nomes[:-1])} e {nomes[-1]}"
 
 
-servicos = "".join(
-    f'<li><span class="nome">{escape(s["nome"])}</span><span class="dur">{s["duracao_min"]} min</span>'
-    f'<span class="preco">R$ {s["preco"]}</span></li>'
-    for s in salao["servicos"]
+grupos = "".join(
+    f'<section class="servicos"><h2>{escape(grupo)}</h2><ul>{"".join(item(s) for s in itens)}</ul></section>'
+    for grupo, itens in servicos_por_grupo(salao).items()
 )
-horarios = "".join(f"<li><span>{escape(h['dias'])}</span><span>{escape(h['horas'])}</span></li>" for h in salao["horarios"])
+if salao.get("horarios"):
+    horarios = "<ul class=\"horarios\">" + "".join(
+        f"<li><span>{escape(h['dias'])}</span><span>{escape(h['horas'])}</span></li>" for h in salao["horarios"]
+    ) + "</ul>"
+else:
+    horarios = f'<p>Combine o melhor horário <a href="{agendar}" target="_blank" rel="noopener">pelo WhatsApp</a>.</p>'
+equipe = (
+    f"<section><h2>Quem atende</h2><p>{escape(juntar(salao['equipe']))}. "
+    "Se você tem preferência por alguém, é só dizer na mensagem.</p></section>"
+    if salao.get("equipe")
+    else ""
+)
 instagram = (
     f'<p><a href="https://instagram.com/{escape(salao["instagram"])}" target="_blank" rel="noopener">'
-    f'@{escape(salao["instagram"])} no Instagram</a></p>'
+    f'@{escape(salao["instagram"])}</a> no Instagram</p>'
     if salao.get("instagram")
     else ""
 )
 
 PAGINA = f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Gloock&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;500;600&family=Pinyon+Script&display=swap');
 
 /* esconde a moldura do Streamlit: aqui é a vitrine do salão */
 header[data-testid="stHeader"], [data-testid="stSidebarCollapsedControl"], [data-testid="stToolbar"] {{display: none;}}
-.block-container {{padding-top: 1.25rem; padding-bottom: 3rem;}}
+.block-container {{padding-top: 1rem; padding-bottom: 3rem;}}
 
 .vitrine {{
-  --vinho: #7A1E48; --vinho-escuro: #5A1435; --rosa-cha: #F3D7DE; --branco: #FFFFFF;
-  max-width: 34rem; margin: 0 auto; font-family: 'Figtree', system-ui, sans-serif; line-height: 1.5;
+  --perola: #F6ECE8; --perola-funda: #E9D6CD; --cacau: #3E302B; --dourado: #B98B6B; --dourado-claro: #DDBFA8;
+  max-width: 34rem; margin: 0 auto;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.2rem; line-height: 1.55;
 }}
-.vitrine h1, .vitrine h2 {{font-family: 'Gloock', Georgia, serif; font-weight: 400; letter-spacing: -0.01em;}}
+.vitrine h1, .vitrine h2 {{font-family: 'Cinzel', Georgia, serif; font-weight: 400;}}
 
-.frasco {{
-  position: relative; overflow: hidden; border-radius: 1.75rem; padding: 2.25rem 1.5rem 1.75rem;
-  background: var(--vinho); color: var(--branco);
+/* o cartão perolado, como o flyer: fica igual no tema claro e no escuro */
+.cartao {{
+  position: relative; overflow: hidden; text-align: center; color: var(--cacau);
+  padding: 2rem 1.5rem 2.25rem; border-radius: 1.25rem;
+  background:
+    radial-gradient(60% 45% at 20% 10%, rgba(255,255,255,.85), rgba(255,255,255,0)),
+    radial-gradient(70% 55% at 85% 95%, rgba(221,191,168,.55), rgba(221,191,168,0)),
+    linear-gradient(160deg, var(--perola), var(--perola-funda));
+  box-shadow: inset 0 0 0 1px rgba(185,139,107,.35);
 }}
-/* o brilho de esmalte recém-passado */
-.frasco::before {{
-  content: ""; position: absolute; top: -30%; left: -15%; width: 70%; height: 90%;
-  background: radial-gradient(closest-side, rgba(255,255,255,.28), rgba(255,255,255,0));
-  transform: rotate(-18deg); pointer-events: none;
-}}
-.frasco h1 {{font-size: clamp(2.4rem, 9vw, 3.4rem); line-height: 1.02; margin: 0 0 .75rem; color: var(--branco);}}
-.frasco p {{font-size: 1.1rem; margin: 0 0 1.75rem; max-width: 24rem; color: var(--rosa-cha);}}
+.monograma {{font-family: 'Pinyon Script', cursive; font-size: 3.2rem; line-height: 1; color: var(--dourado); margin-bottom: .25rem;}}
+.cartao h1 {{font-size: clamp(2.3rem, 10vw, 3.1rem); line-height: 1.05; letter-spacing: .04em; margin: 0; color: var(--cacau);}}
+.subtitulo {{font-family: 'Cinzel', Georgia, serif; font-size: .95rem; letter-spacing: .45em; margin: .35rem 0 0 .45em;}}
+.ornamento {{display: flex; align-items: center; gap: .6rem; margin: 1.25rem auto; max-width: 14rem; color: var(--dourado);}}
+.ornamento::before, .ornamento::after {{content: ""; flex: 1; height: 1px; background: var(--dourado-claro);}}
+.cartao .frase {{margin: 0 auto 1.5rem; max-width: 22rem; font-size: 1.25rem;}}
 
 .agendar {{
-  display: block; text-align: center; text-decoration: none !important; font-weight: 700; font-size: 1.15rem;
-  background: var(--branco); color: var(--vinho) !important; padding: 1rem 1.25rem; border-radius: 999px;
+  display: block; text-decoration: none !important; font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600; font-size: 1.3rem; letter-spacing: .02em;
+  background: var(--cacau); color: var(--perola) !important; padding: .9rem 1.25rem; border-radius: 999px;
 }}
-.agendar:hover {{background: var(--rosa-cha);}}
-.agendar:focus-visible {{outline: 3px solid var(--rosa-cha); outline-offset: 3px;}}
-.frasco .aviso {{font-size: .9rem; margin: .75rem 0 0; color: var(--rosa-cha); opacity: .9;}}
+.agendar:hover {{background: #2D221E;}}
+.agendar:focus-visible {{outline: 2px solid var(--dourado); outline-offset: 3px;}}
+.telefone {{font-size: 1.6rem; margin: .9rem 0 0; letter-spacing: .02em;}}
+.telefone a {{color: var(--cacau) !important; text-decoration: none;}}
 
 .vitrine section {{padding: 2rem .25rem 0;}}
-.vitrine h2 {{font-size: 1.6rem; margin: 0 0 .75rem;}}
+.vitrine h2 {{font-size: 1.45rem; letter-spacing: .06em; margin: 0 0 .5rem;}}
 .vitrine ul {{list-style: none; margin: 0; padding: 0;}}
 .vitrine ul li {{margin: 0; padding-left: 0;}}  /* o Streamlit recua listas; aqui as linhas vão de ponta a ponta */
-.servicos li, .horarios li {{
-  display: flex; gap: .75rem; align-items: baseline; padding: .7rem 0;
-  border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);  /* aparece no tema claro e no escuro */
-}}
-.servicos .nome {{flex: 1; font-weight: 600;}}
+.servicos li {{display: flex; gap: .75rem; align-items: baseline; padding: .3rem 0;}}
+.servicos li::before {{content: "✦"; color: var(--dourado); font-size: .8rem;}}
+.servicos .nome {{flex: 1;}}
 .servicos .dur {{opacity: .7;}}
-.servicos .preco {{min-width: 4.5rem; text-align: right; font-weight: 700;}}
+.servicos .preco {{font-weight: 600;}}
+.horarios li {{display: flex; padding: .35rem 0; border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent);}}
 .horarios li span:first-child {{flex: 1;}}
-.vitrine section p {{margin: .25rem 0;}}
-.vitrine a {{color: inherit;}}
-.rodape {{padding-top: 2.5rem; font-size: .95rem;}}
+.vitrine section p {{margin: .2rem 0;}}
+.vitrine a {{color: inherit; text-decoration-color: var(--dourado); text-underline-offset: 3px;}}
+.rodape {{padding-top: 2.25rem; font-size: 1.1rem;}}
+@media (prefers-reduced-motion: no-preference) {{ .agendar {{transition: background-color .15s;}} }}
 </style>
 
 <div class="vitrine">
-  <div class="frasco">
+  <div class="cartao">
+    <div class="monograma" aria-hidden="true">{escape(salao.get("monograma", ""))}</div>
     <h1>{escape(salao["nome"])}</h1>
-    <p>{escape(salao["frase"])}</p>
+    <div class="subtitulo">{escape(salao.get("subtitulo", ""))}</div>
+    <div class="ornamento" aria-hidden="true">✦</div>
+    <p class="frase">{escape(salao["frase"])}</p>
     <a class="agendar" href="{agendar}" target="_blank" rel="noopener">Agendar pelo WhatsApp</a>
-    <p class="aviso">Abre uma conversa com a gente, já com a mensagem escrita.</p>
+    <p class="telefone"><a href="{agendar}" target="_blank" rel="noopener">{telefone_formatado(salao["whatsapp"])}</a></p>
   </div>
 
-  <section class="servicos">
-    <h2>Serviços</h2>
-    <ul>{servicos}</ul>
-  </section>
+  {grupos}
+  {equipe}
 
   <section>
-    <h2>Quem atende</h2>
-    <p>{escape(juntar(equipe))}. Se você tem preferência por alguém, é só dizer na mensagem.</p>
-  </section>
-
-  <section class="horarios">
-    <h2>Onde e quando</h2>
-    <p>{escape(salao["endereco"])}, {escape(salao["bairro_cidade"])}</p>
-    <ul>{horarios}</ul>
+    <h2>Onde fica</h2>
+    <p>{escape(salao["endereco"])}<br>{escape(salao["bairro_cidade"])}</p>
+    <p><a href="{link_mapa(salao)}" target="_blank" rel="noopener">Ver no mapa</a></p>
+    {horarios}
     {instagram}
   </section>
 

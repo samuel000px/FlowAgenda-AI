@@ -204,3 +204,17 @@ a não ser quando um item abaixo diz outra coisa.
 - Motivo: o autor pediu um site do salão que leve ao WhatsApp, com o painel do administrador escondido
   e protegido por senha.
 - Ficou de fora: login separado por pessoa e editar clientes pelo site (fica para o Google Planilhas).
+
+## D20. Página pública com a identidade da Santa Cor
+
+- Decisão: a página pública passou a seguir o flyer da Santa Cor Esmalteria (João Pessoa): cartão
+  perolado com brilho suave, monograma "sc" manuscrito (Pinyon Script), nome em Cinzel, texto em
+  Cormorant Garamond, detalhes em dourado rosé e serviços com ✦, separados em "Unhas" e "Beleza".
+  O cartão tem cores fixas, então fica igual nos temas claro e escuro.
+- Os dados reais (nome, WhatsApp, endereço, Instagram, serviços) ficam em `data/salao.local.json`,
+  fora do git. Na hospedagem, vão no segredo `SALAO_JSON`. O `salao.json` do repositório continua com
+  dados de exemplo.
+- Serviços sem preço e sem duração são aceitos (o salão ainda não passou), e a seção "Quem atende" só
+  aparece se o salão informar a equipe, para não mostrar as profissionais fictícias dos cenários.
+  Sem horário de funcionamento, a página convida a combinar pelo WhatsApp.
+- Motivo: o autor mandou o flyer, a lista de serviços e os contatos reais do salão da tia.

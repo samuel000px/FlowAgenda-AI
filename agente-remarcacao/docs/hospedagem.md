@@ -48,6 +48,8 @@ quando o histórico for para o Google Planilhas.
    GEMINI_MODEL = "gemini-3.5-flash-lite"
    APP_SENHA = "sua-senha-comprida"
    AVISO_MINIMO_H = "1"
+   # dados reais da página pública (o mesmo conteúdo de data/salao.local.json, numa linha)
+   SALAO_JSON = '{"nome": "Santa Cor", "whatsapp": "5583...", "endereco": "..."}'
    ```
    Os segredos do nível principal viram variáveis de ambiente, que é de onde o código lê. Nada disso vai para o GitHub.
 4. **Deploy.** Em alguns minutos, sai um endereço `https://...streamlit.app`. Mande o link para o

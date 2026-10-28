@@ -150,7 +150,9 @@ histórico desligado, que é o padrão, nada é gravado, e dá para demonstrar �
 
 Os dados da página pública estão em `data/salao.json` e são de exemplo. Para usar os do salão de
 verdade sem mandar para o GitHub, crie `data/salao.local.json` só com o que muda, por exemplo
-`{"nome": "...", "whatsapp": "5511912345678", "endereco": "..."}`. Esse arquivo fica fora do git.
+`{"nome": "...", "whatsapp": "5511912345678", "endereco": "..."}`. Esse arquivo fica fora do git. Numa hospedagem
+como o Streamlit Cloud, onde esse arquivo não existe, cole o mesmo JSON no segredo `SALAO_JSON`.
+Preço e duração dos serviços são opcionais; os serviços podem ter um `grupo` (ex.: "Unhas", "Beleza").
 
 ### Usar pelo celular
 
