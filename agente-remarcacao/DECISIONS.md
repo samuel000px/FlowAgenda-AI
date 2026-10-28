@@ -268,3 +268,19 @@ a não ser quando um item abaixo diz outra coisa.
   a proposta do autor de usar a IA só para interpretar mensagens e deixar a escolha para o código.
 - Os casos foram rodados com a conta anterior à D22; os dias dos casos têm ocupação de 80% ou mais, onde
   as duas contas dão o mesmo resultado.
+
+## D25. A escolha da cliente passa a ser só do código
+
+- Decisão: `src/escolha.py` escolhe a primeira da lista ordenada (filtros, profissional preferida, valor
+  esperado), escreve a justificativa com os números e monta a mensagem com um texto pronto. A tela, o
+  terminal e a avaliação usam essa escolha. A IA continua só na interpretação das respostas.
+  O `src/agente.py` (a IA escolhendo) fica no projeto para o `avaliar_ia.py` comparar.
+- Motivo: o autor preferiria a IA analisando, mas os critérios que ensinaríamos a ela são os mesmos da
+  conta. Nos casos difíceis (D24) ela errou justamente quando se afastou do valor esperado (D11), e cada
+  escolha gastava umas 3 chamadas da cota gratuita. Com o código, a escolha é sempre a mesma, explicável
+  e de graça.
+- A mensagem pronta cumpre as mesmas regras que a avaliação cobra das mensagens da IA (hora,
+  profissional, manter o horário, sem sobrenome, sem "quem responder primeiro"), e um teste confere isso
+  nos oito cenários. Quando a profissional é outra, a mensagem diz: "Seria com a Nina, não com a Lia".
+- Ficou de fora: a IA escolhendo com o código conferindo quando ela discordar muito do valor esperado.
+  Seria mais caro e, na prática, o código acabaria decidindo nos casos em que a IA erra.

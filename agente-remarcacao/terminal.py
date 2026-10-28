@@ -16,10 +16,10 @@ from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 
-from src.agente import decidir
 from src.canal import CanalSimulado
 from src.cascata import MAX_PROF, Atores, tratar_cancelamento
 from src.dados import carregar_cenario
+from src.escolha import decidir_pelo_codigo
 from src.ferramentas import liberar_horario
 from src.filtros import MOTIVOS
 from src.interpretacao import interpretar
@@ -67,7 +67,7 @@ def rodar(cenario_id: str, automatico: bool) -> list:
         return Confirm.ask(f"Aprovar e mover {nome} para {_quando(slot)}?")
 
     canal = CanalSimulado(cenario.respostas if automatico else None, perguntar=None if automatico else perguntar)
-    atores = Atores(decidir, interpretar, canal, aprovar, avisar=lambda e, d: mostrar(cenario, canal, e, d))
+    atores = Atores(decidir_pelo_codigo, interpretar, canal, aprovar, avisar=lambda e, d: mostrar(cenario, canal, e, d))
     passos = tratar_cancelamento(cenario, vago.id, atores)
     salvar_log(cenario, passos)
     return passos
@@ -80,7 +80,7 @@ def mostrar(cenario: Cenario, canal: CanalSimulado, evento: str, dados: dict) ->
         console.print(f"\n[bold]Nível {dados['profundidade']} de {MAX_PROF}[/bold]: horário livre {_quando(slot)} com {cenario.nome_profissional(slot.profissional_id)}")
         mostrar_candidatos(cenario, dados["candidatos"])
     elif evento == "decisao":
-        console.print(Panel(dados["decisao"].justificativa, title="Decisão do agente (gerada pelo modelo)"))
+        console.print(Panel(dados["decisao"].justificativa, title="Por que ela (calculado pelo código)"))
     elif evento == "interpretacao":
         cliente_id = dados["cliente_id"]
         nome = cenario.clientes[cliente_id].nome

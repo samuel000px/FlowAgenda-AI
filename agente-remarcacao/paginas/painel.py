@@ -73,7 +73,7 @@ def fluxo_atual() -> Fluxo:
 def agir(acao, *args) -> None:
     """Roda a ação de um botão; se o modelo falhar, mostra o erro sem perder o estado."""
     try:
-        with st.spinner("O agente está pensando..."):
+        with st.spinner("Um instante..."):
             acao(*args)
         st.session_state.erro = None
     except (ErroLLM, ErroMovimento) as e:
@@ -261,9 +261,9 @@ with col_razao:
         st.caption("Números calculados pelo código.")
 
     if fluxo.decisao:
-        st.markdown("**Decisão do agente**")
+        st.markdown("**Por que ela**")
         st.info(sem_formula(fluxo.decisao.justificativa))
-        st.caption("Gerada pelo modelo.")
+        st.caption("Calculada pelo código. A IA só entra para entender a resposta da cliente.")
 
     st.markdown("**Etapas**")
     st.markdown(
@@ -279,7 +279,7 @@ with col_razao:
         texto = "Rejeitado na aprovação. A agenda não mudou." if fluxo.estado == "rejeitado" else fim.justificativa
         st.warning(f"Fim: {sem_formula(texto)}")
     elif fluxo.estado == "candidatos_calculados":
-        if st.button("Pedir decisão ao agente", type="primary", use_container_width=True):
+        if st.button("Escolher e enviar proposta", type="primary", use_container_width=True):
             agir(fluxo.pedir_decisao)
             st.rerun()
 

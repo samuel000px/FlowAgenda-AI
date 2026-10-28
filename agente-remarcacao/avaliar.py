@@ -11,10 +11,10 @@ from pathlib import Path
 
 from rich.console import Console
 
-from src.agente import decidir
 from src.canal import CanalSimulado
 from src.cascata import Atores, Passo, tratar_cancelamento
 from src.dados import carregar_cenarios
+from src.escolha import decidir_pelo_codigo
 from src.ferramentas import buscar_candidatos, confirmar_movimento, liberar_horario
 from src.interpretacao import interpretar
 from src.llm import ErroLLM
@@ -68,9 +68,9 @@ def regra_ingenua(cenario: Cenario) -> tuple[Cenario, list[Passo]]:
 
 
 def agente(cenario: Cenario) -> tuple[Cenario, list[Passo]]:
-    """Estratégia 3: o fluxo completo com o Gemini. Aprovação automática (modo de avaliação)."""
+    """Estratégia 3: o fluxo completo. O código escolhe; o Gemini interpreta as respostas. Aprovação automática."""
     c = cancelado(cenario)
-    atores = Atores(decidir, interpretar, CanalSimulado(c.respostas), aprovar=lambda *_: True)
+    atores = Atores(decidir_pelo_codigo, interpretar, CanalSimulado(c.respostas), aprovar=lambda *_: True)
     return c, tratar_cancelamento(c, c.slot_cancelado_id, atores)
 
 

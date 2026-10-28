@@ -26,7 +26,7 @@ flowchart TD
     B --> C[Score<br/>taxa de falta, chance de aceitar,<br/>dificuldade de preencher, valor esperado]
     C --> D{Poda<br/>alguém com valor esperado > 0?}
     D -- não --> N[Decide não mexer e explica]
-    D -- sim --> E[LLM escolhe uma, justifica e escreve a mensagem]
+    D -- sim --> E[Código escolhe a primeira da lista,<br/>justifica e monta a mensagem]
     E --> F[Envio pelo canal simulado]
     F --> G[LLM interpreta a resposta<br/>aceitou / recusou / outro horário / ambíguo]
     G -- recusou --> B
@@ -65,14 +65,17 @@ Se ninguém tem valor esperado positivo, o agente **decide não mexer**, e isso 
 | Parte | Quem faz | Onde |
 |---|---|---|
 | Filtros duros, contas, poda | Código | `src/filtros.py`, `src/score.py`, `src/ferramentas.py` |
-| Escolher entre as que sobraram, justificar e escrever a mensagem | LLM | `src/agente.py` |
+| Escolher a cliente, justificar e montar a mensagem | Código | `src/escolha.py` |
 | Entender a resposta da cliente | LLM | `src/interpretacao.py` |
 | Profundidade da cascata e plano B na recusa | Código | `src/cascata.py` (terminal), `src/estado.py` (tela) |
 | Mudar a agenda | Código, **só depois da aprovação humana** | `confirmar_movimento` em `src/ferramentas.py` |
 
-O modelo só tem acesso a duas ferramentas: `buscar_candidatos` (devolve as candidatas já filtradas e com
-os números) e `propor_remarcacao` (guarda um rascunho, não envia nada). `confirmar_movimento` não está
-na lista que o modelo recebe, e um teste garante isso.
+**A IA só entra para entender a resposta da cliente.** A escolha já foi feita pelo modelo
+(`src/agente.py`, com as ferramentas `buscar_candidatos` e `propor_remarcacao`), mas nos casos difíceis
+ele às vezes se afastou do valor esperado para pior, e os critérios que ensinaríamos a ele são os mesmos
+da conta. Por isso a escolha passou para o código (D25), com uma chamada à IA a menos por proposta.
+O `agente.py` continua no projeto para comparação em `python avaliar_ia.py`; ele nunca recebe
+`confirmar_movimento`, e um teste garante isso.
 
 ## Resultados
 
@@ -124,7 +127,7 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 104 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
+| `pytest` | 116 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
 | `streamlit run app.py` | O site: página pública do salão em `/`, painel em `/painel` e clientes e equipe em `/equipe` | Sim (no painel) |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
 | `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |
@@ -169,9 +172,10 @@ Tailscale, ou servidor pago), com o passo a passo de cada uma, estão em [docs/h
 
 ## Decisões de projeto
 
-- **Contas no código, escolha no LLM.** Taxa de falta, valor esperado e filtros são contas que precisam
-  dar sempre o mesmo resultado e ser testadas. O modelo entra onde há texto: escolher entre as candidatas que
-  sobraram, escrever a mensagem e entender a resposta da cliente.
+- **Contas e escolha no código, interpretação na IA.** Taxa de falta, valor esperado, filtros e a escolha
+  precisam dar sempre o mesmo resultado e ser testados. A IA entra onde há texto livre de verdade: entender
+  o que a cliente respondeu ("hj n", "só depois das 17h", "quanto custa?"). Nos testes difíceis ela
+  acertou 120 de 120 interpretações (`docs/avaliacao-ia.md`).
 - **Poucos dados pessoais.** O cadastro tem só nome, visitas, faltas e a nota de 0 a 10. Para o modelo vai
   só o primeiro nome, sem telefone nem anotações. Não guardamos distância: a própria cliente diz se
   consegue chegar, e o salão define um aviso mínimo (`AVISO_MINIMO_H` no `.env`, padrão 1h).

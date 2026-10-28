@@ -13,8 +13,8 @@ import copy
 from dataclasses import dataclass
 
 from src.agenda_externa import AgendaExterna, SemAgendaExterna
-from src.agente import decidir as decidir_com_modelo
 from src.canal import CanalSimulado
+from src.escolha import decidir_pelo_codigo
 from src.cascata import MAX_PROF, TEXTO_LIMITE, Passo, pergunta_de_esclarecimento, sem_candidatas
 from src.ferramentas import aplicar_movimento_aprovado, buscar_candidatos, liberar_horario
 from src.historico import Historico, SemHistorico
@@ -23,7 +23,7 @@ from src.interpretacao import interpretar as interpretar_com_modelo
 from src.modelos import Candidato, Cenario, Decisao
 
 FINAIS = ("decidiu_nao_agir", "limite_atingido", "rejeitado")
-ETAPAS = ("Filtros duros", "Score", "Poda", "Decisão do agente", "Resposta interpretada", "Aprovação humana")
+ETAPAS = ("Filtros duros", "Score", "Poda", "Escolha", "Resposta interpretada", "Aprovação humana")
 MENSAGEM_SEM_RESPOSTA = "Oi! Como não conseguimos falar a tempo, vou seguir com a agenda. Seu horário continua o mesmo, tá? Até lá!"
 
 
@@ -42,7 +42,7 @@ class Fluxo:
     def __init__(
         self,
         cenario: Cenario,
-        decidir=decidir_com_modelo,
+        decidir=decidir_pelo_codigo,  # a escolha é do código (D25); o modelo só interpreta respostas
         interpretar=interpretar_com_modelo,
         agenda_externa: AgendaExterna | None = None,
         historico: Historico | None = None,
@@ -80,7 +80,7 @@ class Fluxo:
         return {"candidatos_calculados": 3, "aguardando_resposta": 4, "aguardando_aprovacao": 5}.get(self.estado, 2)
 
     def pedir_decisao(self) -> None:
-        """Botão "Pedir decisão ao agente": chama o modelo e envia a mensagem pelo canal."""
+        """Botão "Escolher e enviar proposta": escolhe a cliente e envia a mensagem pelo canal."""
         self._exigir("candidatos_calculados")
         self.decisao = self.decidir(self.cenario, self.slot_atual, self.recusados, self.profundidade)
         self.interpretacao = None
