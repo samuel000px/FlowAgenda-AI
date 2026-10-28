@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {seedAdmin,actAdmin,seek,tickAdmin,message,at} from '../lib/flowagenda.mjs';
-import {verifySignature,normalizeConfig,queueNewMessages,queueMessage,windowOpen,recipientError,payloadFor,receiveMessage,applyStatus,metaCall,replyContext,prepareDelivery} from '../lib/whatsapp-core.mjs';
+import {awaitingReply,verifySignature,normalizeConfig,queueNewMessages,queueMessage,windowOpen,recipientError,payloadFor,receiveMessage,applyStatus,metaCall,replyContext,prepareDelivery} from '../lib/whatsapp-core.mjs';
 const now=Date.parse('2026-10-28T08:00:00-03:00');
 const config={phoneId:'12345678',version:'v26.0',allowed:['5581999999999','5581888888888'],accessToken:'test-token-not-a-real-credential',appSecret:'a'.repeat(32),enabled:true,verified:now};
 function ready(){
@@ -106,4 +106,13 @@ test('business reminder template carries appointment information and cancellatio
 
 test('opt-out removes contact consent without cancelling bookings and blocks subsequent sends',()=>{
  const {s,m}=ready(),before=structuredClone(s.appointments);receiveMessage(s,event('PARAR'),business,now+2000);assert.equal(s.clients[0].consent,false);assert.deepEqual(s.appointments,before);assert.match(recipientError(s,'C1',business),/autorização/);
+});
+
+test('conversa que o robô não resolve conta em "Responder WhatsApp" até alguém da equipe responder',()=>{
+ const s=seedAdmin();s.clients=[{id:'C1',name:'Ana',phone:config.allowed[0],consent:true,visits:0,missed:0,accepted:0,proposals:0}];
+ receiveMessage(s,event('Quero falar com uma atendente, por favor'),config,now+2000);
+ receiveMessage(s,event('oi',{id:'wamid.outro',from:'5581777777777'}),{...config,allowed:[...config.allowed,'5581777777777']},now+2000);
+ assert.deepEqual(awaitingReply(s).sort(),['C1','wa:5581777777777']);
+ actAdmin(s,'message',{client_id:'C1',text:'Oi, Ana! Sou a Lia, como posso ajudar?'},now+3000);
+ assert.deepEqual(awaitingReply(s),['wa:5581777777777']);
 });

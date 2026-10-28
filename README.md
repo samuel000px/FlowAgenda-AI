@@ -57,6 +57,12 @@ npm run deploy
 
 Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o app `santa-cor` e gera a chave que assina o login. No fim ele mostra o endereço (`https://santa-cor.<sua-conta>.workers.dev`) e quais segredos faltam. Cadastre a senha e a chave do Gemini, uma vez, com `npx wrangler secret put APP_SENHA --name santa-cor` e `npx wrangler secret put GEMINI_API_KEY --name santa-cor`. Nenhum dado publicado é apagado nas atualizações.
 
+## Painel da gerência
+
+- **Receita prevista** soma o valor de cada atendimento confirmado do dia escolhido na agenda (o valor gravado na hora de marcar, com desconto e adicionais) e tira as faltas registradas. Pedidos do site ainda não aceitos não entram.
+- **Responder WhatsApp** conta as conversas cuja última mensagem é da cliente e que o atendimento automático não resolveu (por exemplo, quem pediu para falar com alguém). Com uma ou mais, o cartão fica em alerta e aparece um aviso que leva ao Atendimento; some quando alguém da equipe responde.
+- **Lista de espera** fica numa faixa acima da agenda, que usa a largura toda. Quem demonstrou interesse numa data cheia aparece primeiro, marcado como prioridade, e cada entrada avisa quando abre uma vaga daquele serviço no dia.
+
 ## Organizar a operação
 
 1. Em **Configurações**, informe o nome da esmalteria, a antecedência mínima, o tamanho do bloco e o funcionamento de cada dia.
@@ -157,6 +163,7 @@ Permissões da equipe, verificadas no servidor:
 - A cliente é buscada por nome (sem ligar para acento) ou por parte do número; a busca mostra só o nome e o final do número. Cadastro novo com o número de outra cliente é bloqueado e oferece usar o cadastro dela; com o mesmo nome, pede para escolher a existente ou confirmar que é outra pessoa. Se a cliente da lista trocou de número, o novo substitui o antigo (fica registrado nas atividades). Um número que já é de outra cliente não pode ser usado.
 - A resposta sobre antecipar, dada ali pessoalmente, atualiza o cadastro da cliente.
 - No cadastro da gerência vale o mesmo: número repetido é recusado e nome repetido pede confirmação.
+- **Data cheia**: se não houver horário livre no dia, a funcionária pode tocar em "Demonstrar interesse nesta data" e colocar a cliente na lista de espera daquele dia, com prioridade. No site, a cliente faz o mesmo deixando nome e celular.
 - Aprovar remarcações já aceitas pela cliente que envolvam a profissional escolhida (horário de origem ou destino). Disponibilidade e conflitos são conferidos novamente; a aprovação registra a responsável e mantém a sincronização Google e WhatsApp existente.
 - Não pode cancelar, reagendar livremente, rejeitar propostas, registrar faltas, modificar equipe/configurações, enviar mensagens avulsas ou acessar credenciais da integração.
 

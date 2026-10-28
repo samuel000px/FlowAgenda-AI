@@ -1,6 +1,6 @@
 import {env} from 'cloudflare:workers';
 import {tickAdmin,upgrade} from '../../../lib/flowagenda.mjs';
-import {byToken,cancelByToken,catalog,changeWithWhatsApp,openDays,publicView,requestBooking,slots} from '../../../lib/agendamento.mjs';
+import {byToken,cancelByToken,catalog,changeWithWhatsApp,openDays,publicView,requestBooking,requestInterest,slots} from '../../../lib/agendamento.mjs';
 import {syncCalendar} from '../../../lib/google-calendar';
 import {connection,flushWhatsApp} from '../../../lib/whatsapp';
 import {sameOrigin} from '../../../lib/admin-auth';
@@ -47,6 +47,7 @@ export async function POST(req:Request){
    await flushWhatsApp(env,ROOM);
    return json(publicView(state,result));
   }
+  if(p.action==='interest'){const {result}=await change(s=>requestInterest(s,p));return json(result);}
   const {state,result}=await change(s=>requestBooking(s,p));
   return json({token:result[0].token,...publicView(state,result[0])});
  }catch(e){return json({error:(e as Error).message},400);}

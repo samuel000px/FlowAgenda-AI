@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {actAdmin,candidates,seedAdmin,tickAdmin,upgrade} from '../lib/flowagenda.mjs';
-import {bookInStore,byToken,cancelByToken,catalog,changeWithWhatsApp,openDays,phoneDigits,publicView,readCart,requestBooking,slots} from '../lib/agendamento.mjs';
+import {bookInStore,byToken,cancelByToken,catalog,changeWithWhatsApp,interestInStore,openDays,phoneDigits,publicView,readCart,requestBooking,requestInterest,slots} from '../lib/agendamento.mjs';
 
 // Segunda-feira, 26/10/2026, 8h em Brasília: a agenda abre na terça.
 const now=Date.parse('2026-10-26T08:00:00-03:00');
@@ -284,4 +284,32 @@ test('agendas antigas: nota 0 vira "não quer antecipar" e a nota some do cadast
   assert.deepEqual(s.clients.map(c=>[c.consent,'willingness' in c]),[[false,false],[true,false]]);
   actAdmin(s,'client_save',{name:'Nova',phone:'',consent:true},now);
   assert.equal(s.clients.at(-1).consent,true);
+});
+
+// Agenda da Nina cheia na terça: todos os inícios ocupados por outra cliente.
+function cheia(s){
+  s.clients.push({id:'CX',name:'Ocupada',phone:'',consent:false,preferred:'',visits:0,missed:0,proposals:0,accepted:0});
+  for(const x of slots(s,manicure('P2'),TERCA,now))if(slots(s,manicure('P2'),TERCA,now).some(y=>y.start===x.start))actAdmin(s,'book',{client_id:'CX',service_id:'S1',staff_id:'P2',date:TERCA,start:x.start},now);
+  assert.equal(slots(s,manicure('P2'),TERCA,now).length,0);
+}
+
+test('data cheia pelo site: a cliente entra na lista de espera com prioridade, sem mexer no cadastro',()=>{
+  const s=salao(),c=antiga(s);cheia(s);
+  const r=requestInterest(s,{cart:manicure('P2'),date:TERCA,name:'Fulana',phone:'(83) 99999-0000',earlier:false},now);
+  const w=s.waitlist.at(-1);
+  assert.deepEqual([w.client_id,w.priority,w.source,w.staff_id,w.name],['C1',1,'site','P2','Fulana']);
+  assert.deepEqual([c.consent,c.name],[true,'Maria Joaquina']);
+  assert.equal(r.name,'Fulana','a resposta não revela o nome do cadastro');
+  assert.throws(()=>requestInterest(s,{cart:manicure('P2'),date:TERCA,name:'Fulana',phone:'83999990000'},now),/Já está na lista de espera/);
+  assert.throws(()=>requestInterest(s,{cart:manicure('P1'),date:TERCA,name:'Bia',phone:'83988887777'},now),/ainda tem horário livre/);
+});
+
+test('data cheia na loja: entra na lista de espera, com as mesmas regras contra cadastro repetido',()=>{
+  const s=salao();antiga(s);cheia(s);
+  const base={cart:manicure('P2'),date:TERCA,earlier:true};
+  assert.throws(()=>interestInStore(s,{...base,name:'Maria Joaquina'},'Lia',now),/Já existe Maria Joaquina/);
+  const w=interestInStore(s,{...base,client_id:'C1'},'Lia',now);
+  assert.deepEqual([w.priority,w.source],[1,'loja']);
+  assert.match(s.events[0].text,/Lia pôs Maria Joaquina na lista de espera/);
+  assert.throws(()=>interestInStore(s,{...base,cart:manicure('P1'),client_id:'C1'},'Lia',now),/ainda tem horário livre/);
 });

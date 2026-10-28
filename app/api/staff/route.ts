@@ -12,7 +12,7 @@ export async function GET(req:Request){
   const q=new URL(req.url).searchParams,cart=q.get('cart');
   if(q.has('clientes'))return json({clients:staffClients(s.state,s.staffId,String(q.get('clientes')).slice(0,100))});
   // Com carrinho, devolve só os horários livres para marcar na loja.
-  if(cart){if(cart.length>2000)throw Error('Carrinho grande demais.');return json({slots:staffSlots(s.state,s.staffId,JSON.parse(cart),String(q.get('date')||''))});}
+  if(cart){if(cart.length>2000)throw Error('Carrinho grande demais.');return json(staffSlots(s.state,s.staffId,JSON.parse(cart),String(q.get('date')||'')));}
   return json(staffView(s.state,s.staffId,q.get('date')||undefined));
  }catch(e){return json({error:(e as Error).message},400);}
 }

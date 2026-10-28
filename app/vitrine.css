@@ -173,3 +173,8 @@
 .vitrine .rodape .miudo{font-size:.7rem;color:oklch(0.48 0.05 15 / .5);margin-top:1.5rem}
 .vitrine .equipe{display:inline-block;margin-top:.25rem;font-size:.7rem;font-weight:500;color:var(--cobre)}
 .vitrine .extras{font-size:.8rem;color:var(--malva-60);margin:.6rem .5rem 0}
+
+/* Data cheia no agendamento: aviso e o caminho para a lista de espera. */
+.vitrine .data-cheia{display:grid;gap:.75rem;padding:1rem 1.1rem;border-radius:18px;background:oklch(1 0 0 / .6);border:.8px solid oklch(0.68 0.08 40 / .35)}
+.vitrine .data-cheia p{font-size:.9rem;color:var(--malva-70)}
+.vitrine .data-cheia strong{color:var(--malva)}

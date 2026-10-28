@@ -48,6 +48,8 @@ export default function Agendar(){
   const [itens,setItens]=useState<Item[]>([]),[aberto,setAberto]=useState(''),[opcao,setOpcao]=useState<number|undefined>(),[extras,setExtras]=useState<string[]>([]);
   const [equipe,setEquipe]=useState<Record<string,string>>({}),[pagina,setPagina]=useState(0),[data,setData]=useState(''),[inicio,setInicio]=useState<number|null>(null);
   const [horarios,setHorarios]=useState<Horario[]|null>(null),[pedido,setPedido]=useState<Record<string,any>|null>(null);
+  // Data cheia: a cliente pode deixar nome e celular para entrar na lista de espera do dia.
+  const [querEspera,setQuerEspera]=useState(false),[naEspera,setNaEspera]=useState<Record<string,any>|null>(null);
 
   useEffect(()=>{
     fetch('/api/agendar').then(r=>r.json()).then((d:any)=>{
@@ -64,7 +66,7 @@ export default function Agendar(){
 
   // Sempre que o carrinho, as profissionais ou o dia mudam, busca os horários de novo.
   useEffect(()=>{
-    setInicio(null);setHorarios(null);
+    setInicio(null);setHorarios(null);setQuerEspera(false);
     if(!chave)return;
     let valido=true;
     fetch(`/api/agendar?cart=${encodeURIComponent(chave)}&date=${data}`).then(r=>r.json()).then((d:any)=>{if(valido){if(d.error)setErro(d.error);setHorarios(d.slots||[]);}});
@@ -84,6 +86,24 @@ export default function Agendar(){
     }catch(e){setErro((e as Error).message);}
     finally{setOcupado(false);}
   }
+
+  async function esperar(e:FormEvent<HTMLFormElement>){
+    e.preventDefault();setOcupado(true);setErro('');
+    const f=new FormData(e.currentTarget);
+    try{
+      const r=await fetch('/api/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'interest',cart:carrinho,date:data,name:f.get('name'),phone:f.get('phone'),earlier:f.has('earlier')})});
+      const d:any=await r.json();if(!r.ok)throw Error(d.error);setNaEspera(d);scrollTo(0,0);
+    }catch(e){setErro((e as Error).message);}
+    finally{setOcupado(false);}
+  }
+
+  if(naEspera)return <div className="sucesso">
+    <div className="selo-ok" aria-hidden="true">🗓️</div>
+    <header className="titulo-pagina"><h1>Você está na lista de espera</h1></header>
+    <p>Obrigada, {naEspera.name}! {semana(naEspera.date)}, {dia(naEspera.date)} está cheio, mas você entrou na lista de espera com prioridade. Se abrir um horário, a gente chama você.</p>
+    <a className="botao" href={linkWhatsapp(salao.whatsapp,`Olá! Sou ${naEspera.name} e entrei na lista de espera de ${dia(naEspera.date)} (${naEspera.services.join(' + ')}).`)} target="_blank" rel="noopener">Falar com a gente no WhatsApp</a>
+    <a className="botao claro" href="/agendar">Ver outros dias</a>
+  </div>;
 
   if(pedido){
     const link=`${location.origin}/a/${pedido.token}`;
@@ -168,8 +188,17 @@ export default function Agendar(){
       <span className="rotulo">4 · Horário</span>
       {horarios===null?<p className="vazio">Buscando horários…</p>
         :horarios.length?<div className="chips">{horarios.map(h=><button key={h.start} className="chip" aria-pressed={inicio===h.start} onClick={()=>setInicio(h.start)}>{h.time}</button>)}</div>
-        :<p className="vazio">Nenhum horário livre para tudo isso neste dia. Experimente outro dia ou "Sem preferência".</p>}
+        :<div className="data-cheia"><p><strong>Data cheia.</strong> Não há horário livre para tudo isso neste dia. Experimente outro dia ou “Sem preferência”, ou deixe seu interesse: você entra na lista de espera com prioridade.</p>{!querEspera&&<button className="botao claro" onClick={()=>setQuerEspera(true)}>Demonstrar interesse nesta data</button>}</div>}
     </div>}
+
+    {querEspera&&horarios?.length===0&&<form className="passo formulario" onSubmit={esperar}>
+      <div className="resumo"><p><strong>Lista de espera · {semana(data)}, {dia(data)}</strong></p>{calculados.map(x=><p key={x.svc.id}>{x.svc.name}</p>)}</div>
+      <label>Seu nome<input type="text" name="name" required minLength={2} maxLength={100} autoComplete="name"/></label>
+      <label>Celular com DDD<input type="tel" name="phone" required inputMode="tel" autoComplete="tel" placeholder="(83) 99999-9999"/></label>
+      <label className="marcar"><input type="checkbox" name="earlier"/>Se abrir um horário mais cedo, quero ser avisada.</label>
+      {erro&&<p className="aviso" role="alert">{erro}</p>}
+      <button className="botao" type="submit" disabled={ocupado}>{ocupado?'Enviando…':'Entrar na lista de espera'}</button>
+    </form>}
 
     {horario&&<form className="passo formulario" onSubmit={enviar}>
       <div className="resumo"><p><strong>{semana(data)}, {dia(data)}</strong></p>{horario.plan.map((x,i)=><p key={i}>{hora(x.start)}–{hora(x.end)} · {calculados[i].svc.name} com {nome(x.staff)}</p>)}<p>Total: <strong>{reais(total)}</strong></p></div>
@@ -179,6 +208,6 @@ export default function Agendar(){
       {erro&&<p className="aviso" role="alert">{erro}</p>}
       <button className="botao" type="submit" disabled={ocupado}>{ocupado?'Enviando…':'Pedir horário'}</button>
     </form>}
-    {erro&&!horario&&<p className="aviso passo" role="alert">{erro}</p>}
+    {erro&&!horario&&!querEspera&&<p className="aviso passo" role="alert">{erro}</p>}
   </>;
 }

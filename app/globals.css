@@ -45,3 +45,25 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .yes-no{border:0;padding:0;margin:0 0 17px}
 .yes-no .row{gap:22px;margin-top:8px}
 .yes-no .check-field{margin:0;font-size:13px;color:inherit}
+
+/* Cartões que levam a outra aba; "Responder WhatsApp" fica em alerta quando alguém espera. */
+.stat-link{display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.stat-link:hover{background:white;border-color:#d9b8be;box-shadow:0 2px 10px #3623260d}
+.stat-card.is-alert{background:#fff3ef;border-color:#eba48f;box-shadow:0 0 0 3px #eba48f33}
+.stat-card.is-alert:hover{background:#ffece5}
+.stat-card.is-alert strong,.stat-card.is-alert svg{color:#b3402a}
+.stat-card.is-alert .row span{color:#9a3a26;font-weight:600}
+.wa-banner{background:#fff1ec;border-color:#f3c4b5;color:#8a3420}
+.wa-banner:hover{background:#ffe7df}
+.wa-banner small{color:#a35a48}
+
+/* Lista de espera em faixa acima da agenda, que agora usa a largura toda. */
+.waitlist-strip{margin-bottom:22px}
+.waitlist-strip .panel-heading p{font-size:11px;margin-top:4px}
+.waitlist-strip h2{display:flex;align-items:center;gap:8px}
+.waitlist-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));border-top:1px solid #f8eff1}
+.waitlist-items .waiting-row{border-top:0;border-right:1px solid #f8eff1;border-bottom:1px solid #f8eff1}
+.waiting-row.is-priority{box-shadow:inset 3px 0 0 #d9a441}
+.waiting-row small{display:block}
+.waiting-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.waitlist-strip .empty-inline{padding:4px 22px 18px}

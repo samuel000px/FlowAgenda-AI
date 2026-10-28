@@ -131,3 +131,10 @@
 .staff-match button{width:100%;min-height:48px}
 .staff-match .check-field{margin:0;font-size:14px;color:var(--ink)}
 .staff-step>.text-button{margin-top:10px;min-height:44px}
+
+/* Data cheia: aviso e o botão para entrar na lista de espera daquele dia. */
+.staff-full{display:grid;gap:12px;padding:14px 16px;border-radius:12px;border:1px solid #e9c9a8;background:#fdf6ee}
+.staff-full p{font-size:14px;line-height:1.5;margin:0}
+.staff-full p svg{vertical-align:-3px;margin-right:6px;color:#b0763a}
+.staff-full strong{margin-right:4px}
+.staff-full button{width:100%;min-height:50px}

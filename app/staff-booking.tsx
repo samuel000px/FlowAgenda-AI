@@ -2,7 +2,7 @@
 // Marcar horário pela funcionária, pensado para o celular: para quem chegou na loja ou para outro dia.
 // Serviço, com quem, dia, horário, cliente e se ela quer antecipar. Entra direto na agenda, confirmado.
 import {useEffect,useState,type FormEvent} from 'react';
-import {CalendarPlus,UserPlus} from 'lucide-react';
+import {CalendarPlus,CalendarX2,UserPlus} from 'lucide-react';
 import {nameKey,phoneKey,today} from '../lib/flowagenda.mjs';
 type Row=Record<string,any>;
 const amanha=()=>{const d=new Date(today()+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+1);return d.toISOString().slice(0,10);};
@@ -23,6 +23,8 @@ function useClientes(texto:string){
 export default function StaffBooking({catalog,me,busy,act,onDone}:{catalog:Row,me:string,busy:boolean,act:(action:string,p:Row,message?:string)=>Promise<boolean>,onDone:(date:string)=>void}){
  const [servico,setServico]=useState(''),[opcao,setOpcao]=useState(''),[pessoa,setPessoa]=useState(''),[data,setData]=useState(today()),[inicio,setInicio]=useState<number|null>(null);
  const [horarios,setHorarios]=useState<Row[]|null>(null),[erro,setErro]=useState(''),[antecipar,setAntecipar]=useState<boolean|null>(null);
+ // Data cheia: em vez de horário, a cliente entra na lista de espera daquele dia (espera=true).
+ const [fechado,setFechado]=useState(false),[espera,setEspera]=useState(false);
  // Cliente: busca no cadastro, uma da lista (cliente) ou uma nova (nova=true, com nome e celular).
  const [busca,setBusca]=useState(''),[cliente,setCliente]=useState<Row|null>(null),[nova,setNova]=useState(false),[nome,setNome]=useState(''),[celular,setCelular]=useState(''),[outra,setOutra]=useState(false);
  const achadas=useClientes(cliente?'':nova?nome:busca),pelonumero=useClientes(nova&&phoneKey(celular).length>=12?celular:'');
@@ -36,11 +38,11 @@ export default function StaffBooking({catalog,me,busy,act,onDone}:{catalog:Row,m
  function limpar(){setCliente(null);setNova(false);setBusca('');setNome('');setCelular('');setOutra(false);}
 
  useEffect(()=>{
-  setInicio(null);setHorarios(null);setErro('');
+  setInicio(null);setHorarios(null);setErro('');setEspera(false);
   if(!servico||!pessoa||!data||falta)return;
   let valido=true;
   const cart={items:[{service:servico,...(opcao!==''?{variant:Number(opcao)}:{})}],staff:{[escolhido.group]:pessoa}};
-  fetch(`/api/staff?cart=${encodeURIComponent(JSON.stringify(cart))}&date=${data}`).then(r=>r.json()).then((d:any)=>{if(!valido)return;if(d.error)setErro(d.error);setHorarios(d.slots||[]);}).catch(()=>{if(valido)setErro('Não foi possível buscar os horários.');});
+  fetch(`/api/staff?cart=${encodeURIComponent(JSON.stringify(cart))}&date=${data}`).then(r=>r.json()).then((d:any)=>{if(!valido)return;if(d.error)setErro(d.error);setFechado(!!d.closed);setHorarios(d.slots||[]);}).catch(()=>{if(valido)setErro('Não foi possível buscar os horários.');});
   return()=>{valido=false};
  },[servico,opcao,pessoa,data]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -49,7 +51,9 @@ export default function StaffBooking({catalog,me,busy,act,onDone}:{catalog:Row,m
   const cart={items:[{service:servico,...(opcao!==''?{variant:Number(opcao)}:{})}],staff:{[escolhido.group]:pessoa}};
   const hora=horarios?.find(h=>h.start===inicio)?.time,quem=(cliente?.name||nome).split(' ')[0];
   const p=cliente?{client_id:cliente.id,phone:celular}:{name:nome,phone:celular,newClient:outra};
-  if(await act('book_in_store',{...p,cart,date:data,start:inicio,earlier:antecipar},`Horário marcado: ${quem}, ${rotulo(data).toLowerCase()} às ${hora}. Já está na agenda.`)){
+  const ok=espera?await act('waitlist_interest',{...p,cart,date:data,earlier:antecipar},`${quem} entrou na lista de espera de ${rotulo(data).toLowerCase()}, com prioridade.`)
+   :await act('book_in_store',{...p,cart,date:data,start:inicio,earlier:antecipar},`Horário marcado: ${quem}, ${rotulo(data).toLowerCase()} às ${hora}. Já está na agenda.`);
+  if(ok){
    setServico('');setOpcao('');setPessoa('');setAntecipar(null);limpar();onDone(data);
   }
  }
@@ -72,11 +76,13 @@ export default function StaffBooking({catalog,me,busy,act,onDone}:{catalog:Row,m
    {escolhido&&!falta&&<fieldset className="staff-step"><legend>Horário</legend>
     {horarios===null?<p className="muted small">{erro||'Buscando horários livres…'}</p>
      :horarios.length?<div className="staff-slots">{horarios.map(h=><button type="button" key={h.start} aria-pressed={inicio===h.start} disabled={busy} onClick={()=>setInicio(h.start)}>{h.time}</button>)}</div>
-     :<p className="muted small">{erro||'Nenhum horário livre neste dia. Tente outro dia ou outra profissional.'}</p>}
+     :erro?<p className="muted small">{erro}</p>
+     :fechado?<p className="muted small">O salão não abre neste dia. Escolha outra data.</p>
+     :<div className="staff-full"><p><CalendarX2 size={18}/><strong>Data cheia</strong>{equipe.length>1?` com ${equipe.find((x:Row)=>x.id===pessoa)?.name}. Veja outra profissional ou`:'.'} Se ela quiser este dia, entra na lista de espera com prioridade.</p>{!espera&&<button type="button" className="secondary" disabled={busy} onClick={()=>setEspera(true)}>Demonstrar interesse nesta data</button>}</div>}
    </fieldset>}
 
-   {inicio!==null&&<>
-    <fieldset className="staff-step"><legend>Cliente</legend>
+   {(inicio!==null||espera)&&<>
+    <fieldset className="staff-step"><legend>{espera?'Quem quer este dia':'Cliente'}</legend>
      {cliente?<>
       <div className="staff-picked"><div><strong>{cliente.name}</strong><small>Celular {final(cliente)}</small></div><button type="button" className="text-button" disabled={busy} onClick={limpar}>Trocar</button></div>
       <label className="field"><span>{cliente.phoneEnd?'Ela trocou de número? Novo celular (opcional)':'Celular (opcional)'}</span><input type="tel" inputMode="tel" autoComplete="off" placeholder="(83) 99999-9999" maxLength={20} value={celular} onChange={e=>setCelular(e.target.value)} disabled={busy}/>{cliente.phoneEnd&&celular&&<small>O número antigo (final {cliente.phoneEnd}) é apagado e fica só este.</small>}</label>
@@ -94,7 +100,7 @@ export default function StaffBooking({catalog,me,busy,act,onDone}:{catalog:Row,m
     </fieldset>
     {pronta&&<>
      <fieldset className="staff-step"><legend>Gostaria de antecipar caso encontrássemos outro horário mais cedo?</legend><div className="staff-yesno">{[[true,'Sim'],[false,'Não']].map(([v,t])=><button type="button" key={t as string} aria-pressed={antecipar===v} disabled={busy} onClick={()=>setAntecipar(v as boolean)}>{t as string}</button>)}</div></fieldset>
-     <button type="submit" className="staff-submit" disabled={busy||antecipar===null}><CalendarPlus size={18}/>{busy?'Marcando…':'Marcar horário'}</button>
+     <button type="submit" className="staff-submit" disabled={busy||antecipar===null}>{espera?<CalendarX2 size={18}/>:<CalendarPlus size={18}/>}{busy?'Salvando…':espera?'Colocar na lista de espera':'Marcar horário'}</button>
     </>}
    </>}
   </form>
