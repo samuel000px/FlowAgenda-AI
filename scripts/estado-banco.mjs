@@ -11,7 +11,7 @@ import './sites-env.mjs';
 export const SALA = 'flowagenda';
 const aspas = (v) => `'${String(v).replaceAll("'", "''")}'`;
 
-export function banco(remoto) {
+export function banco(remoto, SALA_ = SALA) {
   const base = ['--import', './scripts/sites-env.mjs', './node_modules/wrangler/bin/wrangler.js', 'd1', 'execute', 'DB', '--config', 'dist/server/wrangler.json',
     ...(remoto ? ['--remote'] : ['--local', '--persist-to', '.wrangler/state'])];
   const d1 = (args) => {
@@ -22,24 +22,24 @@ export function banco(remoto) {
   };
   return {
     /** O registro da agenda ({state, version}) ou undefined se ninguém entrou no painel ainda. */
-    ler() { return d1(['--command', `SELECT state,version FROM rooms WHERE id=${aspas(SALA)}`])[0]; },
+    ler() { return d1(['--command', `SELECT state,version FROM rooms WHERE id=${aspas(SALA_)}`])[0]; },
     /** Grava o estado; com `linha`, só se ninguém salvou no meio do caminho. */
     gravar(estado, linha) {
       const json = JSON.stringify(estado), agora = Date.now(), pedacos = json.match(/[\s\S]{1,40000}/g);
       const sql = [
         'CREATE TABLE IF NOT EXISTS import_staging (id TEXT PRIMARY KEY, data TEXT NOT NULL);',
-        `DELETE FROM import_staging WHERE id=${aspas(SALA)};`,
-        `INSERT INTO import_staging (id, data) VALUES (${aspas(SALA)}, '');`,
-        ...pedacos.map((p) => `UPDATE import_staging SET data = data || ${aspas(p)} WHERE id=${aspas(SALA)};`),
+        `DELETE FROM import_staging WHERE id=${aspas(SALA_)};`,
+        `INSERT INTO import_staging (id, data) VALUES (${aspas(SALA_)}, '');`,
+        ...pedacos.map((p) => `UPDATE import_staging SET data = data || ${aspas(p)} WHERE id=${aspas(SALA_)};`),
         linha
-          ? `UPDATE rooms SET state=(SELECT data FROM import_staging WHERE id=${aspas(SALA)}), version=version+1, updated=${agora} WHERE id=${aspas(SALA)} AND version=${Number(linha.version)};`
-          : `INSERT INTO rooms (id, manager, client, state, version, created, updated) VALUES (${aspas(SALA)}, ${aspas(randomBytes(16).toString('hex'))}, ${aspas(randomBytes(16).toString('hex'))}, (SELECT data FROM import_staging WHERE id=${aspas(SALA)}), 0, ${agora}, ${agora});`,
-        `DELETE FROM import_staging WHERE id=${aspas(SALA)};`,
+          ? `UPDATE rooms SET state=(SELECT data FROM import_staging WHERE id=${aspas(SALA_)}), version=version+1, updated=${agora} WHERE id=${aspas(SALA_)} AND version=${Number(linha.version)};`
+          : `INSERT INTO rooms (id, manager, client, state, version, created, updated) VALUES (${aspas(SALA_)}, ${aspas(randomBytes(16).toString('hex'))}, ${aspas(randomBytes(16).toString('hex'))}, (SELECT data FROM import_staging WHERE id=${aspas(SALA_)}), 0, ${agora}, ${agora});`,
+        `DELETE FROM import_staging WHERE id=${aspas(SALA_)};`,
       ];
       const pasta = mkdtempSync(join(tmpdir(), 'santa-cor-'));
       try { const caminho = join(pasta, 'gravar.sql'); writeFileSync(caminho, sql.join('\n')); d1(['--file', caminho]); }
       finally { rmSync(pasta, { recursive: true, force: true }); }
-      const [conferido] = d1(['--command', `SELECT length(state) AS tamanho FROM rooms WHERE id=${aspas(SALA)}`]);
+      const [conferido] = d1(['--command', `SELECT length(state) AS tamanho FROM rooms WHERE id=${aspas(SALA_)}`]);
       if (conferido?.tamanho !== json.length) throw new Error('A agenda mudou durante a gravação (alguém salvou ao mesmo tempo). Nada foi perdido: rode de novo.');
       return json.length;
     },
