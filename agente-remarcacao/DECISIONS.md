@@ -188,3 +188,19 @@ a não ser quando um item abaixo diz outra coisa.
   no Community Cloud o disco é apagado quando o app reinicia.
 - Ficou de fora: contas de usuário separadas (só há uma pessoa aprovando) e login pelo Google (mais
   configuração do que o caso pede agora).
+
+## D19. Site com página pública e painel escondido
+
+- Decisão: `app.py` virou a entrada de um site com três páginas e nenhum menu (`st.navigation` com
+  `position="hidden"`): `/` é a página pública do salão (`paginas/inicio.py`), `/painel` é a remarcação
+  e `/equipe` mostra clientes e equipe. As duas últimas pedem senha (`paginas/comum.py`). A página pública
+  não lê nada das clientes e não tem link para o painel (um teste confere).
+- Visual da página pública: um bloco "vinho de esmalte" (#7A1E48) com texto branco, que fica igual
+  nos temas claro e escuro, com o brilho de um esmalte recém-passado. Nome em Gloock e texto em Figtree.
+  Uma coluna só, pensada para celular, e o botão "Agendar pelo WhatsApp" logo abaixo do nome.
+- Dados do salão em `data/salao.json` (exemplo, no git) com `data/salao.local.json` por cima (dados
+  reais, fora do git). O botão usa um link `wa.me`: abre o WhatsApp do celular de quem clica, com a
+  mensagem escrita, sem API e sem custo.
+- Motivo: o autor pediu um site do salão que leve ao WhatsApp, com o painel do administrador escondido
+  e protegido por senha.
+- Ficou de fora: login separado por pessoa e editar clientes pelo site (fica para o Google Planilhas).

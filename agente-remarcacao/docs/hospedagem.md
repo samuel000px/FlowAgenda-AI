@@ -4,6 +4,12 @@
 > dona do salão testar pelo celular e aprender o fluxo. Para operar a agenda de verdade, ainda falta o
 > "modo real": o relógio de verdade no lugar do `agora` fixo e a agenda vindo do Google Agenda.
 
+## O que fica público e o que fica protegido
+
+- `/` é a página do salão, aberta para qualquer pessoa. É ela que vai no Instagram e no status do WhatsApp.
+- `/painel` e `/equipe` não aparecem em nenhum link. "Escondido" só evita que alguém encontre por
+  acaso; **quem protege de verdade é a senha**.
+
 ## 1. A senha (vale para qualquer opção)
 
 A interface pede senha quando a variável `APP_SENHA` está configurada. Sem ela, o app abre direto, o
@@ -35,7 +41,7 @@ quando o histórico for para o Google Planilhas.
 2. **Create app**, depois **Deploy a public app from GitHub**:
    - Repository: `samuel000px/FlowAgenda-AI` (ou o seu fork)
    - Branch: `main`
-   - Main file path: `agente-remarcacao/app.py`
+   - Main file path: `agente-remarcacao/app.py` (ele abre a página pública; o painel fica em `/painel`)
 3. Em **Advanced settings**, escolha Python 3.12 e cole os segredos (formato TOML):
    ```toml
    GEMINI_API_KEY = "sua-chave"

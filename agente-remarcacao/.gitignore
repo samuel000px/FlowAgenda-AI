@@ -21,3 +21,6 @@ logs/
 
 # registro de visitas, faltas e propostas: dados de clientes reais
 registro/
+
+# dados reais do salão para a página pública (telefone, endereço)
+data/salao.local.json

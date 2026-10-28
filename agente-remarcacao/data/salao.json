@@ -1,0 +1,19 @@
+{
+  "_comentario": "Dados de EXEMPLO da página pública. Para usar os dados reais do salão sem mandar para o GitHub, crie data/salao.local.json só com os campos que mudam; ele fica fora do git e tem prioridade.",
+  "nome": "Esmalteria Exemplo",
+  "frase": "Unhas feitas com calma, no horário que cabe no seu dia.",
+  "whatsapp": "5511900000000",
+  "mensagem_whatsapp": "Oi! Quero agendar um horário.",
+  "endereco": "Rua das Flores, 123",
+  "bairro_cidade": "Centro, São Paulo",
+  "instagram": "esmalteriaexemplo",
+  "horarios": [
+    {"dias": "Terça a sexta", "horas": "9h às 19h"},
+    {"dias": "Sábado", "horas": "9h às 16h"},
+    {"dias": "Domingo e segunda", "horas": "fechado"}
+  ],
+  "servicos": [
+    {"nome": "Manicure", "duracao_min": 45, "preco": 45},
+    {"nome": "Pé e mão", "duracao_min": 90, "preco": 80}
+  ]
+}

@@ -118,8 +118,8 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 86 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
-| `streamlit run app.py` | A interface: agenda, chat simulado e raciocínio do agente | Sim |
+| `pytest` | 90 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
+| `streamlit run app.py` | O site: página pública do salão em `/`, painel em `/painel` e clientes e equipe em `/equipe` | Sim (no painel) |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
 | `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |
 | `python avaliar.py` | Roda os 7 cenários com as 3 estratégias e reescreve `resultados.md` | Sim |
@@ -139,6 +139,18 @@ Tudo vai para `registro/historico.csv`, uma linha por acontecimento (data, clien
 O arquivo abre no Excel e pode virar uma aba do Google Planilhas. Os números de cada cliente passam a
 ser o cadastro mais o registro. O arquivo fica fora do git, porque tem dados de clientes reais. Com o
 histórico desligado, que é o padrão, nada é gravado, e dá para demonstrar à vontade.
+
+### O site: página pública e painel escondido
+
+- **`/`**: a página do salão para as clientes. Serviços e preços, quem atende, endereço, horário e o
+  botão **"Agendar pelo WhatsApp"**, que abre a conversa com o salão já com a mensagem escrita. Não
+  mostra nada das clientes nem tem link para o painel.
+- **`/painel`**: a remarcação, e **`/equipe`**: clientes e equipe. Não aparecem em nenhum menu da página
+  pública; só abre quem sabe o endereço e tem a senha.
+
+Os dados da página pública estão em `data/salao.json` e são de exemplo. Para usar os do salão de
+verdade sem mandar para o GitHub, crie `data/salao.local.json` só com o que muda, por exemplo
+`{"nome": "...", "whatsapp": "5511912345678", "endereco": "..."}`. Esse arquivo fica fora do git.
 
 ### Usar pelo celular
 
