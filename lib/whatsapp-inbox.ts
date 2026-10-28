@@ -9,7 +9,9 @@ export async function processWhatsAppInbox(env:Cloudflare.Env,room:string){
  const c=await connection(env,room);if(!c)return;
  for(let count=0;count<5;count++){
   const row=await env.DB!.prepare('SELECT state FROM rooms WHERE id=?').bind(room).first<any>();
-  if(!row)return;const state=JSON.parse(row.state),item=state.whatsappInbox?.[0];if(!item)break;
+  // Fila vazia (o normal) não precisa ler o cadastro inteiro: no plano grátis cada leitura conta.
+  if(!row||!row.state.includes('"whatsappInbox":[{'))break;
+  const state=JSON.parse(row.state),item=state.whatsappInbox?.[0];if(!item)break;
   const event=item.event,context=replyContext(state,event,c);let interpretation:any=null,expectedContext='';
   if(item.phoneId===c.phoneId&&c.enabled&&context?.offer_id&&event.type==='text'&&!event.oversized&&!replyIntent(event.text?.body||'')&&!state.messages.some((m:any)=>m.whatsapp?.id===event.id)&&env.GEMINI_API_KEY){
    const quota=await env.DB!.prepare('INSERT INTO limits(id,used) VALUES(?,1) ON CONFLICT(id) DO UPDATE SET used=used+1 WHERE used<100 RETURNING used').bind('responses:'+room+':'+new Date().toISOString().slice(0,10)).first();

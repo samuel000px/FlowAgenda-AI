@@ -42,3 +42,17 @@ test('celular que já é de outra cliente não é repetido; arquivo estranho é 
  assert.throws(()=>readPackage({versao:2}),/não reconhecido/);
  assert.throws(()=>readPackage({versao:1,clients:'x'}),/inválida/);
 });
+
+test('limpeza: sai quem veio 1 vez sem contato, nomes quase iguais juntam, quem tem agenda fica',async()=>{
+ const {pruneClients,similarNames}=await import('../lib/importacao.mjs');
+ const s=seedAdmin(),c=(id,name,extra={})=>({id,name,phone:'',consent:false,visits:1,missed:0,proposals:0,accepted:0,origin:'planilha',...extra});
+ s.clients=[c('C1','Andrea Gomes',{visits:3,phone:'5583988887777'}),c('C2','Andreia Gomes',{visits:2,lastVisit:'2026-10-01'}),c('C3','Aline'),c('C4','Alane',{visits:4}),
+  c('C5','Bia Uma Vez'),c('C6','Rute Agendada'),c('C7','Cris Celular',{phone:'5583977776666'}),{id:'C8',name:'Do Site',phone:'',visits:0,missed:0,proposals:0,accepted:0}];
+ s.appointments=[{id:'A1',client_id:'C6'}];
+ const r=pruneClients(s),nomes=s.clients.map(x=>x.name);
+ assert.deepEqual(nomes.sort(),['Alane','Andrea Gomes','Cris Celular','Do Site','Rute Agendada']);
+ assert.deepEqual([r.removed,r.merged],[2,1]);
+ const andrea=s.clients.find(x=>x.name==='Andrea Gomes');assert.equal(andrea.visits,5);assert.equal(andrea.lastVisit,'2026-10-01');
+ assert.ok(!similarNames('Aline','Alane'),'só primeiro nome nunca junta');
+ assert.ok(!similarNames('Ana Júlia','Ana Melia'));assert.ok(similarNames('Karol Brakifilder','Karol Brackifielder'));
+});

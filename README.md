@@ -218,3 +218,10 @@ Com o arquivo na pasta `dados/`, o `npm run deploy` importa sozinho no site publ
 O banco publicado aceita no máximo ~100 KB por comando; por isso `scripts/importar-planilha.mjs` envia o cadastro em pedaços para uma tabela de passagem e só no fim troca o registro da agenda.
 
 **Estoque** fica no menu do painel: itens por lugar, quantidade, mínimo, entrada e saída (com quem fez e o motivo). Itens no mínimo ou abaixo aparecem em "Para repor".
+
+### Tamanho do cadastro e o plano grátis do Cloudflare
+
+O plano grátis dá 10 ms de processamento por pedido, e o cadastro inteiro é lido a cada atualização do painel. Para caber:
+
+- `npm run limpar-clientes` (ou `node scripts/limpar-clientes.mjs --remote` no site publicado; `--simular` só mostra) tira as clientes da planilha que vieram uma vez e não deixaram celular nem aniversário, e junta nomes completos quase iguais ("Andrea Gomes" e "Andreia Gomes", somando as visitas). Só primeiro nome nunca é juntado. Quem já tem agendamento, mensagem ou histórico no sistema novo nunca é mexida. A importação já aplica a mesma limpeza.
+- O painel lê o cadastro uma vez por pedido e só relê quando o WhatsApp ou o Google Agenda gravaram algo.

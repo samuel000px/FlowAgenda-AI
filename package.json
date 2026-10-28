@@ -18,7 +18,8 @@
     "setup": "npm run install:ci && npm run build && npm run db:init",
     "calendar:setup": "node scripts/calendar-setup.mjs",
     "deploy": "node scripts/deploy.mjs",
-    "importar": "node scripts/importar-planilha.mjs"
+    "importar": "node scripts/importar-planilha.mjs",
+    "limpar-clientes": "node scripts/limpar-clientes.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
