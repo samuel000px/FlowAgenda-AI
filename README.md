@@ -61,7 +61,7 @@ Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o ap
 
 1. Em **Configurações**, informe o nome da esmalteria, a antecedência mínima, o tamanho do bloco e o funcionamento de cada dia.
 2. Em **Equipe e serviços**, revise preços, durações, especialidades e expedientes. Use durações que sejam múltiplos do bloco (com bloco de 45 min: 45, 90, 135...).
-3. Em **Clientes**, cadastre contato, autorização para antecipação, disposição de 0 a 10 e profissional preferida.
+3. Em **Clientes**, cadastre contato, profissional preferida e se ela gostaria de antecipar caso apareça um horário mais cedo (sim ou não).
 4. Cadastre horários em **Agenda → Novo agendamento**.
 5. Um cancelamento libera uma vaga e prepara uma proposta quando há candidata elegível e benefício esperado positivo.
 6. Em **Atendimento**, acompanhe o WhatsApp conectado em Integrações ou registre retornos de outros canais. Na conexão Meta, propostas novas são enviadas aos participantes autorizados quando existe uma janela de conversa ativa. Uma resposta ambígua gera um pedido de esclarecimento; uma segunda ambiguidade encerra aquela proposta.
@@ -73,7 +73,7 @@ Sem chave Gemini, respostas diretas e botões de aceite/recusa continuam funcion
 ## Regras incorporadas
 
 - Compatibilidade de serviço e duração, antecedência mínima, autorização e disponibilidade.
-- Preferência da profissional e disposição para antecipar; redução de disposição quando a cliente escolheu um horário posterior apesar de haver opções anteriores.
+- Preferência da profissional e se a cliente quer antecipar (sim ou não). Quem disse sim parte da mesma chance de aceitar; quem escolheu um horário posterior havendo opções anteriores parte de uma chance menor. Agendas antigas com a nota de 0 a 10 são convertidas: nota 0 vira "não".
 - Probabilidade de aceite e faltas suavizadas pelo histórico.
 - Benefício esperado = ganho do horário liberado − risco do horário de origem. Propostas sem benefício positivo são descartadas.
 - Aceite separado da aprovação humana; verificação da reserva original e dos conflitos novamente ao aprovar.
@@ -153,7 +153,7 @@ Permissões da equipe, verificadas no servidor:
 
 - Consultar a agenda por data, filtrando seus atendimentos ou toda a equipe.
 - Identificar pedidos do site que ainda aguardam aceite; aceitar ou recusar esses pedidos continua sendo uma ação da gerência na aba Aceitações. Pedidos pendentes também impedem remarcações conflitantes.
-- Cadastrar novas clientes presenciais, sem editar clientes existentes ou criar reservas.
+- Marcar horário para quem chegou na loja (aba **Novo horário**): serviço, profissional, dia, horário, nome, WhatsApp opcional e se quer antecipar. Entra direto como confirmado, a partir de agora, sem a antecedência mínima do site. Se o celular já for de uma cliente cadastrada, o horário vai para ela sem mudar o cadastro.
 - Aprovar remarcações já aceitas pela cliente que envolvam a profissional escolhida (horário de origem ou destino). Disponibilidade e conflitos são conferidos novamente; a aprovação registra a responsável e mantém a sincronização Google e WhatsApp existente.
 - Não pode cancelar, reagendar livremente, rejeitar propostas, registrar faltas, modificar equipe/configurações, enviar mensagens avulsas ou acessar credenciais da integração.
 

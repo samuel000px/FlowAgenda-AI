@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {actAdmin,candidates,seedAdmin,tickAdmin,upgrade} from '../lib/flowagenda.mjs';
-import {byToken,cancelByToken,catalog,changeWithWhatsApp,openDays,phoneDigits,publicView,readCart,requestBooking,slots} from '../lib/agendamento.mjs';
+import {bookInStore,byToken,cancelByToken,catalog,changeWithWhatsApp,openDays,phoneDigits,publicView,readCart,requestBooking,slots} from '../lib/agendamento.mjs';
 
 // Segunda-feira, 26/10/2026, 8h em Brasília: a agenda abre na terça.
 const now=Date.parse('2026-10-26T08:00:00-03:00');
@@ -198,12 +198,12 @@ test('configurações recusam bloco ou horário inválidos',()=>{
 });
 
 // Cliente que a gerência já cadastrou: autorizou contato, tem nota 9 e prefere a Lia.
-const antiga=s=>(s.clients.push({id:'C1',name:'Maria Joaquina',phone:'(83) 99999-0000',consent:true,willingness:9,preferred:'P1',visits:30,missed:0,proposals:5,accepted:4}),s.clients[0]);
+const antiga=s=>(s.clients.push({id:'C1',name:'Maria Joaquina',phone:'(83) 99999-0000',consent:true,preferred:'P1',visits:30,missed:0,proposals:5,accepted:4}),s.clients[0]);
 
 test('pedido com o celular de uma cliente cadastrada não mexe no cadastro dela',()=>{
   const s=salao(),c=antiga(s),[a]=pedido(s,{name:'Fulano',earlier:false,cart:manicure('P2')});
   assert.equal(a.client_id,'C1');
-  assert.deepEqual([c.consent,c.willingness,c.preferred,c.name],[true,9,'P1','Maria Joaquina']);
+  assert.deepEqual([c.consent,c.preferred,c.name],[true,'P1','Maria Joaquina']);
   assert.equal(publicView(s,a,now).name,'Fulano','quem pediu não descobre o nome da dona do número');
 });
 
@@ -216,12 +216,13 @@ test('o site nunca devolve a autorização de quem pediu para parar as mensagens
 test('cliente nova só entra autorizada a antecipar se marcar a caixa',()=>{
   const s=salao();
   pedido(s,{earlier:false});
-  assert.deepEqual([s.clients[0].consent,s.clients[0].willingness],[false,0]);
+  assert.equal(s.clients[0].consent,false);
+  assert.equal('willingness' in s.clients[0],false,'a nota de 0 a 10 não existe mais');
 });
 
 test('a proposta criada pelo cancelamento no link entra na fila do WhatsApp',()=>{
   const s=salao();
-  for(let i=0;i<5;i++){s.clients.push({id:'C'+i,name:'Cliente '+i,phone:'8399999100'+i,consent:true,willingness:10,preferred:'P1',visits:30,missed:0,proposals:5,accepted:5});actAdmin(s,'book',{client_id:'C'+i,service_id:'S1',staff_id:'P1',date:'2026-11-07',start:780+45*i},now);}
+  for(let i=0;i<5;i++){s.clients.push({id:'C'+i,name:'Cliente '+i,phone:'8399999100'+i,consent:true,preferred:'P1',visits:30,missed:0,proposals:5,accepted:5});actAdmin(s,'book',{client_id:'C'+i,service_id:'S1',staff_id:'P1',date:'2026-11-07',start:780+45*i},now);}
   const [a]=pedido(s,{name:'Zé',phone:'83988887777',earlier:false});actAdmin(s,'request_accept',{id:a.id},now);
   const config={enabled:true,verified:true,mode:'business',restricted:false,allowed:[],phoneId:'1',templates:{enabled:false}};
   s.whatsappLastInbound=Object.fromEntries(s.clients.map(c=>[c.phone,now-1000]));
@@ -229,4 +230,30 @@ test('a proposta criada pelo cancelamento no link entra na fila do WhatsApp',()=
   const proposta=s.messages.find(m=>m.offer_id);
   assert.ok(proposta,'o cancelamento preparou uma proposta');
   assert.equal(proposta.whatsapp?.status,'queued');
+});
+
+test('na loja o horário entra confirmado, a partir de agora, e a resposta sim ou não vira a autorização',()=>{
+  const s=salao(),agora=Date.parse('2026-10-27T10:20:00-03:00');
+  const livres=slots(s,manicure('P2'),TERCA,agora,0).map(x=>x.time);
+  assert.equal(livres[0],'10:30','sem a antecedência de uma hora do site');
+  const [a]=bookInStore(s,{name:'Joana',phone:'',cart:manicure('P2'),date:TERCA,start:630,earlier:false},'Nina',agora);
+  assert.deepEqual([a.status,a.source,a.staff_id],['booked','loja','P2']);
+  assert.equal(s.clients.at(-1).consent,false);
+  assert.match(s.events[0].text,/Nina marcou na loja: Joana/);
+  assert.throws(()=>bookInStore(s,{name:'Bia',cart:manicure('P2'),date:TERCA,start:675},'Nina',agora),/antecipar/);
+});
+
+test('na loja, o celular de quem já é cliente só marca o horário, sem mexer no cadastro',()=>{
+  const s=salao(),c=antiga(s),agora=Date.parse('2026-10-27T10:20:00-03:00');
+  const [a]=bookInStore(s,{name:'Maria',phone:'83999990000',cart:manicure('P2'),date:TERCA,start:630,earlier:false},'Nina',agora);
+  assert.equal(a.client_id,'C1');
+  assert.deepEqual([c.consent,c.name,s.clients.length],[true,'Maria Joaquina',1]);
+});
+
+test('agendas antigas: nota 0 vira "não quer antecipar" e a nota some do cadastro',()=>{
+  const s=salao();s.clients=[{id:'C1',name:'A',consent:true,willingness:0},{id:'C2',name:'B',consent:true,willingness:7}];
+  upgrade(s);
+  assert.deepEqual(s.clients.map(c=>[c.consent,'willingness' in c]),[[false,false],[true,false]]);
+  actAdmin(s,'client_save',{name:'Nova',phone:'',consent:true},now);
+  assert.equal(s.clients.at(-1).consent,true);
 });

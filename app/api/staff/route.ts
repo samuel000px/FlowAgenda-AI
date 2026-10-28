@@ -1,12 +1,20 @@
 import {env} from 'cloudflare:workers';
 import {sameOrigin} from '../../../lib/admin-auth';
 import {requireStaff} from '../../../lib/staff-auth';
-import {staffView,applyStaffAction} from '../../../lib/staff-core.mjs';
+import {staffView,staffSlots,applyStaffAction} from '../../../lib/staff-core.mjs';
 import {connection,updateRoom,flushWhatsApp} from '../../../lib/whatsapp';
 import {syncCalendar} from '../../../lib/google-calendar';
 export const dynamic='force-dynamic';
 const json=(body:unknown,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'}});
-export async function GET(req:Request){try{const s=await requireStaff(req,env);return json(staffView(s.state,s.staffId,new URL(req.url).searchParams.get('date')||undefined));}catch(e){return json({error:(e as Error).message},401);}}
+export async function GET(req:Request){
+ let s;try{s=await requireStaff(req,env);}catch(e){return json({error:(e as Error).message},401);}
+ try{
+  const q=new URL(req.url).searchParams,cart=q.get('cart');
+  // Com carrinho, devolve só os horários livres para marcar na loja.
+  if(cart){if(cart.length>2000)throw Error('Carrinho grande demais.');return json({slots:staffSlots(s.state,s.staffId,JSON.parse(cart),String(q.get('date')||''))});}
+  return json(staffView(s.state,s.staffId,q.get('date')||undefined));
+ }catch(e){return json({error:(e as Error).message},400);}
+}
 export async function POST(req:Request){
  try{
   sameOrigin(req);const session=await requireStaff(req,env),raw=await req.text();if(raw.length>3000)throw Error('Solicitação muito longa.');const p=JSON.parse(raw);

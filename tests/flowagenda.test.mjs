@@ -5,17 +5,19 @@ import {actAdmin,at,candidates,difficulty,rateMiss,probability,seedAdmin,seek,ti
 const fixtures=JSON.parse(readFileSync(new URL('./fixtures/remarcacao-parity.json',import.meta.url)));
 export function convert(f){
  const c=f.scenario,s=seedAdmin();s.settings.autoNext=false;
- s.clients=Object.values(c.clientes).map(x=>({id:x.id,name:x.nome,consent:x.disposicao>0,willingness:x.disposicao,preferred:x.profissional_preferida||'',visits:x.consultas_total,missed:x.faltas,proposals:x.propostas_recebidas,accepted:x.propostas_aceitas}));
+ s.clients=Object.values(c.clientes).map(x=>({id:x.id,name:x.nome,consent:x.disposicao>0,preferred:x.profissional_preferida||'',visits:x.consultas_total,missed:x.faltas,proposals:x.propostas_recebidas,accepted:x.propostas_aceitas}));
  s.services=[...new Set(c.agenda.map(a=>a.tipo_atendimento))].map(id=>({id,name:id,duration:30,price:45}));
  s.staff=Object.entries(c.profissionais).map(([id,name])=>({id,name,active:true,start:0,end:1440,break_start:0,break_end:0,services:s.services.map(v=>v.id)}));
  s.days=Object.fromEntries(Object.entries(c.dias).map(([date,d])=>[date,{occupancy:d.ocupacao_pct,queue:d.fila_espera}]));
  s.appointments=c.agenda.filter(a=>a.status==='ocupado').map(a=>{const start=Number(a.hora.slice(0,2))*60+Number(a.hora.slice(3));return {id:a.id,date:a.data,start,end:start+a.duracao_min,client_id:a.cliente_id,staff_id:a.profissional_id,service_id:a.tipo_atendimento,price:a.valor,status:'booked',chosenLate:a.havia_horario_antes,attendance:'unknown',reminded:false,result:null};});
  const now=Date.parse(c.agora.replace(' ','T')+'-03:00');actAdmin(s,'cancel',{id:c.slot_cancelado_id},now);return {s,now,g:s.gaps[0]};
 }
+// O painel só guarda se a cliente quer antecipar (sim ou não), que no Python equivale à nota 5 ou 0.
+// A conta exata só é comparada para essas clientes; ordem e elegibilidade valem para todas.
 for(const f of fixtures)test('Python parity '+f.scenario.id+': candidate order, eligibility and exact score',()=>{
- const {s,g,now}=convert(f),actual=candidates(s,g.id,now),expected=f.expected;
+ const {s,g,now}=convert(f),actual=candidates(s,g.id,now),expected=f.expected,nota=id=>f.scenario.clientes[id]?.disposicao??Object.values(f.scenario.clientes).find(c=>c.id===id)?.disposicao;
  assert.deepEqual(actual.map(c=>c.client_id),expected.map(c=>c.cliente_id));
- for(let i=0;i<actual.length;i++){const a=actual[i],e=expected[i];assert.equal(!a.reason,e.motivo===null,e.nome);if(e.valor_esperado!==null){assert.ok(Math.abs(a.value-e.valor_esperado)<1e-9);assert.ok(Math.abs(a.chance-e.prob_aceitar)<1e-9);assert.ok(Math.abs(a.gain-e.ganho)<1e-9);assert.ok(Math.abs(a.risk-e.risco)<1e-9);}}
+ for(let i=0;i<actual.length;i++){const a=actual[i],e=expected[i];assert.equal(!a.reason,e.motivo===null,e.nome);if(e.valor_esperado!==null&&[0,5].includes(nota(e.cliente_id))){assert.ok(Math.abs(a.value-e.valor_esperado)<1e-9);assert.ok(Math.abs(a.chance-e.prob_aceitar)<1e-9);assert.ok(Math.abs(a.gain-e.ganho)<1e-9);assert.ok(Math.abs(a.risk-e.risco)<1e-9);}}
 });
 const ready=()=>{const item=fixtures.find(f=>f.expected.some(c=>!c.motivo));const r=convert(item);r.o=seek(r.s,r.g.id,r.now);assert.ok(r.o);return r;};
 test('acceptance does not move appointments; approval is required and idempotent',()=>{

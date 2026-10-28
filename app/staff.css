@@ -88,3 +88,29 @@
  .staff-agenda .panel-heading .actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
  .staff-agenda .field input,.staff-agenda .field select{padding-inline:8px}
 }
+
+/* Novo horário na loja: tudo grande o bastante para o dedo, pensado primeiro para o celular. */
+.staff-booking{padding:22px;display:grid;gap:4px}
+.staff-booking form{display:grid;gap:22px;margin-top:18px}
+.staff-booking .field{margin:0}
+.staff-booking .field>span{font-size:14px}
+.staff-booking select,.staff-booking input{width:100%;box-sizing:border-box}
+.staff-step{border:0;padding:0;margin:0;min-width:0}
+.staff-step legend{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:10px;line-height:1.4}
+.staff-chips{display:flex;flex-wrap:wrap;gap:8px}
+.staff-chips button,.staff-slots button,.staff-yesno button{min-height:48px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:14px;font-weight:500}
+.staff-chips button[aria-pressed=true],.staff-slots button[aria-pressed=true],.staff-yesno button[aria-pressed=true]{background:var(--green);border-color:var(--green);color:#fff}
+.staff-chips button:hover,.staff-slots button:hover,.staff-yesno button:hover{background:var(--green-light)}
+.staff-chips button[aria-pressed=true]:hover,.staff-slots button[aria-pressed=true]:hover,.staff-yesno button[aria-pressed=true]:hover{background:var(--green)}
+.staff-chips .staff-other-day{width:auto;flex:1;min-width:150px;border-radius:999px;padding:0 14px}
+.staff-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.staff-slots button{padding:0;border-radius:12px;font-size:15px;font-variant-numeric:tabular-nums}
+.staff-yesno{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.staff-yesno button{border-radius:12px;font-size:15px}
+.staff-booking .staff-submit{width:100%;min-height:54px;font-size:15px}
+@media(max-width:760px){
+ .staff-booking{padding:22px 18px}
+ .staff-booking h2{font-size:19px}
+ .staff-slots{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:379px){.staff-slots{grid-template-columns:repeat(3,minmax(0,1fr))}}
