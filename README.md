@@ -37,7 +37,7 @@ O único caminho da página para o painel é a linha "Acesso da equipe", no roda
 
 ### Como funciona o agendamento pelo site
 
-1. O catálogo fica em **Equipe e serviços**, separado por área (Unhas, Cabelo). Cada serviço pode ter **opções** com tempo e valor próprios (o comprimento da escova) e **adicionais** da mesma área, que somam só no preço (francesinha, babyliss). São quatro áreas: Mãos e pés, Alongamento e gel, Cabelo, e Sobrancelha e depilação. Os preços iniciais são os mais cobrados na planilha do salão (ago/2025 a out/2026); os tempos são estimativas. "Importar serviços das fichas" acrescenta o que faltar, sem duplicar nem mudar o que já existe.
+1. O catálogo fica em **Equipe e serviços**, separado por área (Unhas, Cabelo). Cada serviço pode ter **opções** com tempo e valor próprios (o comprimento da escova) e **adicionais** da mesma área, que somam só no preço (francesinha, babyliss). São quatro áreas: Mãos e pés, Alongamento e gel, Cabelo, e Sobrancelha e depilação. O catálogo traz todos os serviços que aparecem sozinhos na planilha do salão; combinações como "manutenção + pedicure" viram dois itens no carrinho. Os preços iniciais são os mais cobrados na planilha (ago/2025 a out/2026); os tempos são estimativas. "Importar serviços das fichas" acrescenta o que faltar, sem duplicar nem mudar o que já existe. Agendas que já estavam em uso recebem uma vez os serviços que faltavam (esmaltação no pé, esmaltação simples, postiça, ajuste de unha, nariz, orelha, queixo e brow lamination), já com as profissionais que fazem a área. Um serviço só aparece no site se alguma profissional ativa o faz; no catálogo do painel, o que está fora do site vem marcado.
 2. O carrinho aceita até 3 serviços. Eles ficam **em sequência**, um começando quando o outro termina, com **uma profissional por área**: unhas com quem faz unhas, escova com quem faz escova.
 3. **Ofertas "Pegue também"**: em Equipe e serviços, cada oferta diz quem escolher o gatilho (um serviço ou qualquer serviço de uma área) ganha desconto, em % ou R$, no alvo. A cliente vê a oferta de maior desconto. O desconto vale só no item que entrou depois no carrinho, então duas ofertas cruzadas não somam.
 4. Os horários seguem uma grade de blocos (45 minutos por padrão) dentro do funcionamento de cada dia, definido em **Configurações** (padrão: terça a sexta 9h–18h, sábado 8h–17h). Só aparecem inícios em que o carrinho inteiro cabe, fora do intervalo das profissionais e sem bater em outro atendimento.
@@ -68,12 +68,13 @@ Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o ap
 
 1. Em **Configurações**, informe o nome da esmalteria, a antecedência mínima, o tamanho do bloco e o funcionamento de cada dia.
 2. Em **Equipe e serviços**, revise preços, durações, especialidades e expedientes. Use durações que sejam múltiplos do bloco (com bloco de 45 min: 45, 90, 135...).
-3. Em **Clientes**, cadastre contato, profissional preferida e se ela gostaria de antecipar caso apareça um horário mais cedo (sim ou não).
-4. Cadastre horários em **Agenda → Novo agendamento**.
-5. Um cancelamento libera uma vaga e prepara uma proposta quando há candidata elegível e benefício esperado positivo.
-6. Em **Atendimento**, acompanhe o WhatsApp conectado em Integrações ou registre retornos de outros canais. Na conexão Meta, propostas novas são enviadas aos participantes autorizados quando existe uma janela de conversa ativa. Uma resposta ambígua gera um pedido de esclarecimento; uma segunda ambiguidade encerra aquela proposta.
-7. O aceite da cliente aguarda **Remarcações → Aprovar alteração**. Só então o horário muda; a vaga de origem pode gerar até dois desdobramentos. Recusas e encerramento sem resposta podem preparar a próxima proposta.
-8. Em **Fechamento**, registre presenças e faltas após o atendimento. O histórico alimenta os cálculos e pode ser exportado em CSV.
+3. Em **Equipe e serviços**, **Excluir** tira a profissional da equipe, do site e das listas. Quem ainda tem horário marcado ou proposta em aberto precisa ter esses horários remarcados ou cancelados antes. Se ela já atendeu, o registro fica guardado só para a agenda antiga e as finanças continuarem com o nome dela; sem histórico, sai de vez.
+4. Em **Clientes**, cadastre contato, profissional preferida e se ela gostaria de antecipar caso apareça um horário mais cedo (sim ou não).
+5. Cadastre horários em **Agenda → Novo agendamento**.
+6. Um cancelamento libera uma vaga e prepara uma proposta quando há candidata elegível e benefício esperado positivo.
+7. Em **Atendimento**, acompanhe o WhatsApp conectado em Integrações ou registre retornos de outros canais. Na conexão Meta, propostas novas são enviadas aos participantes autorizados quando existe uma janela de conversa ativa. Uma resposta ambígua gera um pedido de esclarecimento; uma segunda ambiguidade encerra aquela proposta.
+8. O aceite da cliente aguarda **Remarcações → Aprovar alteração**. Só então o horário muda; a vaga de origem pode gerar até dois desdobramentos. Recusas e encerramento sem resposta podem preparar a próxima proposta.
+9. Em **Fechamento**, registre presenças e faltas após o atendimento. O histórico alimenta os cálculos e pode ser exportado em CSV.
 
 Sem chave Gemini, respostas diretas e botões de aceite/recusa continuam funcionando. Para interpretação livre, configure `GEMINI_API_KEY` e opcionalmente `GEMINI_MODEL` no servidor e reinicie. O modelo recebe apenas a proposta e a resposta, nunca acesso direto à agenda. A interpretação tem limite diário e prazo de resposta.
 
@@ -160,7 +161,7 @@ Em **Equipe e serviços → Acesso das funcionárias**, crie e copie o link `/fu
 
 A área prioriza o celular: até 760 px, a agenda usa cartões e o menu fica fixo na parte inferior (Agenda, Novo horário e Atendimento). Os controles têm área de toque ampliada, campos de 16 px e espaço para a área segura do aparelho. Há atalhos para o dia anterior, próximo dia e hoje; no computador, a agenda continua em tabela. O endereço é o mesmo nos dois formatos.
 
-O link é uma credencial compartilhada: quem o receber pode escolher qualquer nome ativo. A escolha identifica a sessão e registra as ações, mas não comprova a identidade da pessoa. Para revogar acessos, a gerente pode trocar ou desativar o link; isso também invalida as sessões existentes. Inativar uma profissional bloqueia seu acesso. Sessões duram oito horas e são separadas das sessões administrativas.
+O link é uma credencial compartilhada: quem o receber pode escolher qualquer nome ativo. A escolha identifica a sessão e registra as ações, mas não comprova a identidade da pessoa. Para revogar acessos, a gerente pode trocar ou desativar o link; isso também invalida as sessões existentes. Inativar ou excluir uma profissional bloqueia seu acesso. Sessões duram oito horas e são separadas das sessões administrativas.
 
 Permissões da equipe, verificadas no servidor:
 

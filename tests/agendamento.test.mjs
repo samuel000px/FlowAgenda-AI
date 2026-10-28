@@ -339,3 +339,41 @@ test('aniversário: dia e mês; o site só preenche o que está vazio',()=>{
   pedido(s,{start:585,birthday:'01/01'});
   assert.equal(c.birthday,'04-10','outra pessoa digitando o mesmo celular não troca o aniversário');
 });
+
+test('excluir profissional: sem histórico sai de vez; com horário marcado, o painel avisa',()=>{
+  const s=salao();
+  actAdmin(s,'staff_remove',{id:'P2'},now);
+  assert.ok(!s.staff.some(p=>p.id==='P2'));
+  pedido(s);actAdmin(s,'request_accept',{id:s.appointments[0].id},now);
+  assert.throws(()=>actAdmin(s,'staff_remove',{id:'P1'},now),/Lia ainda tem 1 horário/);
+});
+
+test('excluir profissional com atendimentos antigos: some das listas e do site, o nome fica na agenda',()=>{
+  const s=salao();pedido(s);const a=s.appointments[0];actAdmin(s,'request_accept',{id:a.id},now);
+  a.result='attended';s.clients[0].preferred='P1';
+  actAdmin(s,'staff_remove',{id:'P1'},now);
+  const lia=s.staff.find(p=>p.id==='P1');
+  assert.equal(lia.removed,true);assert.equal(lia.active,false);
+  assert.equal(s.clients[0].preferred,'');
+  assert.ok(!catalog(s).staff.some(p=>p.id==='P1'));
+  assert.match(s.events[0].text,/Lia foi excluída/);
+});
+
+test('catálogo antigo ganha os serviços da planilha uma vez, já com quem faz a área, e aparecem no /agendar',()=>{
+  const s=salao();s.staff.push({id:'P4',name:'Bia',active:true,start:480,end:1080,break_start:0,break_end:0,services:['S6','S7','S31']});
+  s.services=s.services.filter(v=>!['S36','S37','S38','S39','S40','S41','S42','S43'].includes(v.id));
+  Object.assign(s.services.find(v=>v.id==='S20'),{price:65});Object.assign(s.services.find(v=>v.id==='S24'),{name:'Pó ou efeito sereia',price:20});
+  delete s.catalogVersion;
+  const nova=upgrade(s);
+  assert.equal(nova.catalogVersion,2);
+  for(const nome of ['Esmaltação permanente no pé','Esmaltação simples','Postiça','Ajuste de unha','Nariz','Orelha','Queixo','Brow lamination'])assert.ok(nova.services.some(v=>v.name===nome),nome);
+  assert.equal(nova.services.find(v=>v.id==='S20').price,35);
+  assert.equal(nova.services.find(v=>v.id==='S24').price,30);
+  assert.ok(nova.staff.find(p=>p.id==='P1').services.includes('S36'),'quem faz mãos e pés ganha os novos de mãos e pés');
+  assert.ok(!nova.staff.find(p=>p.id==='P3').services.includes('S36'),'quem só faz cabelo não');
+  assert.ok(nova.staff.find(p=>p.id==='P4').services.includes('S40'));
+  const site=catalog(nova).services.map(v=>v.name);
+  assert.ok(site.includes('Postiça')&&site.includes('Nariz')&&site.includes('Esmaltação simples'));
+  const total=nova.services.length;upgrade(nova);
+  assert.equal(nova.services.length,total,'rodar de novo não duplica');
+});
