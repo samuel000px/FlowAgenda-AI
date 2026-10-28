@@ -1,7 +1,6 @@
 import {connection,updateRoom,flushWhatsApp} from './whatsapp';
 import {receiveMessage,replyContext} from './whatsapp-core.mjs';
 import {classifyResponse} from './response-agent';
-import {syncCalendar} from './google-calendar';
 import {replyIntent} from './conversation.mjs';
 // Webhooks are acknowledged only after the inbox is durable. A later panel refresh
 // retries pending work if the worker is stopped while interpreting a response.
@@ -23,5 +22,5 @@ export async function processWhatsAppInbox(env:Cloudflare.Env,room:string){
    s.whatsappInbox=s.whatsappInbox.filter((i:any)=>i.event.id!==event.id);
   },c);
  }
- await flushWhatsApp(env,room);await syncCalendar(env,room);
+ await flushWhatsApp(env,room);
 }

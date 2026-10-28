@@ -1,7 +1,7 @@
 import {env} from 'cloudflare:workers';
 import {connection,updateRoom} from '../../../../lib/whatsapp';
 import {verifySignature,applyStatus,phone,incomingAllowed} from '../../../../lib/whatsapp-core.mjs';
-import {digest} from '../../../../lib/calendar-core.mjs';
+import {digest} from '../../../../lib/cripto.mjs';
 import {processWhatsAppInbox} from '../../../../lib/whatsapp-inbox';
 import {getRequestExecutionContext} from 'vinext/shims/request-context';
 export const dynamic='force-dynamic';

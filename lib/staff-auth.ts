@@ -1,4 +1,4 @@
-import {digest,nonce,seal,unseal} from './calendar-core.mjs';
+import {digest,nonce,seal,unseal} from './cripto.mjs';
 import {activeStaff} from './staff-core.mjs';
 const cookieName='flowagenda_staff_session';
 export const validStaffToken=(value:string)=>/^[a-f0-9]{48}$/.test(value);

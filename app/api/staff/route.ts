@@ -3,7 +3,6 @@ import {sameOrigin} from '../../../lib/admin-auth';
 import {requireStaff,staffCookie} from '../../../lib/staff-auth';
 import {staffView,staffSlots,staffClients,applyStaffAction} from '../../../lib/staff-core.mjs';
 import {connection,updateRoom,flushWhatsApp} from '../../../lib/whatsapp';
-import {syncCalendar} from '../../../lib/google-calendar';
 export const dynamic='force-dynamic';
 const json=(body:unknown,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'}});
 export async function GET(req:Request){
@@ -27,7 +26,7 @@ export async function POST(req:Request){
    if(s.staffAccess?.hash!==session.grant)throw Error('O link foi desativado. Entre novamente.');
    applyStaffAction(s,session.staffId,p);
   },config);
-  let warning='';try{await syncCalendar(env,session.room);await flushWhatsApp(env,session.room);}catch{warning='A alteração foi salva. A sincronização externa será retomada; não repita o cadastro.';}
+  let warning='';try{await flushWhatsApp(env,session.room);}catch{warning='A alteração foi salva. O envio pelo WhatsApp será retomado; não repita o cadastro.';}
   return json({ok:true,warning});
  }catch(e){return json({error:(e as Error).message},403);}
 }

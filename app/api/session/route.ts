@@ -1,6 +1,6 @@
 import {env} from 'cloudflare:workers';
 import {clearSession,requireAdmin,sameOrigin,sessionCookie} from '../../../lib/admin-auth';
-import {digest,nonce} from '../../../lib/calendar-core.mjs';
+import {digest,nonce} from '../../../lib/cripto.mjs';
 import {seedAdmin} from '../../../lib/flowagenda.mjs';
 export const dynamic='force-dynamic';
 const json=(value:unknown,status=200,headers={})=>Response.json(value,{status,headers:{'Cache-Control':'no-store',...headers}});

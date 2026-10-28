@@ -1,10 +1,9 @@
 import {env} from 'cloudflare:workers';
 import {tickAdmin,upgrade} from '../../../lib/flowagenda.mjs';
 import {byToken,cancelByToken,catalog,changeWithWhatsApp,openDays,publicView,requestBooking,requestInterest,slots} from '../../../lib/agendamento.mjs';
-import {syncCalendar} from '../../../lib/google-calendar';
 import {connection,flushWhatsApp} from '../../../lib/whatsapp';
 import {sameOrigin} from '../../../lib/admin-auth';
-import {digest} from '../../../lib/calendar-core.mjs';
+import {digest} from '../../../lib/cripto.mjs';
 export const dynamic='force-dynamic';
 // A página pública usa a mesma agenda que a administração abre depois do login.
 const ROOM='flowagenda';
@@ -43,7 +42,6 @@ export async function POST(req:Request){
   const p=JSON.parse(raw);
   if(p.action==='cancel'){
    const {state,result}=await change(s=>cancelByToken(s,String(p.token||'')));
-   if(result.status==='cancelled')await syncCalendar(env,ROOM);
    await flushWhatsApp(env,ROOM);
    return json(publicView(state,result));
   }

@@ -1,11 +1,11 @@
 "use client";
 // Agenda do dia no estilo do Google Agenda: uma coluna por profissional, horários na lateral e cada
-// atendimento como um bloco na cor que a profissional tem no Google (mesma regra de calendar-core).
+// atendimento como um bloco na cor da profissional (sempre a mesma para cada uma).
 // As caixas de seleção mostram ou escondem cada profissional; a escolha fica guardada no navegador.
 import {useEffect,useMemo,useState} from 'react';
-import {digest} from '../lib/calendar-core.mjs';
+import {digest} from '../lib/cripto.mjs';
 type Row=Record<string,any>;
-// Cores de evento do Google Agenda, pelos colorId usados na sincronização.
+// Paleta de cores de evento do Google Agenda.
 const GOOGLE:Record<string,string>={'1':'#7986cb','2':'#33b679','3':'#8e24aa','5':'#f6bf26','6':'#f4511e','7':'#039be5','9':'#3f51b5','10':'#0b8043'};
 const IDS=['1','2','3','5','6','7','9','10'];
 const PX=1.3; // pixels por minuto: meia hora = 39px

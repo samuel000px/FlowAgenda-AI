@@ -13,7 +13,7 @@ O primeiro comando cria uma área local separada com **50 clientes, 3 profission
 
 Abra o link apresentado. Se já estiver no painel, clique em **Sair**, abra o link novamente e entre com a senha administrativa local. A parte `#room=exemplos-...` seleciona a área de exemplos após o login. A senha continua obrigatória; o link não dá acesso sozinho.
 
-O script acessa somente `.wrangler/state`, não aceita `--remote` e não copia conexões Google ou WhatsApp. Os exemplos não são importados pelo deploy. Os telefones ficam vazios. O resultado da execução fica em `.sites-runtime/casos-locais.json`, fora do Git.
+O script acessa somente `.wrangler/state`, não aceita `--remote` e não copia a conexão do WhatsApp. Os exemplos não são importados pelo deploy. Os telefones ficam vazios. O resultado da execução fica em `.sites-runtime/casos-locais.json`, fora do Git.
 
 ## O que testar
 

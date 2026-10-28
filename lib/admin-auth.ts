@@ -1,4 +1,4 @@
-import {digest,nonce} from './calendar-core.mjs';
+import {digest,nonce} from './cripto.mjs';
 const cookieName='flowagenda_session';
 const encode=(value:Uint8Array)=>btoa(String.fromCharCode(...value)).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
 const decode=(value:string)=>Uint8Array.from(atob(value.replaceAll('-','+').replaceAll('_','/')),c=>c.charCodeAt(0));

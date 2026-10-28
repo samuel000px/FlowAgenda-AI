@@ -1,4 +1,4 @@
-import {seal,unseal,nonce} from './calendar-core.mjs';
+import {seal,unseal,nonce} from './cripto.mjs';
 import {upgrade,tickAdmin} from './flowagenda.mjs';
 import {normalizeConfig,queueNewMessages,recipientError,currentQuestion,prepareDelivery,payloadFor,metaCall,SENT,phone} from './whatsapp-core.mjs';
 type Env=Cloudflare.Env;

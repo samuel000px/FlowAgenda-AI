@@ -10,7 +10,7 @@ Requer Node.js 22.13 ou superior. Na primeira instalação:
 
 ```sh
 npm run setup
-npm run calendar:setup
+npm run chave:local
 ```
 
 Configure `APP_SENHA` em `.dev.vars` e mantenha `CALENDAR_ENCRYPTION_KEY` gerada pelo comando acima. Depois:
@@ -90,18 +90,6 @@ Sem chave Gemini, respostas diretas e botões de aceite/recusa continuam funcion
 
 A versão web acrescenta verificação de conflitos de cliente/profissional e persistência com controle de versão para evitar que duas telas sobrescrevam a agenda.
 
-## Google Agenda
-
-A administração acessa **Configurações → Integrações → Conectar conta Google**, escolhe a conta e autoriza. O retorno abre a mesma seção, com o progresso e o botão para abrir a agenda. A instalação precisa das credenciais do aplicativo uma única vez; cada administrador não precisa criar um projeto Google.
-
-- Agenda dedicada à esmalteria: título com serviço, cliente e profissional; uma cor estável por profissional; início e fim reais do atendimento, incluindo opções e adicionais. Cada serviço de um pedido com vários serviços tem seu próprio evento.
-- Horários confirmados, atuais e futuros, são sincronizados. Pedidos aguardando aceite não ocupam o Google antes da aprovação. Remarcações aprovadas atualizam o evento existente; cancelamentos o removem.
-- Mudanças são enviadas ao salvar e reavaliadas periodicamente. A rotina da hospedagem trabalha com o painel fechado, independentemente da ativação do WhatsApp. Importações iniciais seguem em lotes de até 20 alterações; o painel informa o que falta. Em instalações com várias agendas, a rotina prioriza a menos recentemente sincronizada.
-
-A sincronização é **do painel para o Google**; edições diretamente no Google não são importadas. Dados locais permanecem salvos em caso de falha. Tokens são criptografados; autorização e renovação ficam no servidor. A permissão se limita às agendas criadas pelo aplicativo. Trocar a conta verifica o acesso à agenda anterior e cria outra quando necessário; a antiga permanece na conta anterior. Desconectar interrompe a sincronização, sem excluir os eventos já enviados.
-
-A configuração inicial do responsável técnico, a publicação e a conferência com uma conta real estão no [guia Google Agenda](docs/google-agenda.md).
-
 ## WhatsApp oficial da Meta
 
 Configure em **Integrações → WhatsApp Business · Meta**. O painel recebe o ID do telefone, a versão da API, o token de acesso, o App Secret e a lista de participantes. As credenciais ficam criptografadas no servidor. A configuração e o teste completo estão no [guia do WhatsApp](docs/whatsapp-meta.md).
@@ -135,7 +123,7 @@ Agendas antigas abertas com o link de gerente são preservadas após login. Os d
 | `lib/response-agent.ts` | Interpretação limitada das respostas |
 | `lib/admin-auth.ts`, `app/api/session/route.ts` | Acesso administrativo |
 | `app/api/room/route.ts` | API e persistência com controle de versão |
-| `lib/google-calendar.ts`, `lib/calendar-core.mjs` | OAuth e sincronização |
+| `lib/cripto.mjs` | Hash e cifra do login, do link da equipe e da conexão do WhatsApp |
 | `app/whatsapp-panel.tsx`, `app/whatsapp-chat.tsx` | Configuração Meta e central de atendimento |
 | `lib/whatsapp-core.mjs`, `lib/whatsapp.ts`, `lib/whatsapp-inbox.ts` | Transporte, fila, assinatura e processamento de respostas |
 | `lib/whatsapp-templates.mjs`, `lib/whatsapp-scheduler.ts`, `worker/index.ts` | Modelos e lembretes automáticos na hospedagem |
@@ -186,7 +174,7 @@ Arquivos principais: `app/staff-portal.tsx` (interface), `app/staff.css` (estilo
 - **Finanças**, exclusiva da administração, separa receita prevista de pagamentos registrados. Após marcar comparecimento em Fechamento, confirme o recebimento por Pix, dinheiro ou cartão. O pagamento entra na data local em que foi registrado, mesmo que o serviço seja de outro dia.
 - Registre as despesas do dia para obter o saldo recebido menos despesas. Esse saldo não é uma demonstração de lucro e não inclui despesas ainda não lançadas. Registros ficam no banco da agenda, sem nova migração.
 
-As conexões Google Agenda e WhatsApp ficam em **Configurações → Integrações**. Os atalhos da central de atendimento abrem essa mesma seção.
+A conexão do WhatsApp fica em **Configurações → Integrações**. O sistema não sincroniza mais com o Google Agenda: a própria Agenda do painel, em grade, faz esse papel. Os atalhos da central de atendimento abrem essa mesma seção.
 
 ## Finanças
 
@@ -207,7 +195,7 @@ Perguntas em aberto para o salão: `docs/perguntas-para-o-salao.md`.
 
 ## Exemplos fictícios no localhost
 
-Execute `npm run exemplos:local` para criar uma área separada com 50 clientes fictícias, 3 profissionais e casos de agenda, remarcação, atendimento, finanças e estoque. O comando mostra o link e preserva os dados existentes. Não acessa o banco publicado nem conecta os exemplos ao WhatsApp ou Google Agenda. Veja o roteiro completo em [examples/README.md](examples/README.md). Para validar sem gravar: `npm run exemplos:check`.
+Execute `npm run exemplos:local` para criar uma área separada com 50 clientes fictícias, 3 profissionais e casos de agenda, remarcação, atendimento, finanças e estoque. O comando mostra o link e preserva os dados existentes. Não acessa o banco publicado nem conecta os exemplos ao WhatsApp. Veja o roteiro completo em [examples/README.md](examples/README.md). Para validar sem gravar: `npm run exemplos:check`.
 
 Para ver uma semana inteira funcionando junto, `npm run exemplos:semana` cria outra área separada com 5 profissionais fictícias e cerca de 150 atendimentos de 25 a 31/10/2026 (`-- --inicio AAAA-MM-DD` muda a semana). Os dias que já passaram vêm fechados, com pagamentos, faltas e um sem pagamento; os próximos trazem pedidos do site em Aceitações, uma proposta de remarcação e outra para aprovar, sábado lotado com duas clientes na espera, duas conversas para responder no WhatsApp, aniversariantes e estoque baixo. Ninguém tem telefone e nada é enviado. O comando mostra o link (`/painel#room=...`); entre com a senha de `APP_SENHA` do `.dev.vars`.
 
@@ -230,7 +218,7 @@ O banco publicado aceita no máximo ~100 KB por comando; por isso `scripts/impor
 O plano grátis dá 10 ms de processamento por pedido, e o cadastro inteiro é lido a cada atualização do painel. Para caber:
 
 - `npm run limpar-clientes` (ou `node scripts/limpar-clientes.mjs --remote` no site publicado; `--simular` só mostra) tira as clientes da planilha que vieram uma vez e não deixaram celular nem aniversário, e junta nomes completos quase iguais ("Andrea Gomes" e "Andreia Gomes", somando as visitas). Só primeiro nome nunca é juntado. Quem já tem agendamento, mensagem ou histórico no sistema novo nunca é mexida. A importação já aplica a mesma limpeza.
-- O painel lê o cadastro uma vez por pedido e só relê quando o WhatsApp ou o Google Agenda gravaram algo.
+- O painel lê o cadastro uma vez por pedido e só relê quando o WhatsApp gravou algo.
 
 ### Sessões
 
@@ -238,4 +226,4 @@ O login da gerência e o das funcionárias duram 8 horas, mas são renovados enq
 
 ### Agenda em grade
 
-A Agenda do painel mostra o dia como no Google Agenda: uma coluna por profissional, horários de meia em meia hora e cada atendimento como um bloco na cor que a profissional tem no Google (a mesma regra da sincronização). As caixas acima da grade mostram ou escondem cada profissional, e a escolha fica guardada no navegador. Pedido aguardando aceite aparece listrado; cancelado e falta, riscados. Clicar num horário futuro abre "Gerenciar"; nos outros, abre a conversa da cliente. O botão "Lista" volta para a tabela.
+A Agenda do painel mostra o dia como no Google Agenda: uma coluna por profissional, horários de meia em meia hora e cada atendimento como um bloco na cor da profissional, sempre a mesma para cada uma. As caixas acima da grade mostram ou escondem cada profissional, e a escolha fica guardada no navegador. Pedido aguardando aceite aparece listrado; cancelado e falta, riscados. Clicar num horário futuro abre "Gerenciar"; nos outros, abre a conversa da cliente. O botão "Lista" volta para a tabela.

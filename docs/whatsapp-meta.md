@@ -85,7 +85,7 @@ O modo de teste mantém até cinco destinatários verificados e permite `hello_w
 - O escopo cobre texto e botões; anexos não são baixados nem interpretados.
 - Gemini interpreta somente respostas ambíguas vinculadas a propostas. Indisponibilidade do modelo preserva a mensagem. A agenda mantém aprovação humana e validações.
 - Timeout fica “sem confirmação”, sem reenvio automático. Falhas definitivas permitem tentativa manual após resolver a causa.
-- Google Agenda exige sua própria conexão. A lista de espera continua com agendamento pela gerente; o motor antecipa clientes já agendadas.
+- A lista de espera continua com agendamento pela gerente; o motor antecipa clientes já agendadas.
 - O sistema não importa nem dispara para os contatos do celular.
 - API, IA e hospedagem têm regras e limites próprios; não há promessa de operação gratuita ilimitada.
 
