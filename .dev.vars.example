@@ -9,3 +9,6 @@ GOOGLE_CLIENT_SECRET=""
 GOOGLE_REDIRECT_URI="http://localhost:5173/api/google/callback"
 # Gerada por npm run calendar:setup. Nao compartilhe nem troque apos conectar.
 CALENDAR_ENCRYPTION_KEY=""
+
+# Senha de acesso à administração.
+APP_SENHA=""

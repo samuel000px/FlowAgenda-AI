@@ -1,12 +1,10 @@
+import {requireAdmin} from './admin-auth';
 import { challenge, digest, googleCall, nonce, pushEvents, seal, SCOPE, unseal, validDay } from './calendar-core.mjs';
 
 type Env=Cloudflare.Env;
 export const configured=(env:Env)=>!!(env.GOOGLE_CLIENT_ID&&env.GOOGLE_CLIENT_SECRET&&env.GOOGLE_REDIRECT_URI&&/^[a-f0-9]{64}$/i.test(env.CALENDAR_ENCRYPTION_KEY||''));
 export async function managerRoom(req:Request,env:Env){
-  if(!env.DB)throw Error('Banco indisponível.');
-  const room=await env.DB.prepare('SELECT id,manager FROM rooms WHERE id=?').bind(req.headers.get('X-Room')||'').first<any>();
-  if(!room||room.manager!==req.headers.get('X-Room-Key'))throw Error('Apenas o gerente pode conectar o calendário.');
-  return room.id as string;
+  return requireAdmin(req,env);
 }
 export async function calendarStatus(env:Env,room:string){
   const row=await env.DB!.prepare('SELECT calendar,day,synced,error,lease FROM calendar_connections WHERE room=?').bind(room).first<any>();
@@ -21,7 +19,7 @@ async function tokenRequest(env:Env,params:Record<string,string>){
 }
 export async function startOAuth(env:Env,room:string,day:string){
   if(!configured(env))throw Error('Configure as credenciais Google no servidor primeiro.');
-  if(!validDay(day))throw Error('Escolha a data da agenda de demonstração.');
+  if(!validDay(day))throw Error('Escolha a data da agenda.');
   const state=nonce(),verifier=nonce(),now=Date.now();
   await env.DB!.batch([
     env.DB!.prepare('DELETE FROM calendar_oauth WHERE room=? OR expires<?').bind(room,now),
@@ -31,7 +29,7 @@ export async function startOAuth(env:Env,room:string,day:string){
   return {state,url:`https://accounts.google.com/o/oauth2/v2/auth?${params}`};
 }
 export async function finishOAuth(env:Env,state:string,code:string){
-  if(!configured(env)||!state||!code)throw Error('Autorização incompleta. Volte ao Encaixa e conecte novamente.');
+  if(!configured(env)||!state||!code)throw Error('Autorização incompleta. Volte ao FlowAgenda-AI e conecte novamente.');
   // Consume state atomically; callbacks cannot be replayed.
   const pending=await env.DB!.prepare('DELETE FROM calendar_oauth WHERE state=? AND expires>? RETURNING *').bind(await digest(state),Date.now()).first<any>();
   if(!pending)throw Error('Esta autorização expirou ou já foi usada. Tente novamente.');
@@ -39,8 +37,8 @@ export async function finishOAuth(env:Env,state:string,code:string){
   if(previous?.lease>Date.now())throw Error('Há uma sincronização em andamento. Aguarde e tente novamente.');
   const tokens=await tokenRequest(env,{grant_type:'authorization_code',code,redirect_uri:env.GOOGLE_REDIRECT_URI!,code_verifier:pending.verifier});
   if(!tokens.refresh_token)throw Error('O Google não autorizou a sincronização contínua. Remova o acesso anterior e conecte novamente.');
-  if(tokens.scope&&!tokens.scope.split(' ').includes(SCOPE))throw Error('Autorize a criação do calendário do Encaixa.');
-  const calendar=previous?.calendar||(await googleCall(tokens.access_token,'/calendars','POST',{summary:`Encaixa · Esmalteria · ${pending.room.slice(0,6)}`,description:'Agenda de demonstração com clientes fictícias. Alterações são feitas pelo Encaixa.',timeZone:'America/Fortaleza'})).id;
+  if(tokens.scope&&!tokens.scope.split(' ').includes(SCOPE))throw Error('Autorize a criação do calendário do FlowAgenda-AI.');
+  const calendar=previous?.calendar||(await googleCall(tokens.access_token,'/calendars','POST',{summary:`FlowAgenda-AI · Esmalteria · ${pending.room.slice(0,6)}`,description:'Agenda de atendimentos administrada pelo FlowAgenda-AI.',timeZone:'America/Fortaleza'})).id;
   const encrypted=await seal({access:tokens.access_token,refresh:tokens.refresh_token,expires:Date.now()+Number(tokens.expires_in||3600)*1000},env.CALENDAR_ENCRYPTION_KEY,pending.room);
   await env.DB!.prepare("INSERT INTO calendar_connections(room,tokens,calendar,day) VALUES(?,?,?,?) ON CONFLICT(room) DO UPDATE SET tokens=excluded.tokens,error='',retry=0").bind(pending.room,encrypted,calendar,pending.day).run();
   await syncCalendar(env,pending.room,true);

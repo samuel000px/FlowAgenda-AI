@@ -1,0 +1,3625 @@
+[
+  {
+    "scenario": {
+      "id": "S1",
+      "nome": "Aviso tardio",
+      "o_que_prova": "Filtros duros e poda com pouco aviso",
+      "agora": "2026-10-28 11:00:00",
+      "slot_cancelado_id": "S1-03",
+      "clientes": {
+        "C01": {
+          "id": "C01",
+          "nome": "Ana Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C02": {
+          "id": "C02",
+          "nome": "Beatriz Alves",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C03": {
+          "id": "C03",
+          "nome": "Luana Freitas",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C04": {
+          "id": "C04",
+          "nome": "Camila Rocha",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 8,
+          "faltas": 1,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C05": {
+          "id": "C05",
+          "nome": "Daniela Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C06": {
+          "id": "C06",
+          "nome": "Elisa Costa",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C07": {
+          "id": "C07",
+          "nome": "Fernanda Melo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 1,
+          "faltas": 1,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C08": {
+          "id": "C08",
+          "nome": "Gabriela Dias",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 5,
+          "propostas_recebidas": 6,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C09": {
+          "id": "C09",
+          "nome": "Helena Reis",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C10": {
+          "id": "C10",
+          "nome": "Ingrid Santos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C11": {
+          "id": "C11",
+          "nome": "Julia Moraes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 3,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C12": {
+          "id": "C12",
+          "nome": "Karina Silva",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 5,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C13": {
+          "id": "C13",
+          "nome": "Larissa Gomes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 11,
+          "faltas": 0,
+          "propostas_recebidas": 5,
+          "propostas_aceitas": 4,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C14": {
+          "id": "C14",
+          "nome": "Marina Souza",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C15": {
+          "id": "C15",
+          "nome": "Natalia Barros",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C16": {
+          "id": "C16",
+          "nome": "Olivia Ramos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C17": {
+          "id": "C17",
+          "nome": "Patricia Araujo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C18": {
+          "id": "C18",
+          "nome": "Rafaela Nunes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 4,
+          "faltas": 0,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C19": {
+          "id": "C19",
+          "nome": "Sofia Martins",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 5,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C20": {
+          "id": "C20",
+          "nome": "Talita Braga",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": "P2"
+        },
+        "C21": {
+          "id": "C21",
+          "nome": "Yasmin Lopes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 7,
+          "profissional_preferida": "P1"
+        },
+        "C22": {
+          "id": "C22",
+          "nome": "Lorena Matos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C23": {
+          "id": "C23",
+          "nome": "Vânia Brito",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        }
+      },
+      "agenda": [
+        {
+          "id": "S1-01",
+          "data": "2026-10-28",
+          "hora": "09:00",
+          "duracao_min": 90,
+          "tipo_atendimento": "pe_e_mao",
+          "status": "ocupado",
+          "cliente_id": "C19",
+          "valor": 80,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S1-02",
+          "data": "2026-10-28",
+          "hora": "10:30",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C14",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S1-03",
+          "data": "2026-10-28",
+          "hora": "13:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C01",
+          "valor": 45,
+          "profissional_id": "P3",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S1-04",
+          "data": "2026-10-28",
+          "hora": "17:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C06",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S1-05",
+          "data": "2026-10-29",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C03",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S1-06",
+          "data": "2026-10-29",
+          "hora": "14:00",
+          "duracao_min": 90,
+          "tipo_atendimento": "pe_e_mao",
+          "status": "ocupado",
+          "cliente_id": "C04",
+          "valor": 80,
+          "profissional_id": "P3",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S1-07",
+          "data": "2026-10-29",
+          "hora": "17:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C05",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S1-08",
+          "data": "2026-10-30",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C02",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        }
+      ],
+      "dias": {
+        "2026-10-28": {
+          "ocupacao_pct": 70,
+          "fila_espera": 0
+        },
+        "2026-10-29": {
+          "ocupacao_pct": 60,
+          "fila_espera": 1
+        },
+        "2026-10-30": {
+          "ocupacao_pct": 75,
+          "fila_espera": 2
+        }
+      },
+      "respostas": {
+        "C02": "Opa, consigo sim! Chego em 15 min.",
+        "C06": "Não, prefiro manter meu horário mesmo."
+      },
+      "esperado": {
+        "resumo": "Ana cancela as 13h com 2h de aviso. Luana e Daniela deram nota 0 para trocar de horário, então nem são chamadas, e Camila faz pé e mão. Elisa deixaria um buraco no fim do dia, sem fila, então é podada. Beatriz é a escolhida.",
+        "fora": {
+          "C03": "nao_quer",
+          "C04": "tipo",
+          "C05": "nao_quer",
+          "C06": "valor_negativo"
+        },
+        "passos": [
+          {
+            "profundidade": 0,
+            "slot_id": "S1-03",
+            "escolha": "C02",
+            "resposta": "aceitou"
+          },
+          {
+            "profundidade": 1,
+            "slot_id": "S1-08",
+            "resultado": "nao_agir"
+          }
+        ]
+      },
+      "profissionais": {
+        "P1": "Lia",
+        "P2": "Nina",
+        "P3": "Rafa"
+      }
+    },
+    "expected": [
+      {
+        "cliente_id": "C02",
+        "nome": "Beatriz Alves",
+        "slot_atual_id": "S1-08",
+        "motivo": null,
+        "taxa_falta": 0.0625,
+        "prob_aceitar": 0.6666666666666666,
+        "antecedencia_novo_h": 47.0,
+        "fila_novo": 2,
+        "dificuldade_novo": 0.1825520833333334,
+        "ganho": 27.46875,
+        "risco": 5.476562500000002,
+        "valor_esperado": 21.9921875,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C06",
+        "nome": "Elisa Costa",
+        "slot_atual_id": "S1-04",
+        "motivo": "valor_negativo",
+        "taxa_falta": 0.2,
+        "prob_aceitar": 0.2,
+        "antecedencia_novo_h": 6.0,
+        "fila_novo": 0,
+        "dificuldade_novo": 0.934375,
+        "ganho": 7.003125,
+        "risco": 8.409374999999999,
+        "valor_esperado": -1.4062499999999991,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C19",
+        "nome": "Sofia Martins",
+        "slot_atual_id": "S1-01",
+        "motivo": "tipo",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C14",
+        "nome": "Marina Souza",
+        "slot_atual_id": "S1-02",
+        "motivo": "nao_posterior",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C03",
+        "nome": "Luana Freitas",
+        "slot_atual_id": "S1-05",
+        "motivo": "nao_quer",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C04",
+        "nome": "Camila Rocha",
+        "slot_atual_id": "S1-06",
+        "motivo": "tipo",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C05",
+        "nome": "Daniela Lima",
+        "slot_atual_id": "S1-07",
+        "motivo": "nao_quer",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      }
+    ]
+  },
+  {
+    "scenario": {
+      "id": "S2",
+      "nome": "Cascata que compensa",
+      "o_que_prova": "Troca um buraco difícil por um fácil",
+      "agora": "2026-10-28 09:00:00",
+      "slot_cancelado_id": "S2-02",
+      "clientes": {
+        "C01": {
+          "id": "C01",
+          "nome": "Ana Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C02": {
+          "id": "C02",
+          "nome": "Beatriz Alves",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C03": {
+          "id": "C03",
+          "nome": "Luana Freitas",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C04": {
+          "id": "C04",
+          "nome": "Camila Rocha",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 8,
+          "faltas": 1,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C05": {
+          "id": "C05",
+          "nome": "Daniela Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C06": {
+          "id": "C06",
+          "nome": "Elisa Costa",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C07": {
+          "id": "C07",
+          "nome": "Fernanda Melo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 1,
+          "faltas": 1,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C08": {
+          "id": "C08",
+          "nome": "Gabriela Dias",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 5,
+          "propostas_recebidas": 6,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C09": {
+          "id": "C09",
+          "nome": "Helena Reis",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C10": {
+          "id": "C10",
+          "nome": "Ingrid Santos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C11": {
+          "id": "C11",
+          "nome": "Julia Moraes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 3,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C12": {
+          "id": "C12",
+          "nome": "Karina Silva",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 5,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C13": {
+          "id": "C13",
+          "nome": "Larissa Gomes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 11,
+          "faltas": 0,
+          "propostas_recebidas": 5,
+          "propostas_aceitas": 4,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C14": {
+          "id": "C14",
+          "nome": "Marina Souza",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C15": {
+          "id": "C15",
+          "nome": "Natalia Barros",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C16": {
+          "id": "C16",
+          "nome": "Olivia Ramos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C17": {
+          "id": "C17",
+          "nome": "Patricia Araujo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C18": {
+          "id": "C18",
+          "nome": "Rafaela Nunes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 4,
+          "faltas": 0,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C19": {
+          "id": "C19",
+          "nome": "Sofia Martins",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 5,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C20": {
+          "id": "C20",
+          "nome": "Talita Braga",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": "P2"
+        },
+        "C21": {
+          "id": "C21",
+          "nome": "Yasmin Lopes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 7,
+          "profissional_preferida": "P1"
+        },
+        "C22": {
+          "id": "C22",
+          "nome": "Lorena Matos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C23": {
+          "id": "C23",
+          "nome": "Vânia Brito",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        }
+      },
+      "agenda": [
+        {
+          "id": "S2-01",
+          "data": "2026-10-28",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C02",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S2-02",
+          "data": "2026-10-28",
+          "hora": "15:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C17",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S2-03",
+          "data": "2026-10-28",
+          "hora": "16:30",
+          "duracao_min": 90,
+          "tipo_atendimento": "pe_e_mao",
+          "status": "ocupado",
+          "cliente_id": "C19",
+          "valor": 80,
+          "profissional_id": "P3",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S2-04",
+          "data": "2026-10-29",
+          "hora": "15:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C09",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S2-05",
+          "data": "2026-10-31",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C10",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        }
+      ],
+      "dias": {
+        "2026-10-28": {
+          "ocupacao_pct": 65,
+          "fila_espera": 0
+        },
+        "2026-10-29": {
+          "ocupacao_pct": 80,
+          "fila_espera": 2
+        },
+        "2026-10-31": {
+          "ocupacao_pct": 95,
+          "fila_espera": 3
+        }
+      },
+      "respostas": {
+        "C09": "Pode ser, hoje à tarde fica até melhor pra mim.",
+        "C10": "Consigo sim! Sábado ia ficar apertado mesmo."
+      },
+      "esperado": {
+        "resumo": "Patrícia cancela as 15h de hoje, sem fila. Helena sai de amanhã as 15h (30h de aviso, 2 na fila). Esse buraco ainda vale a pena: Ingrid sai de sábado, dia lotado com 3 na fila, e vai para quinta. No sábado ninguém mais precisa ser puxado.",
+        "fora": {
+          "C19": "tipo"
+        },
+        "passos": [
+          {
+            "profundidade": 0,
+            "slot_id": "S2-02",
+            "escolha": "C09",
+            "resposta": "aceitou"
+          },
+          {
+            "profundidade": 1,
+            "slot_id": "S2-04",
+            "escolha": "C10",
+            "resposta": "aceitou"
+          },
+          {
+            "profundidade": 2,
+            "slot_id": "S2-05",
+            "resultado": "nao_agir"
+          }
+        ]
+      },
+      "profissionais": {
+        "P1": "Lia",
+        "P2": "Nina",
+        "P3": "Rafa"
+      }
+    },
+    "expected": [
+      {
+        "cliente_id": "C09",
+        "nome": "Helena Reis",
+        "slot_atual_id": "S2-04",
+        "motivo": null,
+        "taxa_falta": 0.08333333333333333,
+        "prob_aceitar": 0.8,
+        "antecedencia_novo_h": 30.0,
+        "fila_novo": 2,
+        "dificuldade_novo": 0.3583333333333334,
+        "ganho": 30.80625,
+        "risco": 12.900000000000002,
+        "valor_esperado": 17.906249999999996,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C10",
+        "nome": "Ingrid Santos",
+        "slot_atual_id": "S2-05",
+        "motivo": null,
+        "taxa_falta": 0.18181818181818182,
+        "prob_aceitar": 0.4,
+        "antecedencia_novo_h": 73.0,
+        "fila_novo": 3,
+        "dificuldade_novo": 0.0,
+        "ganho": 13.63039772727273,
+        "risco": 0.0,
+        "valor_esperado": 13.63039772727273,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C02",
+        "nome": "Beatriz Alves",
+        "slot_atual_id": "S2-01",
+        "motivo": "nao_posterior",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C19",
+        "nome": "Sofia Martins",
+        "slot_atual_id": "S2-03",
+        "motivo": "tipo",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      }
+    ]
+  },
+  {
+    "scenario": {
+      "id": "S3",
+      "nome": "Cascata que não compensa",
+      "o_que_prova": "Poda: decidir não agir",
+      "agora": "2026-10-28 14:00:00",
+      "slot_cancelado_id": "S3-02",
+      "clientes": {
+        "C01": {
+          "id": "C01",
+          "nome": "Ana Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C02": {
+          "id": "C02",
+          "nome": "Beatriz Alves",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C03": {
+          "id": "C03",
+          "nome": "Luana Freitas",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C04": {
+          "id": "C04",
+          "nome": "Camila Rocha",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 8,
+          "faltas": 1,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C05": {
+          "id": "C05",
+          "nome": "Daniela Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C06": {
+          "id": "C06",
+          "nome": "Elisa Costa",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C07": {
+          "id": "C07",
+          "nome": "Fernanda Melo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 1,
+          "faltas": 1,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C08": {
+          "id": "C08",
+          "nome": "Gabriela Dias",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 5,
+          "propostas_recebidas": 6,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C09": {
+          "id": "C09",
+          "nome": "Helena Reis",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C10": {
+          "id": "C10",
+          "nome": "Ingrid Santos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C11": {
+          "id": "C11",
+          "nome": "Julia Moraes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 3,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C12": {
+          "id": "C12",
+          "nome": "Karina Silva",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 5,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C13": {
+          "id": "C13",
+          "nome": "Larissa Gomes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 11,
+          "faltas": 0,
+          "propostas_recebidas": 5,
+          "propostas_aceitas": 4,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C14": {
+          "id": "C14",
+          "nome": "Marina Souza",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C15": {
+          "id": "C15",
+          "nome": "Natalia Barros",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C16": {
+          "id": "C16",
+          "nome": "Olivia Ramos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C17": {
+          "id": "C17",
+          "nome": "Patricia Araujo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C18": {
+          "id": "C18",
+          "nome": "Rafaela Nunes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 4,
+          "faltas": 0,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C19": {
+          "id": "C19",
+          "nome": "Sofia Martins",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 5,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C20": {
+          "id": "C20",
+          "nome": "Talita Braga",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": "P2"
+        },
+        "C21": {
+          "id": "C21",
+          "nome": "Yasmin Lopes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 7,
+          "profissional_preferida": "P1"
+        },
+        "C22": {
+          "id": "C22",
+          "nome": "Lorena Matos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C23": {
+          "id": "C23",
+          "nome": "Vânia Brito",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        }
+      },
+      "agenda": [
+        {
+          "id": "S3-01",
+          "data": "2026-10-28",
+          "hora": "11:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C13",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S3-02",
+          "data": "2026-10-28",
+          "hora": "18:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C18",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S3-03",
+          "data": "2026-10-29",
+          "hora": "09:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C11",
+          "valor": 45,
+          "profissional_id": "P3",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S3-04",
+          "data": "2026-10-29",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C12",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        }
+      ],
+      "dias": {
+        "2026-10-28": {
+          "ocupacao_pct": 60,
+          "fila_espera": 0
+        },
+        "2026-10-29": {
+          "ocupacao_pct": 40,
+          "fila_espera": 0
+        }
+      },
+      "respostas": {
+        "C11": "Pode ser!",
+        "C12": "Consigo."
+      },
+      "esperado": {
+        "resumo": "Rafaela cancela as 18h. As candidatas estão amanhã cedo, num dia com 40% de ocupação e ninguém na fila, e as duas faltam bastante. Puxar qualquer uma troca um buraco difícil por outro quase tão difícil e ainda soma o risco de falta. O agente não mexe e explica.",
+        "fora": {
+          "C11": "valor_negativo",
+          "C12": "valor_negativo"
+        },
+        "passos": [
+          {
+            "profundidade": 0,
+            "slot_id": "S3-02",
+            "resultado": "nao_agir"
+          }
+        ]
+      },
+      "profissionais": {
+        "P1": "Lia",
+        "P2": "Nina",
+        "P3": "Rafa"
+      }
+    },
+    "expected": [
+      {
+        "cliente_id": "C11",
+        "nome": "Julia Moraes",
+        "slot_atual_id": "S3-03",
+        "motivo": "valor_negativo",
+        "taxa_falta": 0.3076923076923077,
+        "prob_aceitar": 0.5,
+        "antecedencia_novo_h": 19.0,
+        "fila_novo": 0,
+        "dificuldade_novo": 0.88125,
+        "ganho": 14.733173076923077,
+        "risco": 19.828125,
+        "valor_esperado": -5.094951923076923,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C12",
+        "nome": "Karina Silva",
+        "slot_atual_id": "S3-04",
+        "motivo": "valor_negativo",
+        "taxa_falta": 0.3333333333333333,
+        "prob_aceitar": 0.5,
+        "antecedencia_novo_h": 20.0,
+        "fila_novo": 0,
+        "dificuldade_novo": 0.875,
+        "ganho": 14.15625,
+        "risco": 19.6875,
+        "valor_esperado": -5.53125,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C13",
+        "nome": "Larissa Gomes",
+        "slot_atual_id": "S3-01",
+        "motivo": "nao_posterior",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      }
+    ]
+  },
+  {
+    "scenario": {
+      "id": "S4",
+      "nome": "Recusa",
+      "o_que_prova": "Plano B",
+      "agora": "2026-10-30 08:00:00",
+      "slot_cancelado_id": "S4-02",
+      "clientes": {
+        "C01": {
+          "id": "C01",
+          "nome": "Ana Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C02": {
+          "id": "C02",
+          "nome": "Beatriz Alves",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C03": {
+          "id": "C03",
+          "nome": "Luana Freitas",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C04": {
+          "id": "C04",
+          "nome": "Camila Rocha",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 8,
+          "faltas": 1,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C05": {
+          "id": "C05",
+          "nome": "Daniela Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C06": {
+          "id": "C06",
+          "nome": "Elisa Costa",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C07": {
+          "id": "C07",
+          "nome": "Fernanda Melo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 1,
+          "faltas": 1,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C08": {
+          "id": "C08",
+          "nome": "Gabriela Dias",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 5,
+          "propostas_recebidas": 6,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C09": {
+          "id": "C09",
+          "nome": "Helena Reis",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C10": {
+          "id": "C10",
+          "nome": "Ingrid Santos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C11": {
+          "id": "C11",
+          "nome": "Julia Moraes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 3,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C12": {
+          "id": "C12",
+          "nome": "Karina Silva",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 5,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C13": {
+          "id": "C13",
+          "nome": "Larissa Gomes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 11,
+          "faltas": 0,
+          "propostas_recebidas": 5,
+          "propostas_aceitas": 4,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C14": {
+          "id": "C14",
+          "nome": "Marina Souza",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C15": {
+          "id": "C15",
+          "nome": "Natalia Barros",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C16": {
+          "id": "C16",
+          "nome": "Olivia Ramos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C17": {
+          "id": "C17",
+          "nome": "Patricia Araujo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C18": {
+          "id": "C18",
+          "nome": "Rafaela Nunes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 4,
+          "faltas": 0,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C19": {
+          "id": "C19",
+          "nome": "Sofia Martins",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 5,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C20": {
+          "id": "C20",
+          "nome": "Talita Braga",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": "P2"
+        },
+        "C21": {
+          "id": "C21",
+          "nome": "Yasmin Lopes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 7,
+          "profissional_preferida": "P1"
+        },
+        "C22": {
+          "id": "C22",
+          "nome": "Lorena Matos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C23": {
+          "id": "C23",
+          "nome": "Vânia Brito",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        }
+      },
+      "agenda": [
+        {
+          "id": "S4-01",
+          "data": "2026-10-30",
+          "hora": "09:30",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C06",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S4-02",
+          "data": "2026-10-30",
+          "hora": "14:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C01",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S4-03",
+          "data": "2026-10-31",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C14",
+          "valor": 45,
+          "profissional_id": "P3",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S4-04",
+          "data": "2026-11-02",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C13",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        }
+      ],
+      "dias": {
+        "2026-10-30": {
+          "ocupacao_pct": 70,
+          "fila_espera": 1
+        },
+        "2026-10-31": {
+          "ocupacao_pct": 85,
+          "fila_espera": 2
+        },
+        "2026-11-02": {
+          "ocupacao_pct": 90,
+          "fila_espera": 3
+        }
+      },
+      "respostas": {
+        "C13": "Ah, hoje não vou conseguir. Prefiro manter segunda mesmo, obrigada!",
+        "C14": "Consigo sim, pode trocar."
+      },
+      "esperado": {
+        "resumo": "Ana cancela as 14h. Larissa é a melhor opção, mas recusa. O agente passa para a Marina, que aceita. No buraco de sábado só sobraria a Larissa, que já recusou, então para.",
+        "fora": {},
+        "passos": [
+          {
+            "profundidade": 0,
+            "slot_id": "S4-02",
+            "escolha": "C13",
+            "resposta": "recusou"
+          },
+          {
+            "profundidade": 0,
+            "slot_id": "S4-02",
+            "escolha": "C14",
+            "resposta": "aceitou"
+          },
+          {
+            "profundidade": 1,
+            "slot_id": "S4-03",
+            "resultado": "nao_agir"
+          }
+        ]
+      },
+      "profissionais": {
+        "P1": "Lia",
+        "P2": "Nina",
+        "P3": "Rafa"
+      }
+    },
+    "expected": [
+      {
+        "cliente_id": "C13",
+        "nome": "Larissa Gomes",
+        "slot_atual_id": "S4-04",
+        "motivo": null,
+        "taxa_falta": 0.06666666666666667,
+        "prob_aceitar": 0.7142857142857143,
+        "antecedencia_novo_h": 74.0,
+        "fila_novo": 3,
+        "dificuldade_novo": 0.0,
+        "ganho": 23.604910714285715,
+        "risco": 0.0,
+        "valor_esperado": 23.604910714285715,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C14",
+        "nome": "Marina Souza",
+        "slot_atual_id": "S4-03",
+        "motivo": null,
+        "taxa_falta": 0.18181818181818182,
+        "prob_aceitar": 0.6,
+        "antecedencia_novo_h": 26.0,
+        "fila_novo": 2,
+        "dificuldade_novo": 0.40833333333333344,
+        "ganho": 16.71903409090909,
+        "risco": 11.025000000000002,
+        "valor_esperado": 5.6940340909090885,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C06",
+        "nome": "Elisa Costa",
+        "slot_atual_id": "S4-01",
+        "motivo": "nao_posterior",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      }
+    ]
+  },
+  {
+    "scenario": {
+      "id": "S5",
+      "nome": "Cliente nova",
+      "o_que_prova": "Suavização da taxa de falta",
+      "agora": "2026-10-29 10:00:00",
+      "slot_cancelado_id": "S5-02",
+      "clientes": {
+        "C01": {
+          "id": "C01",
+          "nome": "Ana Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C02": {
+          "id": "C02",
+          "nome": "Beatriz Alves",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C03": {
+          "id": "C03",
+          "nome": "Luana Freitas",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C04": {
+          "id": "C04",
+          "nome": "Camila Rocha",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 8,
+          "faltas": 1,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C05": {
+          "id": "C05",
+          "nome": "Daniela Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C06": {
+          "id": "C06",
+          "nome": "Elisa Costa",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C07": {
+          "id": "C07",
+          "nome": "Fernanda Melo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 1,
+          "faltas": 1,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C08": {
+          "id": "C08",
+          "nome": "Gabriela Dias",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 5,
+          "propostas_recebidas": 6,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C09": {
+          "id": "C09",
+          "nome": "Helena Reis",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C10": {
+          "id": "C10",
+          "nome": "Ingrid Santos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C11": {
+          "id": "C11",
+          "nome": "Julia Moraes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 3,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C12": {
+          "id": "C12",
+          "nome": "Karina Silva",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 5,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C13": {
+          "id": "C13",
+          "nome": "Larissa Gomes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 11,
+          "faltas": 0,
+          "propostas_recebidas": 5,
+          "propostas_aceitas": 4,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C14": {
+          "id": "C14",
+          "nome": "Marina Souza",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C15": {
+          "id": "C15",
+          "nome": "Natalia Barros",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C16": {
+          "id": "C16",
+          "nome": "Olivia Ramos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C17": {
+          "id": "C17",
+          "nome": "Patricia Araujo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C18": {
+          "id": "C18",
+          "nome": "Rafaela Nunes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 4,
+          "faltas": 0,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C19": {
+          "id": "C19",
+          "nome": "Sofia Martins",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 5,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C20": {
+          "id": "C20",
+          "nome": "Talita Braga",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": "P2"
+        },
+        "C21": {
+          "id": "C21",
+          "nome": "Yasmin Lopes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 7,
+          "profissional_preferida": "P1"
+        },
+        "C22": {
+          "id": "C22",
+          "nome": "Lorena Matos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C23": {
+          "id": "C23",
+          "nome": "Vânia Brito",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        }
+      },
+      "agenda": [
+        {
+          "id": "S5-01",
+          "data": "2026-10-29",
+          "hora": "11:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C09",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S5-02",
+          "data": "2026-10-29",
+          "hora": "14:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C17",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S5-03",
+          "data": "2026-11-02",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C08",
+          "valor": 45,
+          "profissional_id": "P3",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S5-04",
+          "data": "2026-11-02",
+          "hora": "11:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C07",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        }
+      ],
+      "dias": {
+        "2026-10-29": {
+          "ocupacao_pct": 70,
+          "fila_espera": 1
+        },
+        "2026-11-02": {
+          "ocupacao_pct": 90,
+          "fila_espera": 3
+        }
+      },
+      "respostas": {
+        "C07": "Ah, ótimo! Pode ser hoje sim.",
+        "C08": "Pode ser."
+      },
+      "esperado": {
+        "resumo": "Fernanda faltou na única vez que veio. Sem suavização ela seria 100% faltosa; com a suavização fica em 40%, perto da Gabriela (43%, 5 faltas em 10). Como a Fernanda nunca recusou proposta e a Gabriela aceitou só 1 de 6, a Fernanda é escolhida.",
+        "fora": {},
+        "passos": [
+          {
+            "profundidade": 0,
+            "slot_id": "S5-02",
+            "escolha": "C07",
+            "resposta": "aceitou"
+          },
+          {
+            "profundidade": 1,
+            "slot_id": "S5-04",
+            "resultado": "nao_agir"
+          }
+        ]
+      },
+      "profissionais": {
+        "P1": "Lia",
+        "P2": "Nina",
+        "P3": "Rafa"
+      }
+    },
+    "expected": [
+      {
+        "cliente_id": "C07",
+        "nome": "Fernanda Melo",
+        "slot_atual_id": "S5-04",
+        "motivo": null,
+        "taxa_falta": 0.4,
+        "prob_aceitar": 0.5,
+        "antecedencia_novo_h": 97.0,
+        "fila_novo": 3,
+        "dificuldade_novo": 0.0,
+        "ganho": 9.515625000000002,
+        "risco": 0.0,
+        "valor_esperado": 9.515625000000002,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C08",
+        "nome": "Gabriela Dias",
+        "slot_atual_id": "S5-03",
+        "motivo": null,
+        "taxa_falta": 0.42857142857142855,
+        "prob_aceitar": 0.25,
+        "antecedencia_novo_h": 96.0,
+        "fila_novo": 3,
+        "dificuldade_novo": 0.0,
+        "ganho": 4.43638392857143,
+        "risco": 0.0,
+        "valor_esperado": 4.43638392857143,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C09",
+        "nome": "Helena Reis",
+        "slot_atual_id": "S5-01",
+        "motivo": "nao_posterior",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      }
+    ]
+  },
+  {
+    "scenario": {
+      "id": "S6",
+      "nome": "Dia lotado",
+      "o_que_prova": "Uso da ocupação do dia",
+      "agora": "2026-10-31 08:00:00",
+      "slot_cancelado_id": "S6-02",
+      "clientes": {
+        "C01": {
+          "id": "C01",
+          "nome": "Ana Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C02": {
+          "id": "C02",
+          "nome": "Beatriz Alves",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C03": {
+          "id": "C03",
+          "nome": "Luana Freitas",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C04": {
+          "id": "C04",
+          "nome": "Camila Rocha",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 8,
+          "faltas": 1,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C05": {
+          "id": "C05",
+          "nome": "Daniela Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C06": {
+          "id": "C06",
+          "nome": "Elisa Costa",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C07": {
+          "id": "C07",
+          "nome": "Fernanda Melo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 1,
+          "faltas": 1,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C08": {
+          "id": "C08",
+          "nome": "Gabriela Dias",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 5,
+          "propostas_recebidas": 6,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C09": {
+          "id": "C09",
+          "nome": "Helena Reis",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C10": {
+          "id": "C10",
+          "nome": "Ingrid Santos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C11": {
+          "id": "C11",
+          "nome": "Julia Moraes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 3,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C12": {
+          "id": "C12",
+          "nome": "Karina Silva",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 5,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C13": {
+          "id": "C13",
+          "nome": "Larissa Gomes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 11,
+          "faltas": 0,
+          "propostas_recebidas": 5,
+          "propostas_aceitas": 4,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C14": {
+          "id": "C14",
+          "nome": "Marina Souza",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C15": {
+          "id": "C15",
+          "nome": "Natalia Barros",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C16": {
+          "id": "C16",
+          "nome": "Olivia Ramos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C17": {
+          "id": "C17",
+          "nome": "Patricia Araujo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C18": {
+          "id": "C18",
+          "nome": "Rafaela Nunes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 4,
+          "faltas": 0,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C19": {
+          "id": "C19",
+          "nome": "Sofia Martins",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 5,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C20": {
+          "id": "C20",
+          "nome": "Talita Braga",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": "P2"
+        },
+        "C21": {
+          "id": "C21",
+          "nome": "Yasmin Lopes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 7,
+          "profissional_preferida": "P1"
+        },
+        "C22": {
+          "id": "C22",
+          "nome": "Lorena Matos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C23": {
+          "id": "C23",
+          "nome": "Vânia Brito",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        }
+      },
+      "agenda": [
+        {
+          "id": "S6-01",
+          "data": "2026-10-31",
+          "hora": "09:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C11",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S6-02",
+          "data": "2026-10-31",
+          "hora": "11:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C18",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S6-03",
+          "data": "2026-10-31",
+          "hora": "15:00",
+          "duracao_min": 90,
+          "tipo_atendimento": "pe_e_mao",
+          "status": "ocupado",
+          "cliente_id": "C04",
+          "valor": 80,
+          "profissional_id": "P3",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S6-04",
+          "data": "2026-11-02",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C16",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S6-05",
+          "data": "2026-11-03",
+          "hora": "10:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C15",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        }
+      ],
+      "dias": {
+        "2026-10-31": {
+          "ocupacao_pct": 80,
+          "fila_espera": 1
+        },
+        "2026-11-02": {
+          "ocupacao_pct": 35,
+          "fila_espera": 0
+        },
+        "2026-11-03": {
+          "ocupacao_pct": 95,
+          "fila_espera": 4
+        }
+      },
+      "respostas": {
+        "C15": "Pode, prefiro hoje!",
+        "C16": "Pode sim."
+      },
+      "esperado": {
+        "resumo": "Rafaela cancela as 11h de sábado. Natália e Olívia têm o mesmo histórico. A Natália sai de terça, dia com 95% de ocupação e 4 na fila, então o buraco dela some rápido. A Olívia deixaria um buraco na segunda, dia vazio. Natália é a escolhida.",
+        "fora": {
+          "C04": "tipo"
+        },
+        "passos": [
+          {
+            "profundidade": 0,
+            "slot_id": "S6-02",
+            "escolha": "C15",
+            "resposta": "aceitou"
+          },
+          {
+            "profundidade": 1,
+            "slot_id": "S6-05",
+            "resultado": "nao_agir"
+          }
+        ]
+      },
+      "profissionais": {
+        "P1": "Lia",
+        "P2": "Nina",
+        "P3": "Rafa"
+      }
+    },
+    "expected": [
+      {
+        "cliente_id": "C15",
+        "nome": "Natalia Barros",
+        "slot_atual_id": "S6-05",
+        "motivo": null,
+        "taxa_falta": 0.08333333333333333,
+        "prob_aceitar": 0.6666666666666666,
+        "antecedencia_novo_h": 74.0,
+        "fila_novo": 4,
+        "dificuldade_novo": 0.0,
+        "ganho": 22.374999999999996,
+        "risco": 0.0,
+        "valor_esperado": 22.374999999999996,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C16",
+        "nome": "Olivia Ramos",
+        "slot_atual_id": "S6-04",
+        "motivo": null,
+        "taxa_falta": 0.08333333333333333,
+        "prob_aceitar": 0.6666666666666666,
+        "antecedencia_novo_h": 50.0,
+        "fila_novo": 0,
+        "dificuldade_novo": 0.7375,
+        "ganho": 22.374999999999996,
+        "risco": 22.125,
+        "valor_esperado": 0.24999999999999645,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C11",
+        "nome": "Julia Moraes",
+        "slot_atual_id": "S6-01",
+        "motivo": "nao_posterior",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C04",
+        "nome": "Camila Rocha",
+        "slot_atual_id": "S6-03",
+        "motivo": "tipo",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      }
+    ]
+  },
+  {
+    "scenario": {
+      "id": "S7",
+      "nome": "Profissional preferida",
+      "o_que_prova": "Primeiro quem prefere a profissional do horário",
+      "agora": "2026-10-30 08:00:00",
+      "slot_cancelado_id": "S7-02",
+      "clientes": {
+        "C01": {
+          "id": "C01",
+          "nome": "Ana Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C02": {
+          "id": "C02",
+          "nome": "Beatriz Alves",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C03": {
+          "id": "C03",
+          "nome": "Luana Freitas",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C04": {
+          "id": "C04",
+          "nome": "Camila Rocha",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 8,
+          "faltas": 1,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C05": {
+          "id": "C05",
+          "nome": "Daniela Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C06": {
+          "id": "C06",
+          "nome": "Elisa Costa",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C07": {
+          "id": "C07",
+          "nome": "Fernanda Melo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 1,
+          "faltas": 1,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C08": {
+          "id": "C08",
+          "nome": "Gabriela Dias",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 5,
+          "propostas_recebidas": 6,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C09": {
+          "id": "C09",
+          "nome": "Helena Reis",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C10": {
+          "id": "C10",
+          "nome": "Ingrid Santos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C11": {
+          "id": "C11",
+          "nome": "Julia Moraes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 3,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C12": {
+          "id": "C12",
+          "nome": "Karina Silva",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 5,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C13": {
+          "id": "C13",
+          "nome": "Larissa Gomes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 11,
+          "faltas": 0,
+          "propostas_recebidas": 5,
+          "propostas_aceitas": 4,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C14": {
+          "id": "C14",
+          "nome": "Marina Souza",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C15": {
+          "id": "C15",
+          "nome": "Natalia Barros",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C16": {
+          "id": "C16",
+          "nome": "Olivia Ramos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C17": {
+          "id": "C17",
+          "nome": "Patricia Araujo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C18": {
+          "id": "C18",
+          "nome": "Rafaela Nunes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 4,
+          "faltas": 0,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C19": {
+          "id": "C19",
+          "nome": "Sofia Martins",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 5,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C20": {
+          "id": "C20",
+          "nome": "Talita Braga",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": "P2"
+        },
+        "C21": {
+          "id": "C21",
+          "nome": "Yasmin Lopes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 7,
+          "profissional_preferida": "P1"
+        },
+        "C22": {
+          "id": "C22",
+          "nome": "Lorena Matos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C23": {
+          "id": "C23",
+          "nome": "Vânia Brito",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        }
+      },
+      "agenda": [
+        {
+          "id": "S7-01",
+          "data": "2026-10-30",
+          "hora": "09:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C06",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S7-02",
+          "data": "2026-10-30",
+          "hora": "15:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C12",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S7-03",
+          "data": "2026-10-31",
+          "hora": "10:00",
+          "duracao_min": 90,
+          "tipo_atendimento": "pe_e_mao",
+          "status": "ocupado",
+          "cliente_id": "C19",
+          "valor": 80,
+          "profissional_id": "P3",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S7-04",
+          "data": "2026-11-02",
+          "hora": "11:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C20",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S7-05",
+          "data": "2026-11-02",
+          "hora": "14:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C21",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        }
+      ],
+      "dias": {
+        "2026-10-30": {
+          "ocupacao_pct": 70,
+          "fila_espera": 1
+        },
+        "2026-10-31": {
+          "ocupacao_pct": 80,
+          "fila_espera": 1
+        },
+        "2026-11-02": {
+          "ocupacao_pct": 90,
+          "fila_espera": 3
+        }
+      },
+      "respostas": {
+        "C20": "Hoje não vou conseguir, obrigada!",
+        "C21": "Consigo sim! Pode ser com a Nina."
+      },
+      "esperado": {
+        "resumo": "Karina cancela as 15h com a Nina. Yasmin tem números melhores, mas prefere a Lia; Talita prefere a Nina, então é chamada primeiro. Talita recusa, e só então a Yasmin recebe a proposta, avisando que quem atende é a Nina. Ela aceita.",
+        "fora": {
+          "C19": "tipo"
+        },
+        "passos": [
+          {
+            "profundidade": 0,
+            "slot_id": "S7-02",
+            "escolha": "C20",
+            "resposta": "recusou"
+          },
+          {
+            "profundidade": 0,
+            "slot_id": "S7-02",
+            "escolha": "C21",
+            "resposta": "aceitou"
+          },
+          {
+            "profundidade": 1,
+            "slot_id": "S7-05",
+            "resultado": "nao_agir"
+          }
+        ]
+      },
+      "profissionais": {
+        "P1": "Lia",
+        "P2": "Nina",
+        "P3": "Rafa"
+      }
+    },
+    "expected": [
+      {
+        "cliente_id": "C20",
+        "nome": "Talita Braga",
+        "slot_atual_id": "S7-04",
+        "motivo": null,
+        "taxa_falta": 0.2,
+        "prob_aceitar": 0.5,
+        "antecedencia_novo_h": 75.0,
+        "fila_novo": 3,
+        "dificuldade_novo": 0.0,
+        "ganho": 13.27734375,
+        "risco": 0.0,
+        "valor_esperado": 13.27734375,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C21",
+        "nome": "Yasmin Lopes",
+        "slot_atual_id": "S7-05",
+        "motivo": null,
+        "taxa_falta": 0.08333333333333333,
+        "prob_aceitar": 0.6799999999999999,
+        "antecedencia_novo_h": 78.0,
+        "fila_novo": 3,
+        "dificuldade_novo": 0.0,
+        "ganho": 21.627187499999994,
+        "risco": 0.0,
+        "valor_esperado": 21.627187499999994,
+        "mesma_profissional": false,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C06",
+        "nome": "Elisa Costa",
+        "slot_atual_id": "S7-01",
+        "motivo": "nao_posterior",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      },
+      {
+        "cliente_id": "C19",
+        "nome": "Sofia Martins",
+        "slot_atual_id": "S7-03",
+        "motivo": "tipo",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      }
+    ]
+  },
+  {
+    "scenario": {
+      "id": "S8",
+      "nome": "Agenda com folga",
+      "o_que_prova": "Sem procura, não mexer; quem marcou tarde de propósito não quer antes",
+      "agora": "2026-11-02 08:00:00",
+      "slot_cancelado_id": "S8-02",
+      "clientes": {
+        "C01": {
+          "id": "C01",
+          "nome": "Ana Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C02": {
+          "id": "C02",
+          "nome": "Beatriz Alves",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C03": {
+          "id": "C03",
+          "nome": "Luana Freitas",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C04": {
+          "id": "C04",
+          "nome": "Camila Rocha",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 8,
+          "faltas": 1,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C05": {
+          "id": "C05",
+          "nome": "Daniela Lima",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 0,
+          "profissional_preferida": null
+        },
+        "C06": {
+          "id": "C06",
+          "nome": "Elisa Costa",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C07": {
+          "id": "C07",
+          "nome": "Fernanda Melo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 1,
+          "faltas": 1,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C08": {
+          "id": "C08",
+          "nome": "Gabriela Dias",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 10,
+          "faltas": 5,
+          "propostas_recebidas": 6,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C09": {
+          "id": "C09",
+          "nome": "Helena Reis",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C10": {
+          "id": "C10",
+          "nome": "Ingrid Santos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C11": {
+          "id": "C11",
+          "nome": "Julia Moraes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 9,
+          "faltas": 3,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C12": {
+          "id": "C12",
+          "nome": "Karina Silva",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 5,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C13": {
+          "id": "C13",
+          "nome": "Larissa Gomes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 11,
+          "faltas": 0,
+          "propostas_recebidas": 5,
+          "propostas_aceitas": 4,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C14": {
+          "id": "C14",
+          "nome": "Marina Souza",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 7,
+          "faltas": 1,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C15": {
+          "id": "C15",
+          "nome": "Natalia Barros",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C16": {
+          "id": "C16",
+          "nome": "Olivia Ramos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C17": {
+          "id": "C17",
+          "nome": "Patricia Araujo",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C18": {
+          "id": "C18",
+          "nome": "Rafaela Nunes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 4,
+          "faltas": 0,
+          "propostas_recebidas": 0,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C19": {
+          "id": "C19",
+          "nome": "Sofia Martins",
+          "tipo_atendimento": "pe_e_mao",
+          "duracao_min": 90,
+          "consultas_total": 5,
+          "faltas": 0,
+          "propostas_recebidas": 1,
+          "propostas_aceitas": 0,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C20": {
+          "id": "C20",
+          "nome": "Talita Braga",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 6,
+          "faltas": 1,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": "P2"
+        },
+        "C21": {
+          "id": "C21",
+          "nome": "Yasmin Lopes",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 0,
+          "propostas_recebidas": 3,
+          "propostas_aceitas": 2,
+          "disposicao": 7,
+          "profissional_preferida": "P1"
+        },
+        "C22": {
+          "id": "C22",
+          "nome": "Lorena Matos",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 12,
+          "faltas": 0,
+          "propostas_recebidas": 4,
+          "propostas_aceitas": 3,
+          "disposicao": 5,
+          "profissional_preferida": null
+        },
+        "C23": {
+          "id": "C23",
+          "nome": "Vânia Brito",
+          "tipo_atendimento": "manicure",
+          "duracao_min": 45,
+          "consultas_total": 8,
+          "faltas": 2,
+          "propostas_recebidas": 2,
+          "propostas_aceitas": 1,
+          "disposicao": 5,
+          "profissional_preferida": null
+        }
+      },
+      "agenda": [
+        {
+          "id": "S8-01",
+          "data": "2026-11-02",
+          "hora": "09:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C14",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S8-02",
+          "data": "2026-11-02",
+          "hora": "11:00",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C01",
+          "valor": 45,
+          "profissional_id": "P1",
+          "havia_horario_antes": false
+        },
+        {
+          "id": "S8-03",
+          "data": "2026-11-02",
+          "hora": "16:40",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C22",
+          "valor": 45,
+          "profissional_id": "P2",
+          "havia_horario_antes": true
+        },
+        {
+          "id": "S8-04",
+          "data": "2026-11-03",
+          "hora": "12:40",
+          "duracao_min": 45,
+          "tipo_atendimento": "manicure",
+          "status": "ocupado",
+          "cliente_id": "C23",
+          "valor": 45,
+          "profissional_id": "P3",
+          "havia_horario_antes": true
+        }
+      ],
+      "dias": {
+        "2026-11-02": {
+          "ocupacao_pct": 45,
+          "fila_espera": 0
+        },
+        "2026-11-03": {
+          "ocupacao_pct": 50,
+          "fila_espera": 0
+        }
+      },
+      "respostas": {
+        "C22": "Prefiro manter, escolhi esse horário de propósito.",
+        "C23": "Não, obrigada."
+      },
+      "esperado": {
+        "resumo": "Ana cancela as 11h de uma segunda com 45% de ocupação e ninguém na fila. Lorena e Vânia marcaram tarde mesmo havendo horários livres antes, então a disposição delas cai para 2. E com a agenda vazia, o horário que elas deixariam também ficaria vazio. Puxar qualquer uma só troca qual horário fica livre e soma o risco de falta: o agente não mexe.",
+        "fora": {
+          "C22": "valor_negativo",
+          "C23": "valor_negativo"
+        },
+        "passos": [
+          {
+            "profundidade": 0,
+            "slot_id": "S8-02",
+            "resultado": "nao_agir"
+          }
+        ]
+      },
+      "profissionais": {
+        "P1": "Lia",
+        "P2": "Nina",
+        "P3": "Rafa"
+      }
+    },
+    "expected": [
+      {
+        "cliente_id": "C22",
+        "nome": "Lorena Matos",
+        "slot_atual_id": "S8-03",
+        "motivo": "valor_negativo",
+        "taxa_falta": 0.0625,
+        "prob_aceitar": 0.5666666666666667,
+        "antecedencia_novo_h": 8.666666666666666,
+        "fila_novo": 0,
+        "dificuldade_novo": 0.9390625,
+        "ganho": 23.368359375,
+        "risco": 23.94609375,
+        "valor_esperado": -0.5777343749999986,
+        "mesma_profissional": true,
+        "escolheu_tarde": true
+      },
+      {
+        "cliente_id": "C23",
+        "nome": "Vânia Brito",
+        "slot_atual_id": "S8-04",
+        "motivo": "valor_negativo",
+        "taxa_falta": 0.25,
+        "prob_aceitar": 0.35,
+        "antecedencia_novo_h": 28.666666666666668,
+        "fila_novo": 0,
+        "dificuldade_novo": 0.7760416666666666,
+        "ganho": 11.480273437499998,
+        "risco": 12.222656249999998,
+        "valor_esperado": -0.7423828125000007,
+        "mesma_profissional": true,
+        "escolheu_tarde": true
+      },
+      {
+        "cliente_id": "C14",
+        "nome": "Marina Souza",
+        "slot_atual_id": "S8-01",
+        "motivo": "nao_posterior",
+        "taxa_falta": null,
+        "prob_aceitar": null,
+        "antecedencia_novo_h": null,
+        "fila_novo": null,
+        "dificuldade_novo": null,
+        "ganho": null,
+        "risco": null,
+        "valor_esperado": null,
+        "mesma_profissional": true,
+        "escolheu_tarde": false
+      }
+    ]
+  }
+]

@@ -33,6 +33,12 @@ yarn-error.log*
 !.dev.vars.example
 *.pem
 *.key
+# credenciais do Google Agenda
+credenciais/
+*credentials*.json
+*token*.json
+client_secret*.json
+service-account*.json
 *.sqlite
 *.sqlite3
 *.db

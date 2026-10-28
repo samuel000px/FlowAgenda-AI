@@ -1,0 +1,26 @@
+# chave da API: nunca vai para o repositório
+.env
+!.env.example
+
+# credenciais do Google Agenda (OAuth, conta de serviço, token salvo)
+credenciais/
+*credentials*.json
+*token*.json
+client_secret*.json
+service-account*.json
+
+# ambiente e caches do Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# logs das execuções do agente
+logs/
+
+# registro de visitas, faltas e propostas: dados de clientes reais
+registro/
+
+# dados reais do salão para a página pública (telefone, endereço)
+data/salao.local.json

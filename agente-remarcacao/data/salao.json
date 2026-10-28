@@ -1,0 +1,20 @@
+{
+  "_comentario": "Dados de EXEMPLO da página pública. Os dados reais ficam em data/salao.local.json (fora do git) ou na variável SALAO_JSON da hospedagem, só com os campos que mudam. Preço e duração dos serviços são opcionais.",
+  "nome": "Esmalteria Exemplo",
+  "subtitulo": "Esmalteria",
+  "monograma": "ee",
+  "frase": "Unhas feitas com calma, no horário que cabe no seu dia.",
+  "whatsapp": "5511900000000",
+  "mensagem_whatsapp": "Oi! Quero agendar um horário.",
+  "endereco": "Rua das Flores, 123",
+  "bairro_cidade": "Centro, São Paulo (SP)",
+  "instagram": "esmalteriaexemplo",
+  "horarios": [
+    {"dias": "Terça a sexta", "horas": "9h às 19h"},
+    {"dias": "Sábado", "horas": "9h às 16h"}
+  ],
+  "servicos": [
+    {"grupo": "Unhas", "nome": "Manicure", "duracao_min": 45, "preco": 45},
+    {"grupo": "Unhas", "nome": "Pé e mão", "duracao_min": 90, "preco": 80}
+  ]
+}

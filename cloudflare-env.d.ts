@@ -4,6 +4,7 @@ declare namespace Cloudflare {
     BUCKET?: R2Bucket;
     GEMINI_API_KEY?: string;
     GEMINI_MODEL?: string;
+    APP_SENHA?: string;
     GOOGLE_CLIENT_ID?: string;
     GOOGLE_CLIENT_SECRET?: string;
     GOOGLE_REDIRECT_URI?: string;

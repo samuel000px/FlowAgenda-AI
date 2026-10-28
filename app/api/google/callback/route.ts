@@ -8,11 +8,11 @@ export async function GET(req:Request){
   try{
     if(!state||!cookie||state!==cookie)throw Error('A autorização não corresponde a este navegador. Volte e conecte novamente.');
     if(url.searchParams.has('error'))throw Error('O acesso ao Google Agenda não foi autorizado.');
-    const owner=await finishOAuth(env,state,url.searchParams.get('code')||'');
+    await finishOAuth(env,state,url.searchParams.get('code')||'');
     const destination=new URL('/',env.GOOGLE_REDIRECT_URI!);
-    destination.hash=new URLSearchParams({room:owner.room,key:owner.key}).toString();
+
     return new Response(null,{status:303,headers:{...headers,Location:destination.toString()}});
   }catch(e){
-    return new Response(`Conexão Google Agenda: ${(e as Error).message}\n\nVolte à aba do Encaixa e tente novamente.`,{status:400,headers:{...headers,'Content-Type':'text/plain; charset=utf-8'}});
+    return new Response(`Conexão Google Agenda: ${(e as Error).message}\n\nVolte à aba do FlowAgenda-AI e tente novamente.`,{status:400,headers:{...headers,'Content-Type':'text/plain; charset=utf-8'}});
   }
 }

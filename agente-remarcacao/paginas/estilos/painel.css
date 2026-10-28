@@ -1,0 +1,12 @@
+/* Bolhas do chat simulado: agente à direita, cliente à esquerda. */
+.bolha {padding: .5rem .75rem; border-radius: .75rem; margin: .25rem 0; max-width: 85%; line-height: 1.35;}
+.agente {background: #1f6feb; color: #fff; margin-left: auto;}
+.cliente {background: #eaeef2; color: #1f2328;}
+.quem {font-size: .75rem; opacity: .8; margin-bottom: .1rem;}
+
+/* Etiqueta com o que a IA entendeu da resposta. */
+.etiqueta {display: inline-block; font-size: .75rem; padding: .1rem .5rem; border-radius: 1rem;
+           background: #fff8c5; color: #4d2d00; border: 1px solid #d4a72c;}
+
+/* Etapa em que o fluxo está agora. */
+.etapa-atual {font-weight: 700; color: #1f6feb;}
