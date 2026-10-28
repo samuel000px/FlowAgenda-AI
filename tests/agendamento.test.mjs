@@ -393,3 +393,24 @@ test('painel não marca com quem não faz o serviço',()=>{
   const s=salao();s.clients.push({id:'C1',name:'Ana',phone:'',consent:true,visits:0,missed:0,proposals:0,accepted:0});
   assert.throws(()=>actAdmin(s,'book',{client_id:'C1',service_id:'S11',staff_id:'P1',date:TERCA,start:540},now),/Lia não faz Escova/);
 });
+
+test('agenda com o catálogo inicial antigo recebe o catálogo inteiro e a equipe se completa pela planilha',async()=>{
+  const {completeStaff}=await import('../lib/importacao.mjs');
+  const s=seedAdmin();delete s.catalogVersion;s.promos=[];
+  s.services=[{id:'S1',name:'Manicure',duration:45,price:45,group:'Mãos e pés',addon:false},{id:'S2',name:'Pedicure',duration:45,price:45,group:'Mãos e pés',addon:false},{id:'S3',name:'Pé e mão',duration:90,price:85,group:'Mãos e pés',addon:false}];
+  s.staff=['Lili','Ester','Avyllen'].map((name,i)=>({id:'P'+i,name,services:['S1','S2','S3'],start:480,end:1080,break_start:0,break_end:0,active:true}));
+  s.appointments=[{id:'A1',client_id:'C1',service_id:'S3',staff_id:'P0',date:'2026-11-03',start:540,end:630,price:85,status:'booked'}];
+  const nova=upgrade(s);
+  assert.equal(nova.catalogVersion,3);assert.ok(nova.services.length>40);
+  assert.equal(nova.services.find(v=>v.id==='S3').name,'Manicure + Pedicure','o horário marcado continua ligado ao mesmo serviço');
+  assert.ok(nova.staff.every(p=>p.services.includes('S36')),'quem fazia só os três faz toda a área de mãos e pés');
+  assert.ok(nova.promos.length>0);
+  assert.deepEqual(catalog(nova).groups,['Mãos e pés']);
+  const pacote=JSON.stringify({versao:1,origem:'teste',gerado:'1',staff:[{name:'Lili',areas:['Mãos e pés','Alongamento e gel']},{name:'Ester',areas:['Mãos e pés','Cabelo','Sobrancelha e depilação']},{name:'Avyllen',areas:['Mãos e pés']}]});
+  assert.equal(completeStaff(nova,pacote),2);
+  assert.deepEqual(catalog(nova).groups,['Mãos e pés','Alongamento e gel','Cabelo','Sobrancelha e depilação']);
+  assert.ok(nova.staff[1].services.includes('S11')&&!nova.staff[2].services.includes('S11'));
+  nova.staff[1].services=nova.staff[1].services.filter(k=>k!=='S11');
+  assert.equal(completeStaff(nova,pacote),0,'uma vez só: o que a gerência desmarcou não volta');
+  assert.ok(!nova.staff[1].services.includes('S11'));
+});
