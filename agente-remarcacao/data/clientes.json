@@ -19,5 +19,7 @@
   {"id": "C18", "nome": "Rafaela Nunes", "tipo_atendimento": "manicure", "duracao_min": 45, "consultas_total": 4, "faltas": 0, "propostas_recebidas": 0, "propostas_aceitas": 0, "disposicao": 5, "profissional_preferida": null},
   {"id": "C19", "nome": "Sofia Martins", "tipo_atendimento": "pe_e_mao", "duracao_min": 90, "consultas_total": 5, "faltas": 0, "propostas_recebidas": 1, "propostas_aceitas": 0, "disposicao": 5, "profissional_preferida": null},
   {"id": "C20", "nome": "Talita Braga", "tipo_atendimento": "manicure", "duracao_min": 45, "consultas_total": 6, "faltas": 1, "propostas_recebidas": 2, "propostas_aceitas": 1, "disposicao": 5, "profissional_preferida": "P2"},
-  {"id": "C21", "nome": "Yasmin Lopes", "tipo_atendimento": "manicure", "duracao_min": 45, "consultas_total": 8, "faltas": 0, "propostas_recebidas": 3, "propostas_aceitas": 2, "disposicao": 7, "profissional_preferida": "P1"}
+  {"id": "C21", "nome": "Yasmin Lopes", "tipo_atendimento": "manicure", "duracao_min": 45, "consultas_total": 8, "faltas": 0, "propostas_recebidas": 3, "propostas_aceitas": 2, "disposicao": 7, "profissional_preferida": "P1"},
+  {"id": "C22", "nome": "Lorena Matos", "tipo_atendimento": "manicure", "duracao_min": 45, "consultas_total": 12, "faltas": 0, "propostas_recebidas": 4, "propostas_aceitas": 3, "disposicao": 5, "profissional_preferida": null},
+  {"id": "C23", "nome": "Vânia Brito", "tipo_atendimento": "manicure", "duracao_min": 45, "consultas_total": 8, "faltas": 2, "propostas_recebidas": 2, "propostas_aceitas": 1, "disposicao": 5, "profissional_preferida": null}
 ]

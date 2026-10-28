@@ -6,9 +6,9 @@ import pytest
 from src.dados import PASTA_DADOS, ErroDados, carregar_cenario, carregar_cenarios
 
 
-def test_carrega_os_sete_cenarios():
+def test_carrega_todos_os_cenarios():
     cenarios = carregar_cenarios()
-    assert [c.id for c in cenarios] == ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]
+    assert [c.id for c in cenarios] == ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8"]
     assert cenarios[0].profissionais == {"P1": "Lia", "P2": "Nina", "P3": "Rafa"}
 
 

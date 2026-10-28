@@ -8,7 +8,7 @@ from collections.abc import Collection
 from src.agenda_externa import AgendaExterna
 from src.filtros import MOTIVOS, motivo_de_exclusao
 from src.modelos import Buraco, Candidato, Cenario, Slot
-from src.score import dificuldade_de_preencher, ganho_e_risco, prob_aceitar, taxa_falta
+from src.score import dificuldade_de_preencher, disposicao_efetiva, ganho_e_risco, prob_aceitar, taxa_falta
 
 
 class ErroMovimento(Exception):
@@ -26,7 +26,8 @@ def liberar_horario(cenario: Cenario, slot_id: str) -> Slot:
 
 def buraco(cenario: Cenario, slot: Slot) -> Buraco:
     """Valor, aviso e fila de um horário, para o score."""
-    return Buraco(slot.valor, cenario.antecedencia_h(slot), cenario.dias[slot.data].fila_espera)
+    dia = cenario.dias[slot.data]
+    return Buraco(slot.valor, cenario.antecedencia_h(slot), dia.fila_espera, dia.ocupacao_pct)
 
 
 def buscar_candidatos(cenario: Cenario, slot_id: str, recusados: Collection[str] = ()) -> list[Candidato]:
@@ -44,14 +45,16 @@ def buscar_candidatos(cenario: Cenario, slot_id: str, recusados: Collection[str]
         motivo = motivo_de_exclusao(cliente, slot, vago, cenario.agora, recusados)
         c = Candidato(cliente.id, cliente.nome, slot.id, motivo)
         c.mesma_profissional = cliente.profissional_preferida in (None, vago.profissional_id)
+        c.escolheu_tarde = slot.havia_horario_antes
         if motivo is None:
             buraco_novo = buraco(cenario, slot)
             c.taxa_falta = taxa_falta(cliente.faltas, cliente.consultas_total)
-            c.prob_aceitar = prob_aceitar(cliente.propostas_aceitas, cliente.propostas_recebidas, cliente.disposicao)
+            nota = disposicao_efetiva(cliente, c.escolheu_tarde)
+            c.prob_aceitar = prob_aceitar(cliente.propostas_aceitas, cliente.propostas_recebidas, nota)
             c.antecedencia_novo_h = buraco_novo.antecedencia_h
             c.fila_novo = buraco_novo.fila
-            c.dificuldade_novo = dificuldade_de_preencher(buraco_novo.antecedencia_h, buraco_novo.fila)
-            c.ganho, c.risco = ganho_e_risco(cliente, buraco_atual, buraco_novo)
+            c.dificuldade_novo = dificuldade_de_preencher(buraco_novo.antecedencia_h, buraco_novo.fila, buraco_novo.ocupacao_pct)
+            c.ganho, c.risco = ganho_e_risco(cliente, buraco_atual, buraco_novo, c.escolheu_tarde)
             c.valor_esperado = c.ganho - c.risco
             if c.valor_esperado <= 0:
                 c.motivo = "valor_negativo"  # poda: mexer deixaria a agenda pior

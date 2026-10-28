@@ -1,6 +1,6 @@
 """Mede a parte de IA com casos difíceis e escreve docs/avaliacao-ia.md. Não muda nada no agente.
 
-Uso:  python avaliar_ia.py            (decisões rodam 2 vezes cada, para medir consistência)
+Uso:  python avaliar_ia.py            (cada caso roda 2 vezes, para medir consistência)
       python avaliar_ia.py --rodadas 3
       python avaliar_ia.py --recalcular logs/avaliacao-ia-....json   (refaz as notas sem chamar o Gemini)
 
@@ -35,7 +35,7 @@ def problemas_da_mensagem(mensagem: str, nome_completo: str, hora: str, profissi
         falhas.append("não diz a hora")
     if profissional.lower() not in texto:
         falhas.append("não diz a profissional")
-    if not re.search(r"\bmant(er|enha|ém|em)\b|continuar (com|no|na)|seu horário (de|da|do)", texto):
+    if not re.search(r"\bmant(er|enha|ém|em)\b|continuar (com|no|na)|ficar (com|no|na)|seu horário (de|da|do)", texto):
         falhas.append("não oferece manter o horário")
     sobrenome = nome_completo.split()[-1].lower()
     if len(nome_completo.split()) > 1 and sobrenome in texto:
@@ -47,17 +47,18 @@ def problemas_da_mensagem(mensagem: str, nome_completo: str, hora: str, profissi
     return falhas
 
 
-def avaliar_interpretacao() -> list[dict]:
-    """Uma chamada por caso."""
+def avaliar_interpretacao(rodadas: int) -> list[dict]:
+    """Uma chamada por caso em cada rodada."""
     dados = json.loads((PASTA / "avaliacao_ia" / "casos_interpretacao.json").read_text(encoding="utf-8"))
     resultados = []
-    for caso in dados["casos"]:
-        try:
-            veio = interpretar(dados["proposta"], caso["resposta"]).resultado
-        except ErroLLM as e:
-            veio = f"erro: {e}"
-        resultados.append({**caso, "veio": veio, "certo": veio in caso["aceitas"]})
-        console.print(f"  {'OK ' if resultados[-1]['certo'] else 'ERRO'} {veio:14} {caso['resposta']}")
+    for rodada in range(1, rodadas + 1):
+        for caso in dados["casos"]:
+            try:
+                veio = interpretar(dados["proposta"], caso["resposta"]).resultado
+            except ErroLLM as e:
+                veio = f"erro: {e}"
+            resultados.append({**caso, "rodada": rodada, "veio": veio, "certo": veio in caso["aceitas"]})
+            console.print(f"  {'OK ' if resultados[-1]['certo'] else 'ERRO'} r{rodada} {veio:14} {caso['resposta'][:70]}")
     return resultados
 
 
@@ -110,20 +111,32 @@ def escrever(interp: list[dict], decisoes: list[dict], rodadas: int) -> None:
     certos_grupo = Counter(r["grupo"] for r in interp if r["certo"])
     linhas_grupo = "\n".join(f"| {g} | {certos_grupo[g]} de {n} |" for g, n in por_grupo.items())
     erros_interp = "\n".join(
-        f"| {r['resposta']} | {', '.join(r['aceitas'])} | {r['veio']} |" for r in interp if not r["certo"]
+        f"| {r['resposta']} | {', '.join(r['aceitas'])} | {r['veio']} (rodada {r.get('rodada', 1)}) |"
+        for r in interp if not r["certo"]
     ) or "| (nenhum) | | |"
+    # consistência: a mesma resposta recebeu sempre a mesma classificação?
+    vistas: dict[str, set] = {}
+    for r in interp:
+        vistas.setdefault(r["resposta"], set()).add(r["veio"])
+    instaveis = {resp: v for resp, v in vistas.items() if len(v) > 1}
+    linhas_instaveis = "\n".join(f"| {resp} | {', '.join(sorted(v))} |" for resp, v in instaveis.items()) or "| (nenhuma) | |"
+    rodadas_interp = max(r.get("rodada", 1) for r in interp)
 
+    # rodada que falhou por limite ou erro da API não diz nada sobre a IA: fica fora das contas
+    validas = [r for r in decisoes if r["escolha"] != "erro"]
+    erros_api = len(decisoes) - len(validas)
     linhas_decisao, consistencia = [], []
     for caso_id in dict.fromkeys(r["caso"] for r in decisoes):
         rs = [r for r in decisoes if r["caso"] == caso_id]
-        escolhas = [r["escolha"] or "não mexe" for r in rs]
+        ok = [r for r in rs if r["escolha"] != "erro"]
+        escolhas = ["erro da API" if r["escolha"] == "erro" else r["escolha"] or "não mexe" for r in rs]
         linhas_decisao.append(
             f"| {caso_id} {rs[0]['titulo']} | {rs[0]['o_que_mede']} | {rs[0]['topo']} | {', '.join(escolhas)} | "
-            f"{sum(r['aceitavel'] for r in rs)} de {len(rs)} | {sum(not r['falhas_mensagem'] for r in rs)} de {len(rs)} |"
+            f"{sum(r['aceitavel'] for r in ok)} de {len(ok)} | {sum(not r['falhas_mensagem'] for r in ok)} de {len(ok)} |"
         )
-        consistencia.append(len(set(escolhas)) == 1)
-    aceitaveis = sum(r["aceitavel"] for r in decisoes)
-    no_topo = sum(r["igual_ao_topo"] for r in decisoes)
+        consistencia.append(len({r["escolha"] for r in ok}) <= 1)
+    aceitaveis = sum(r["aceitavel"] for r in validas)
+    no_topo = sum(r["igual_ao_topo"] for r in validas)
     msgs_ok = sum(not r["falhas_mensagem"] for r in decisoes if r["escolha"] not in (None, "erro"))
     com_msg = sum(r["escolha"] not in (None, "erro") for r in decisoes)
     falhas_msg = "\n".join(
@@ -142,7 +155,8 @@ Os casos estão em `avaliacao_ia/`. Nada aqui muda o agente: é uma medição.
 
 ## 1. Interpretação das respostas: {certos} de {len(interp)} certas
 
-Uma resposta conta como certa se a classificação está entre as aceitas para aquele caso.
+{len(vistas)} respostas diferentes, cada uma classificada {rodadas_interp} vez(es). Uma classificação conta como
+certa se está entre as aceitas para aquele caso.
 
 | Tipo de resposta | Certas |
 |---|---|
@@ -154,15 +168,22 @@ Erros:
 |---|---|---|
 {erros_interp}
 
-## 2. Escolha da cliente: {aceitaveis} de {len(decisoes)} aceitáveis
+Mesma resposta, classificações diferentes entre rodadas ({len(instaveis)} de {len(vistas)}):
+
+| Resposta da cliente | Classificações que apareceram |
+|---|---|
+{linhas_instaveis}
+
+## 2. Escolha da cliente: {aceitaveis} de {len(validas)} aceitáveis
 
 Cada situação rodou {rodadas} vez(es). "Topo" é a primeira da lista que o código ordenou.
+{f"{erros_api} rodada(s) falharam por limite ou erro da API e não entram nas contas." if erros_api else ""}
 
 | Situação | O que mede | Topo | Escolhas | Aceitáveis | Mensagem ok |
 |---|---|---|---|---|---|
 {chr(10).join(linhas_decisao)}
 
-- Igual ao topo do código: {no_topo} de {len(decisoes)}.
+- Igual ao topo do código: {no_topo} de {len(validas)}.
 - Mesma escolha em todas as rodadas: {sum(consistencia)} de {len(consistencia)} situações.
 - Mensagens que cumprem todas as regras: {msgs_ok} de {com_msg}. As regras são: dizer a hora e a
   profissional, oferecer manter o horário, não usar sobrenome, não falar em "quem responder
@@ -197,7 +218,7 @@ def main() -> None:
         console.print(f"[green]Relatório refeito em {SAIDA.relative_to(PASTA)}, sem chamar o modelo.[/green]")
         return
     console.print("[bold]Interpretação[/bold]")
-    interp = avaliar_interpretacao()
+    interp = avaliar_interpretacao(args.rodadas)
     console.print("[bold]Decisões[/bold]")
     decisoes = avaliar_decisoes(args.rodadas)
     escrever(interp, decisoes, args.rodadas)

@@ -13,6 +13,8 @@ Regras:
 - Chame buscar_candidatos antes de decidir. Use só as clientes que ela devolver. Nunca invente cliente.
 - Os números (taxa de falta, chance de aceitar, valor esperado) já vêm calculados. Não refaça as contas; use-os.
 - Leve em conta também a disposição que a cliente deu (0 a 10) e o aviso que sobra no horário que ela deixaria.
+- Se a cliente escolheu o horário dela havendo outros livres antes, ela provavelmente não quer antecipar;
+  a chance de aceitar já vem rebaixada por isso.
 - Se nenhuma fizer sentido, diga que não vale a pena mexer e explique por quê.
 - Depois de escolher, chame propor_remarcacao com a mensagem. Isso só guarda um rascunho.
 - A mensagem é curta, simpática e clara: diga o dia e a hora do horário livre e deixe claro
@@ -163,4 +165,5 @@ def _para_o_modelo(cenario: Cenario, c: Candidato) -> dict:
         "ocupacao_do_dia_dela_pct": dia.ocupacao_pct,
         "valor_esperado_reais": round(c.valor_esperado, 2),
         "disposicao_0a10": cliente.disposicao,
+        "escolheu_este_horario_havendo_outros_antes": c.escolheu_tarde,
     }

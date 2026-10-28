@@ -95,5 +95,17 @@
       {"id": "S7-04", "data": "2026-11-02", "hora": "11:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C20", "valor": 45, "profissional_id": "P2"},
       {"id": "S7-05", "data": "2026-11-02", "hora": "14:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C21", "valor": 45, "profissional_id": "P1"}
     ]
+  },
+  "S8": {
+    "dias": {
+      "2026-11-02": {"ocupacao_pct": 45, "fila_espera": 0},
+      "2026-11-03": {"ocupacao_pct": 50, "fila_espera": 0}
+    },
+    "slots": [
+      {"id": "S8-01", "data": "2026-11-02", "hora": "09:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C14", "valor": 45, "profissional_id": "P2"},
+      {"id": "S8-02", "data": "2026-11-02", "hora": "11:00", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C01", "valor": 45, "profissional_id": "P1"},
+      {"id": "S8-03", "data": "2026-11-02", "hora": "16:40", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C22", "valor": 45, "profissional_id": "P2", "havia_horario_antes": true},
+      {"id": "S8-04", "data": "2026-11-03", "hora": "12:40", "duracao_min": 45, "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C23", "valor": 45, "profissional_id": "P3", "havia_horario_antes": true}
+    ]
   }
 }

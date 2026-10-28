@@ -1,7 +1,7 @@
 import pytest
 
 from src.modelos import Buraco, Cliente
-from src.score import dificuldade_de_preencher, prob_aceitar, taxa_falta, valor_esperado
+from src.score import dificuldade_de_preencher, disposicao_efetiva, prob_aceitar, taxa_falta, valor_esperado
 
 
 def cliente(**campos) -> Cliente:
@@ -63,3 +63,24 @@ def test_valor_esperado_positivo_quando_o_buraco_novo_se_preenche_sozinho():
     vago = Buraco(valor=45, antecedencia_h=2, fila=0)
     novo_facil = Buraco(valor=45, antecedencia_h=72, fila=3)
     assert valor_esperado(confiavel, vago, novo_facil) > 0
+
+
+def test_sem_procura_o_aviso_nao_ajuda():
+    cheio, vazio = dificuldade_de_preencher(48, 0, ocupacao_pct=90), dificuldade_de_preencher(48, 0, ocupacao_pct=40)
+    assert cheio == pytest.approx(0.4)  # 80% ou mais conta como procura normal
+    assert vazio == pytest.approx(1 - 0.6 * 0.5)  # metade da procura, metade da ajuda do aviso
+    assert dificuldade_de_preencher(48, 3, ocupacao_pct=10) < vazio  # fila ainda ajuda
+
+
+def test_quem_marcou_tarde_de_proposito_entra_com_nota_baixa():
+    normal = cliente(disposicao=6)
+    assert disposicao_efetiva(normal, escolheu_tarde=True) == 2
+    assert disposicao_efetiva(normal, escolheu_tarde=False) == 6
+    assert disposicao_efetiva(cliente(disposicao=9), escolheu_tarde=True) == 9  # disse que quer antes: vale
+    assert disposicao_efetiva(cliente(disposicao=1), escolheu_tarde=True) == 1  # não sobe quem já era baixa
+
+
+def test_marcar_tarde_derruba_o_valor_esperado():
+    c = cliente(consultas_total=12, propostas_recebidas=0, propostas_aceitas=0, disposicao=6)
+    vago, novo = Buraco(45, 5, 0), Buraco(45, 72, 3)
+    assert valor_esperado(c, vago, novo, escolheu_tarde=True) < valor_esperado(c, vago, novo)

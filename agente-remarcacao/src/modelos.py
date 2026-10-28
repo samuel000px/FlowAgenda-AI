@@ -37,6 +37,8 @@ class Slot:
     cliente_id: str | None
     valor: float
     profissional_id: str | None = None  # de quem é este horário
+    # Na hora de marcar havia horários livres mais cedo e ela escolheu este: provavelmente não quer antes.
+    havia_horario_antes: bool = False
 
     @property
     def inicio(self) -> datetime:
@@ -98,6 +100,7 @@ class Buraco:
     valor: float
     antecedencia_h: float
     fila: int
+    ocupacao_pct: float = 100  # quão cheio está o dia: sem procura, aviso não ajuda
 
 
 @dataclass
@@ -117,6 +120,7 @@ class Candidato:
     risco: float | None = None
     valor_esperado: float | None = None
     mesma_profissional: bool = True  # o horário vago é com a profissional que ela prefere (ou ela não tem preferência)
+    escolheu_tarde: bool = False  # marcou este horário havendo outros livres antes
 
     @property
     def elegivel(self) -> bool:

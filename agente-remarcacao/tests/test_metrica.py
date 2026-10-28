@@ -11,8 +11,8 @@ def test_sem_mexer_conta_so_o_horario_cancelado():
     original = carregar_cenario("S1")
     final = copy.deepcopy(original)
     liberar_horario(final, "S1-03")
-    # 45 min, 2h de aviso, sem fila: dificuldade 0,975
-    assert horas_vagas_esperadas(original, final) == pytest.approx(0.75 * 0.975)
+    # 45 min, 2h de aviso, sem fila, dia 70% ocupado (procura 70/80)
+    assert horas_vagas_esperadas(original, final) == pytest.approx(0.75 * (1 - 0.6 * 2 / 48 * 70 / 80))
 
 
 def test_mover_conta_a_falta_de_quem_veio_e_o_buraco_novo():
@@ -21,7 +21,7 @@ def test_mover_conta_a_falta_de_quem_veio_e_o_buraco_novo():
     liberar_horario(final, "S1-03")
     confirmar_movimento(final, "C02", "S1-03")
     beatriz_falta = 1 / 16  # 0 faltas em 12
-    buraco_novo = 1 - (0.6 * 47 / 48 + 0.4 * 2 / 3)  # 47h de aviso, 2 na fila
+    buraco_novo = 1 - (0.6 * 47 / 48 * 75 / 80 + 0.4 * 2 / 3)  # 47h de aviso, 2 na fila, dia 75% ocupado
     assert horas_vagas_esperadas(original, final) == pytest.approx(0.75 * (beatriz_falta + buraco_novo))
 
 

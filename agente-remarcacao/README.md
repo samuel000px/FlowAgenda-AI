@@ -47,7 +47,9 @@ flowchart TD
 | Aviso que sobra | entra na dificuldade de preencher | Mais horas de aviso, mais fácil achar outra pessoa. |
 | Ocupação do dia | fila de espera do dia | Dia lotado, com fila, preenche o buraco novo rápido. |
 
-`dificuldade_de_preencher = 1 − [0,6 × min(aviso/48h, 1) + 0,4 × min(fila/3, 1)]`, de 0 (fácil) a 1 (difícil).
+`dificuldade_de_preencher = 1 − [0,6 × min(aviso/48h, 1) × procura + 0,4 × min(fila/3, 1)]`, de 0 (fácil) a 1 (difícil),
+onde `procura = min(ocupação do dia / 80%, 1)`: com a agenda vazia, muito aviso não ajuda.
+Quem marcou tarde havendo horários livres antes entra com disposição 2 (a não ser que tenha dado nota 8 ou mais).
 
 **A regra central:** só compensa puxar alguém se o buraco novo for mais fácil de preencher do que o
 atual, descontado o risco de ela faltar. Em reais:
@@ -92,6 +94,10 @@ A "regra ingênua" oferece o horário em ordem cronológica para quem passa nos 
 sem poda e sem cascata. Ela empata com o agente em três cenários, e a explicação está em
 [resultados.md](resultados.md), gerado por `python avaliar.py` com o Gemini.
 
+> **Pendente:** esta tabela é de antes da ocupação do dia entrar na conta (D22) e não tem o cenário 8.
+> A simulação sem IA mostra o agente terminando igual nos cenários 1 a 7; falta rodar `python avaliar.py`
+> de novo, quando a cota diária do Gemini voltar, para atualizar os números.
+
 > **Atenção:** são estimativas feitas com o próprio modelo de score, sobre **dados fictícios** e com
 > respostas das clientes roteirizadas. Servem para mostrar que as decisões são coerentes, não para
 > medir ganho no mundo real.
@@ -118,7 +124,7 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 98 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
+| `pytest` | 104 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
 | `streamlit run app.py` | O site: página pública do salão em `/`, painel em `/painel` e clientes e equipe em `/equipe` | Sim (no painel) |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
 | `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |

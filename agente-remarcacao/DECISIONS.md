@@ -235,3 +235,36 @@ a não ser quando um item abaixo diz outra coisa.
   preferiu não mexer, e no quase empate escolheu a veterana em vez da cliente nova, citando o risco de falta.
 - Ficou de fora: notas dadas por outro modelo ("LLM como juiz"). As regras em código bastam para o que
   queremos conferir e não custam nada.
+
+## D22. A ocupação do dia pesa na dificuldade de preencher
+
+- Decisão: `dificuldade_de_preencher(aviso, fila, ocupacao)`. A parte do aviso é multiplicada pela
+  procura, `min(ocupacao / 80%, 1)`. Com o dia 80% cheio ou mais, a conta é igual à anterior; com a
+  agenda vazia, muito aviso quase não ajuda. A fila continua ajudando sempre.
+- Motivo: nem toda agenda está cheia. Num dia com vários horários livres, um cancelamento é só mais um
+  horário livre, e puxar alguém só troca qual horário fica vazio. Antes, a conta dava "pontos" para o
+  horário com muito aviso mesmo sem ninguém procurando por ele.
+- Efeito: os cenários 1 a 7 continuam terminando igual. No cenário 6, a Olívia (que sairia de um dia
+  com 35% de ocupação) caiu de R$ 10,40 para R$ 0,20. Novo cenário 8 (Agenda com folga): o agente não mexe.
+
+## D23. Quem marcou tarde havendo horário antes entra com disposição baixa
+
+- Decisão: o horário ganha `havia_horario_antes`. Se for verdadeiro, a disposição daquela cliente para
+  esse agendamento cai para 2, a não ser que ela tenha dado nota 8 ou mais (aí ela disse que quer antes).
+  O modelo também recebe essa informação, e o painel mostra "(marcou tarde)".
+- Motivo: o autor escolheu 12h40 no barbeiro com três horários livres mais cedo. Quem faz isso não quer
+  antecipar, e chamar essa pessoa é incômodo. Não virou filtro duro: se os números forem muito bons, ela
+  ainda pode ser chamada.
+
+## D24. Segunda rodada de casos difíceis: onde a IA erra
+
+- 40 respostas e 12 situações, 3 rodadas cada. Interpretação: 120 de 120 certas; só uma resposta mudou de
+  classificação entre rodadas ("não, quer dizer, sim, consigo": aceitou ou ambíguo, os dois aceitos).
+- Escolha: 32 de 34 aceitáveis (2 rodadas caíram por limite da API e não contam). **O erro real foi no
+  D11**: em 2 de 3 rodadas a IA escolheu a cliente mais confiável mesmo com valor esperado de R$ 4,50
+  contra R$ 16,59, porque o horário que ela deixaria seria difícil de preencher. Ela chegou a citar o
+  valor baixo na justificativa e escolheu mesmo assim.
+- Leitura: quando a IA discorda do código, às vezes acerta (D5, D7) e às vezes erra (D11). Isso reforça
+  a proposta do autor de usar a IA só para interpretar mensagens e deixar a escolha para o código.
+- Os casos foram rodados com a conta anterior à D22; os dias dos casos têm ocupação de 80% ou mais, onde
+  as duas contas dão o mesmo resultado.

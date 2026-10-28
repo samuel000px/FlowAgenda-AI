@@ -252,7 +252,7 @@ with col_razao:
                 "Cliente": c.nome,
                 "Falta": f"{c.taxa_falta:.0%}" if c.taxa_falta is not None else "-",
                 "Prefere": atual.nome_profissional(atual.clientes[c.cliente_id].profissional_preferida),
-                "Disposição": f"{atual.clientes[c.cliente_id].disposicao}/10",
+                "Disposição": f"{atual.clientes[c.cliente_id].disposicao}/10" + (" (marcou tarde)" if c.escolheu_tarde else ""),
                 "Aceita": f"{c.prob_aceitar:.0%}" if c.prob_aceitar is not None else "-",
                 "Valor esperado": f"R$ {c.valor_esperado:.2f}" if c.valor_esperado is not None else "-",
                 "Resultado": resultado,

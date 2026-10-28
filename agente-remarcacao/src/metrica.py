@@ -13,7 +13,7 @@ def horas_vagas_esperadas(original: Cenario, final: Cenario) -> float:
         horas = depois.duracao_min / 60
         if depois.status == "livre":
             dia = final.dias[depois.data]
-            total += horas * dificuldade_de_preencher(final.antecedencia_h(depois), dia.fila_espera)
+            total += horas * dificuldade_de_preencher(final.antecedencia_h(depois), dia.fila_espera, dia.ocupacao_pct)
         else:
             cliente = final.clientes[depois.cliente_id]
             total += horas * taxa_falta(cliente.faltas, cliente.consultas_total)
