@@ -19,7 +19,7 @@ export type Catalogo={groups:string[],services:Servico[],addons:Adicional[],staf
 type Item={service:string,variant?:number,addons:string[]};
 const SEMANA=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 const POR_PAGINA=6;
-export const ICONE_AREA:Record<string,string>={Unhas:'💅',Cabelo:'💇'};
+export const ICONE_AREA:Record<string,string>={'Mãos e pés':'💅','Alongamento e gel':'💎',Cabelo:'💇','Sobrancelha e depilação':'✨'};
 const dia=(d:string)=>d.split('-').reverse().slice(0,2).join('/');
 const semana=(d:string)=>SEMANA[new Date(d+'T12:00:00Z').getUTCDay()];
 const hora=(m:number)=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
@@ -81,7 +81,7 @@ export default function Agendar(){
     e.preventDefault();setOcupado(true);setErro('');
     const f=new FormData(e.currentTarget);
     try{
-      const r=await fetch('/api/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cart:carrinho,date:data,start:inicio,name:f.get('name'),phone:f.get('phone'),earlier:f.has('earlier')})});
+      const r=await fetch('/api/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cart:carrinho,date:data,start:inicio,name:f.get('name'),phone:f.get('phone'),birthday:f.get('birthday'),earlier:f.has('earlier')})});
       const d:any=await r.json();if(!r.ok)throw Error(d.error);setPedido(d);scrollTo(0,0);
     }catch(e){setErro((e as Error).message);}
     finally{setOcupado(false);}
@@ -91,7 +91,7 @@ export default function Agendar(){
     e.preventDefault();setOcupado(true);setErro('');
     const f=new FormData(e.currentTarget);
     try{
-      const r=await fetch('/api/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'interest',cart:carrinho,date:data,name:f.get('name'),phone:f.get('phone'),earlier:f.has('earlier')})});
+      const r=await fetch('/api/agendar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'interest',cart:carrinho,date:data,name:f.get('name'),phone:f.get('phone'),birthday:f.get('birthday'),earlier:f.has('earlier')})});
       const d:any=await r.json();if(!r.ok)throw Error(d.error);setNaEspera(d);scrollTo(0,0);
     }catch(e){setErro((e as Error).message);}
     finally{setOcupado(false);}
@@ -195,6 +195,7 @@ export default function Agendar(){
       <div className="resumo"><p><strong>Lista de espera · {semana(data)}, {dia(data)}</strong></p>{calculados.map(x=><p key={x.svc.id}>{x.svc.name}</p>)}</div>
       <label>Seu nome<input type="text" name="name" required minLength={2} maxLength={100} autoComplete="name"/></label>
       <label>Celular com DDD<input type="tel" name="phone" required inputMode="tel" autoComplete="tel" placeholder="(83) 99999-9999"/></label>
+      <label>Aniversário (opcional)<input type="text" name="birthday" inputMode="numeric" maxLength={10} placeholder="dd/mm" pattern="\d{1,2}/\d{1,2}(/\d{2,4})?" title="Dia e mês, como 25/12"/><small className="dica">Para a gente lembrar do seu dia com um mimo 💝</small></label>
       <label className="marcar"><input type="checkbox" name="earlier"/>Se abrir um horário mais cedo, quero ser avisada.</label>
       {erro&&<p className="aviso" role="alert">{erro}</p>}
       <button className="botao" type="submit" disabled={ocupado}>{ocupado?'Enviando…':'Entrar na lista de espera'}</button>
@@ -204,6 +205,7 @@ export default function Agendar(){
       <div className="resumo"><p><strong>{semana(data)}, {dia(data)}</strong></p>{horario.plan.map((x,i)=><p key={i}>{hora(x.start)}–{hora(x.end)} · {calculados[i].svc.name} com {nome(x.staff)}</p>)}<p>Total: <strong>{reais(total)}</strong></p></div>
       <label>Seu nome<input type="text" name="name" required minLength={2} maxLength={100} autoComplete="name"/></label>
       <label>Celular com DDD<input type="tel" name="phone" required inputMode="tel" autoComplete="tel" placeholder="(83) 99999-9999"/></label>
+      <label>Aniversário (opcional)<input type="text" name="birthday" inputMode="numeric" maxLength={10} placeholder="dd/mm" pattern="\d{1,2}/\d{1,2}(/\d{2,4})?" title="Dia e mês, como 25/12"/><small className="dica">Para a gente lembrar do seu dia com um mimo 💝</small></label>
       <label className="marcar"><input type="checkbox" name="earlier"/>Se abrir um horário mais cedo, quero ser avisada.</label>
       {erro&&<p className="aviso" role="alert">{erro}</p>}
       <button className="botao" type="submit" disabled={ocupado}>{ocupado?'Enviando…':'Pedir horário'}</button>

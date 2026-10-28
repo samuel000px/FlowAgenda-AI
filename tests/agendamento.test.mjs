@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {actAdmin,candidates,seedAdmin,tickAdmin,upgrade} from '../lib/flowagenda.mjs';
+import {actAdmin,candidates,readBirthday,seedAdmin,tickAdmin,upgrade} from '../lib/flowagenda.mjs';
 import {bookInStore,byToken,cancelByToken,catalog,changeWithWhatsApp,interestInStore,openDays,phoneDigits,publicView,readCart,requestBooking,requestInterest,slots} from '../lib/agendamento.mjs';
 
 // Segunda-feira, 26/10/2026, 8h em Brasília: a agenda abre na terça.
@@ -15,7 +15,7 @@ function salao(){
   ];
   return s;
 }
-const manicure=(staff='P1',extra={})=>({items:[{service:'S1',...extra}],staff:{Unhas:staff}});
+const manicure=(staff='P1',extra={})=>({items:[{service:'S1',...extra}],staff:{'Mãos e pés':staff}});
 const pedido=(s,extra={})=>requestBooking(s,{cart:manicure(),date:TERCA,start:540,name:'Ana Souza',phone:'(83) 99999-0000',earlier:true,...extra},now);
 
 test('agenda abre de terça a sábado, com sábado das 8h às 17h',()=>{
@@ -31,7 +31,7 @@ test('horários seguem a grade de 45 minutos e o carrinho inteiro cabe antes de 
   const s=salao(),terca=slots(s,manicure('P2'),TERCA,now).map(x=>x.time);
   assert.deepEqual(terca.slice(0,3),['09:00','09:45','10:30']);
   assert.equal(terca.at(-1),'17:15');
-  assert.equal(slots(s,{items:[{service:'S3'}],staff:{Unhas:'P1'}},TERCA,now).at(-1).time,'16:30');
+  assert.equal(slots(s,{items:[{service:'S3'}],staff:{'Mãos e pés':'P1'}},TERCA,now).at(-1).time,'16:30');
 });
 
 test('intervalo da profissional e antecedência mínima tiram horários',()=>{
@@ -41,7 +41,7 @@ test('intervalo da profissional e antecedência mínima tiram horários',()=>{
 });
 
 test('carrinho com unhas e cabelo: em sequência, uma profissional por área',()=>{
-  const s=salao(),cart={items:[{service:'S1'},{service:'S11',variant:2}],staff:{Unhas:'P2',Cabelo:''}};
+  const s=salao(),cart={items:[{service:'S1'},{service:'S11',variant:2}],staff:{'Mãos e pés':'P2',Cabelo:''}};
   const [first]=slots(s,cart,TERCA,now);
   assert.equal(first.time,'09:00');
   assert.deepEqual(first.plan.map(x=>[x.start,x.end,x.staff]),[[540,585,'P2'],[585,675,'P3']],'escova longa (90 min) começa quando a manicure acaba');
@@ -51,12 +51,12 @@ test('carrinho com unhas e cabelo: em sequência, uma profissional por área',()
 test('sem sobreposição: o segundo item precisa da profissional livre logo depois do primeiro',()=>{
   const s=salao();
   requestBooking(s,{cart:{items:[{service:'S12'}],staff:{Cabelo:'P3'}},date:TERCA,start:585,name:'Bia',phone:'83988887777'},now);
-  const cart={items:[{service:'S1'},{service:'S11',variant:0}],staff:{Unhas:'P2',Cabelo:'P3'}};
+  const cart={items:[{service:'S1'},{service:'S11',variant:0}],staff:{'Mãos e pés':'P2',Cabelo:'P3'}};
   assert.ok(!slots(s,cart,TERCA,now).some(x=>x.start===540),'Rafa está ocupada às 09:45');
 });
 
 test('mesma área no carrinho fica com a mesma profissional',()=>{
-  const s=salao(),cart={items:[{service:'S2'},{service:'S5'}],staff:{Unhas:''}};
+  const s=salao(),cart={items:[{service:'S2'},{service:'S5'}],staff:{'Mãos e pés':''}};
   const plan=slots(s,cart,TERCA,now)[0].plan;
   assert.equal(plan[0].staff,'P1');assert.equal(plan[1].staff,'P1','só a Lia faz SPA Relaxante, então ela faz os dois');
 });
@@ -65,8 +65,10 @@ test('adicionais somam no preço e não no tempo; desconto do "pegue também" va
   const s=salao(),items=readCart(s,{items:[{service:'S1',addons:['S10','S9']},{service:'S2'}],staff:{}});
   assert.equal(items[0].duration,45);
   assert.equal(items[0].price,50,'manicure 30 + francesinha 10 + arte 10');
-  assert.equal(items[1].discount,5.25,'15% da pedicure (35)');
-  assert.equal(items[1].price,29.75);
+  assert.equal(items[1].discount,0,'manicure não dá desconto na pedicure: o combo Manicure + Pedicure já existe');
+  const [,pe]=readCart(s,{items:[{service:'S7'},{service:'S2'}],staff:{}});
+  assert.equal(pe.discount,5.25,'manutenção dá 15% na pedicure (35)');
+  assert.equal(pe.price,29.75);
   assert.throws(()=>readCart(s,{items:[{service:'S1',addons:['S14']}],staff:{}}),/não combina/);
   assert.throws(()=>readCart(s,{items:[{service:'S11'}],staff:{}}),/opção/);
 });
@@ -75,20 +77,20 @@ test('ofertas cruzadas não dão desconto duplo: vale só no item que entrou dep
   const s=salao(),[unha,escova]=readCart(s,{items:[{service:'S1'},{service:'S11',variant:0}],staff:{}});
   assert.equal(unha.discount,0);assert.equal(escova.discount,10);
   const [escova2,unha2]=readCart(s,{items:[{service:'S11',variant:0},{service:'S1'}],staff:{}});
-  assert.equal(escova2.discount,0);assert.equal(unha2.discount,10);
+  assert.equal(escova2.discount,0);assert.equal(unha2.discount,5);
 });
 
 test('desconto por área e só o maior quando dois combinam',()=>{
   const s=salao(),items=readCart(s,{items:[{service:'S2'},{service:'S11',variant:3}],staff:{}});
   assert.equal(items[1].discount,10,'qualquer serviço de unhas dá R$ 10 na escova');
   s.promos.push({id:'D9',trigger:'S2',target:'S11',type:'percent',value:50,active:true});
-  assert.equal(readCart(s,{items:[{service:'S2'},{service:'S11',variant:3}],staff:{}})[1].discount,40,'50% de 80 ganha dos R$ 10');
+  assert.equal(readCart(s,{items:[{service:'S2'},{service:'S11',variant:3}],staff:{}})[1].discount,35,'50% de 70 ganha dos R$ 10');
   s.promos.forEach(d=>d.active=false);
   assert.equal(readCart(s,{items:[{service:'S2'},{service:'S11',variant:3}],staff:{}})[1].discount,0);
 });
 
 test('pedido segura os horários, cria a cliente e só a gerência confirma (o pedido inteiro)',()=>{
-  const s=salao(),cart={items:[{service:'S1',addons:['S10']},{service:'S11',variant:1}],staff:{Unhas:'P1',Cabelo:'P3'}};
+  const s=salao(),cart={items:[{service:'S1',addons:['S10']},{service:'S11',variant:1}],staff:{'Mãos e pés':'P1',Cabelo:'P3'}};
   const [a,b]=requestBooking(s,{cart,date:TERCA,start:540,name:'Ana Souza',phone:'(83) 99999-0000',earlier:true},now);
   assert.equal(a.status,'requested');assert.equal(a.order,b.order);assert.equal(a.token,b.token);assert.ok(a.linked);
   assert.equal(b.start,585);assert.equal(b.variant,'Cabelo médio');assert.equal(a.addons[0].name,'Francesinha');
@@ -100,7 +102,7 @@ test('pedido segura os horários, cria a cliente e só a gerência confirma (o p
 
 test('pedido com dois atendimentos fica fora da antecipação automática',()=>{
   const s=salao();
-  const [a]=requestBooking(s,{cart:{items:[{service:'S1'},{service:'S12'}],staff:{Unhas:'P2',Cabelo:'P3'}},date:'2026-10-30',start:540,name:'Ana',phone:'83999990000',earlier:true},now);
+  const [a]=requestBooking(s,{cart:{items:[{service:'S1'},{service:'S12'}],staff:{'Mãos e pés':'P2',Cabelo:'P3'}},date:'2026-10-30',start:540,name:'Ana',phone:'83999990000',earlier:true},now);
   actAdmin(s,'request_accept',{id:a.id},now);
   const [solo]=pedido(s,{name:'Bia',phone:'83988887777',date:'2026-10-29',start:585,cart:manicure('P2')});
   actAdmin(s,'request_accept',{id:solo.id},now);
@@ -135,7 +137,7 @@ test('recusa libera o horário e pedido vencido é encerrado',()=>{
 });
 
 test('cancelar pelo link: pedido vira desistência; confirmado vira vaga para o motor',()=>{
-  const s=salao(),[a,b]=requestBooking(s,{cart:{items:[{service:'S1'},{service:'S12'}],staff:{Unhas:'P2',Cabelo:'P3'}},date:TERCA,start:540,name:'Ana',phone:'83999990000'},now);
+  const s=salao(),[a,b]=requestBooking(s,{cart:{items:[{service:'S1'},{service:'S12'}],staff:{'Mãos e pés':'P2',Cabelo:'P3'}},date:TERCA,start:540,name:'Ana',phone:'83999990000'},now);
   assert.equal(byToken(s,a.token).id,a.id);
   assert.throws(()=>byToken(s,'x'.repeat(32)),/não encontrado/);
   cancelByToken(s,a.token,now);
@@ -169,7 +171,7 @@ test('telefone ganha o 55 e agendas antigas recebem funcionamento, áreas e ofer
   const antiga=seedAdmin();delete antiga.settings.hours;delete antiga.settings.block;delete antiga.promos;antiga.services=[{id:'S1',name:'Manicure',duration:45,price:45}];
   const nova=upgrade(antiga);
   assert.equal(nova.settings.block,45);assert.deepEqual(nova.settings.hours[6],[480,1020]);
-  assert.equal(nova.services[0].group,'Unhas');assert.deepEqual(nova.promos,[]);
+  assert.equal(nova.services[0].group,'Mãos e pés');assert.deepEqual(nova.promos,[]);
 });
 
 test('painel: importar catálogo das fichas, salvar oferta e serviço com opções',()=>{
@@ -312,4 +314,28 @@ test('data cheia na loja: entra na lista de espera, com as mesmas regras contra 
   assert.deepEqual([w.priority,w.source],[1,'loja']);
   assert.match(s.events[0].text,/Lia pôs Maria Joaquina na lista de espera/);
   assert.throws(()=>interestInStore(s,{...base,cart:manicure('P1'),client_id:'C1'},'Lia',now),/ainda tem horário livre/);
+});
+
+test('catálogo em quatro áreas, com os preços da planilha do salão',()=>{
+  const s=salao();s.staff.push({id:'P4',name:'Todas',active:true,start:480,end:1080,break_start:0,break_end:0,services:s.services.filter(v=>!v.addon).map(v=>v.id)});
+  const c=catalog(s);
+  assert.deepEqual(c.groups,['Mãos e pés','Alongamento e gel','Cabelo','Sobrancelha e depilação']);
+  const preco=n=>c.services.find(v=>v.name===n).price;
+  assert.equal(preco('Manicure + Pedicure'),50);assert.equal(preco('Manutenção de alongamento'),100);assert.equal(preco('Sobrancelha'),35);
+  assert.ok(c.addons.some(a=>a.name==='Reposição de unha'&&a.group==='Alongamento e gel'));
+});
+
+test('área antiga "Unhas" vira "Mãos e pés", inclusive nas ofertas',()=>{
+  const antiga=seedAdmin();antiga.services=[{id:'S1',name:'Manicure',duration:45,price:30,group:'Unhas',addon:false}];antiga.promos=[{id:'D3',trigger:'group:Unhas',target:'S1',type:'amount',value:5,active:true}];
+  const nova=upgrade(antiga);
+  assert.equal(nova.services[0].group,'Mãos e pés');assert.equal(nova.promos[0].trigger,'group:Mãos e pés');
+});
+
+test('aniversário: dia e mês; o site só preenche o que está vazio',()=>{
+  assert.equal(readBirthday('5/3'),'03-05');assert.equal(readBirthday('25/12/1990'),'12-25');assert.equal(readBirthday(''),'');
+  assert.throws(()=>readBirthday('31/02'),/aniversário/);assert.throws(()=>readBirthday('abc'),/aniversário/);
+  const s=salao();pedido(s,{birthday:'10/04'});
+  const c=s.clients[0];assert.equal(c.birthday,'04-10');
+  pedido(s,{start:585,birthday:'01/01'});
+  assert.equal(c.birthday,'04-10','outra pessoa digitando o mesmo celular não troca o aniversário');
 });

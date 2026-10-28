@@ -22,7 +22,7 @@ function useClientes(texto:string){
 
 export default function StaffBooking({catalog,me,busy,act,onDone}:{catalog:Row,me:string,busy:boolean,act:(action:string,p:Row,message?:string)=>Promise<boolean>,onDone:(date:string)=>void}){
  const [servico,setServico]=useState(''),[opcao,setOpcao]=useState(''),[pessoa,setPessoa]=useState(''),[data,setData]=useState(today()),[inicio,setInicio]=useState<number|null>(null);
- const [horarios,setHorarios]=useState<Row[]|null>(null),[erro,setErro]=useState(''),[antecipar,setAntecipar]=useState<boolean|null>(null);
+ const [horarios,setHorarios]=useState<Row[]|null>(null),[erro,setErro]=useState(''),[antecipar,setAntecipar]=useState<boolean|null>(null),[niver,setNiver]=useState('');
  // Data cheia: em vez de horário, a cliente entra na lista de espera daquele dia (espera=true).
  const [fechado,setFechado]=useState(false),[espera,setEspera]=useState(false);
  // Cliente: busca no cadastro, uma da lista (cliente) ou uma nova (nova=true, com nome e celular).
@@ -35,7 +35,7 @@ export default function StaffBooking({catalog,me,busy,act,onDone}:{catalog:Row,m
  // Ao trocar de serviço, a profissional começa por quem está usando o celular, se ela fizer o serviço.
  function trocarServico(id:string){setServico(id);setOpcao('');const faz=catalog.staff.filter((p:Row)=>p.services.includes(id));setPessoa(faz.some((p:Row)=>p.id===me)?me:faz[0]?.id||'');}
  function usar(c:Row){setCliente(c);setNova(false);setCelular('');setOutra(false);}
- function limpar(){setCliente(null);setNova(false);setBusca('');setNome('');setCelular('');setOutra(false);}
+ function limpar(){setCliente(null);setNova(false);setBusca('');setNome('');setCelular('');setOutra(false);setNiver('');}
 
  useEffect(()=>{
   setInicio(null);setHorarios(null);setErro('');setEspera(false);
@@ -50,7 +50,7 @@ export default function StaffBooking({catalog,me,busy,act,onDone}:{catalog:Row,m
   e.preventDefault();
   const cart={items:[{service:servico,...(opcao!==''?{variant:Number(opcao)}:{})}],staff:{[escolhido.group]:pessoa}};
   const hora=horarios?.find(h=>h.start===inicio)?.time,quem=(cliente?.name||nome).split(' ')[0];
-  const p=cliente?{client_id:cliente.id,phone:celular}:{name:nome,phone:celular,newClient:outra};
+  const p=cliente?{client_id:cliente.id,phone:celular,birthday:niver}:{name:nome,phone:celular,newClient:outra,birthday:niver};
   const ok=espera?await act('waitlist_interest',{...p,cart,date:data,earlier:antecipar},`${quem} entrou na lista de espera de ${rotulo(data).toLowerCase()}, com prioridade.`)
    :await act('book_in_store',{...p,cart,date:data,start:inicio,earlier:antecipar},`Horário marcado: ${quem}, ${rotulo(data).toLowerCase()} às ${hora}. Já está na agenda.`);
   if(ok){
@@ -97,6 +97,7 @@ export default function StaffBooking({catalog,me,busy,act,onDone}:{catalog:Row,m
       {achadas.length>0&&<div className="staff-found">{achadas.map(c=><button type="button" key={c.id} disabled={busy} onClick={()=>usar(c)}><strong>{c.name}</strong><small>{final(c)}</small></button>)}</div>}
       <button type="button" className="secondary staff-new" disabled={busy} onClick={()=>{const digitos=busca.replace(/\D/g,'');setNova(true);setNome(digitos.length>=4?'':busca.trim());setCelular(digitos.length>=4?busca:'');}}><UserPlus size={17}/>{busca.trim()&&busca.replace(/\D/g,'').length<4?`Cadastrar nova: ${busca.trim()}`:'Cadastrar nova cliente'}</button>
      </>}
+     {(cliente||nova)&&<label className="field"><span>Aniversário (opcional)</span><input inputMode="numeric" autoComplete="off" placeholder="dd/mm" maxLength={10} value={niver} onChange={e=>setNiver(e.target.value)} disabled={busy}/><small>Pergunte o dia e o mês para o salão mandar parabéns.</small></label>}
     </fieldset>
     {pronta&&<>
      <fieldset className="staff-step"><legend>Gostaria de antecipar caso encontrássemos outro horário mais cedo?</legend><div className="staff-yesno">{[[true,'Sim'],[false,'Não']].map(([v,t])=><button type="button" key={t as string} aria-pressed={antecipar===v} disabled={busy} onClick={()=>setAntecipar(v as boolean)}>{t as string}</button>)}</div></fieldset>

@@ -37,7 +37,7 @@ O único caminho da página para o painel é a linha "Acesso da equipe", no roda
 
 ### Como funciona o agendamento pelo site
 
-1. O catálogo fica em **Equipe e serviços**, separado por área (Unhas, Cabelo). Cada serviço pode ter **opções** com tempo e valor próprios (o comprimento da escova) e **adicionais** da mesma área, que somam só no preço (francesinha, babyliss). "Importar serviços das fichas" traz a lista das fichas do salão, com valores de exemplo.
+1. O catálogo fica em **Equipe e serviços**, separado por área (Unhas, Cabelo). Cada serviço pode ter **opções** com tempo e valor próprios (o comprimento da escova) e **adicionais** da mesma área, que somam só no preço (francesinha, babyliss). São quatro áreas: Mãos e pés, Alongamento e gel, Cabelo, e Sobrancelha e depilação. Os preços iniciais são os mais cobrados na planilha do salão (ago/2025 a out/2026); os tempos são estimativas. "Importar serviços das fichas" acrescenta o que faltar, sem duplicar nem mudar o que já existe.
 2. O carrinho aceita até 3 serviços. Eles ficam **em sequência**, um começando quando o outro termina, com **uma profissional por área**: unhas com quem faz unhas, escova com quem faz escova.
 3. **Ofertas "Pegue também"**: em Equipe e serviços, cada oferta diz quem escolher o gatilho (um serviço ou qualquer serviço de uma área) ganha desconto, em % ou R$, no alvo. A cliente vê a oferta de maior desconto. O desconto vale só no item que entrou depois no carrinho, então duas ofertas cruzadas não somam.
 4. Os horários seguem uma grade de blocos (45 minutos por padrão) dentro do funcionamento de cada dia, definido em **Configurações** (padrão: terça a sexta 9h–18h, sábado 8h–17h). Só aparecem inícios em que o carrinho inteiro cabe, fora do intervalo das profissionais e sem bater em outro atendimento.
@@ -45,7 +45,8 @@ O único caminho da página para o painel é a linha "Acesso da equipe", no roda
 6. No fim do pedido, a cliente toca em "Confirmar pelo WhatsApp" e manda ao salão uma mensagem já escrita, com o link do agendamento. Como a conversa parte dela, a resposta do salão não é cobrada.
 7. A cliente pode cancelar pelo link (o pedido inteiro). Um horário confirmado que é cancelado vira vaga, e o motor de remarcação procura quem antecipar.
 8. Pedidos com mais de um atendimento ficam fora da antecipação automática, porque antecipar só um quebraria a sequência.
-9. Quem marca "quero ser avisada se abrir um horário mais cedo" entra como autorizada a antecipar.
+9. O aniversário (dia e mês, opcional) é pedido no site, no cadastro da gerência e no horário marcado pela equipe. Pelo site ele só preenche um aniversário vazio, nunca troca o que já existe.
+10. Quem marca "quero ser avisada se abrir um horário mais cedo" entra como autorizada a antecipar.
 
 ## Publicar no Cloudflare
 

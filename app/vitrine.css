@@ -178,3 +178,4 @@
 .vitrine .data-cheia{display:grid;gap:.75rem;padding:1rem 1.1rem;border-radius:18px;background:oklch(1 0 0 / .6);border:.8px solid oklch(0.68 0.08 40 / .35)}
 .vitrine .data-cheia p{font-size:.9rem;color:var(--malva-70)}
 .vitrine .data-cheia strong{color:var(--malva)}
+.vitrine .formulario .dica{font-size:.75rem;color:var(--malva-60)}
