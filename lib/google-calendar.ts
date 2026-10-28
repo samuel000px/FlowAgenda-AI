@@ -8,10 +8,10 @@ export async function managerRoom(req:Request,env:Env){
 }
 export async function calendarStatus(env:Env,room:string,details=false){
   const row=await env.DB!.prepare('SELECT calendar,day,synced,error,lease,entries FROM calendar_connections WHERE room=?').bind(room).first<any>();
-  let progress={pending:0,appointments:0,birthdays:0};
+  let progress={pending:0,appointments:0};
   if(details&&row){
     const current=await env.DB!.prepare('SELECT state FROM rooms WHERE id=?').bind(room).first<any>();
-    if(current){const state=JSON.parse(current.state);progress={pending:(await calendarChanges(room,state,row.day,JSON.parse(row.entries))).length,appointments:state.appointments.filter((a:any)=>a.status==='booked').length,birthdays:state.clients.filter((c:any)=>c.birthday).length};}
+    if(current){const state=JSON.parse(current.state);progress={pending:(await calendarChanges(room,state,row.day,JSON.parse(row.entries))).length,appointments:state.appointments.filter((a:any)=>a.status==='booked').length};}
   }
   return {configured:configured(env),connected:!!row,...progress,day:row?.day||'',synced:row?.synced||0,error:row?.error||'',syncing:(row?.lease||0)>Date.now(),url:row?`https://calendar.google.com/calendar/u/0/r?cid=${encodeURIComponent(row.calendar)}`:'',redirect:env.GOOGLE_REDIRECT_URI||''};
 }
@@ -52,7 +52,7 @@ export async function finishOAuth(env:Env,state:string,code:string){
   if(!calendar){
     const current=await env.DB!.prepare('SELECT state FROM rooms WHERE id=?').bind(pending.room).first<any>();
     const name=current?JSON.parse(current.state).salon?.name||'Santa Cor':'Santa Cor';
-    calendar=(await googleCall(tokens.access_token,'/calendars','POST',{summary:`${name} · Agenda`,description:'Atendimentos e aniversários sincronizados pelo FlowAgenda-AI.',timeZone:'America/Fortaleza'})).id;
+    calendar=(await googleCall(tokens.access_token,'/calendars','POST',{summary:`${name} · Agenda`,description:'Atendimentos sincronizados pelo FlowAgenda-AI.',timeZone:'America/Fortaleza'})).id;
   }
   const encrypted=await seal({access:tokens.access_token,refresh:tokens.refresh_token,expires:Date.now()+Number(tokens.expires_in||3600)*1000},env.CALENDAR_ENCRYPTION_KEY,pending.room);
   await env.DB!.prepare("INSERT INTO calendar_connections(room,tokens,calendar,day,entries,synced) VALUES(?,?,?,?,?,?) ON CONFLICT(room) DO UPDATE SET tokens=excluded.tokens,calendar=excluded.calendar,entries=excluded.entries,synced=excluded.synced,error='',retry=0").bind(pending.room,encrypted,calendar,previous?.day||pending.day,calendar===previous?.calendar?previous.entries:'{}',calendar===previous?.calendar?previous.synced:0).run();

@@ -6,11 +6,10 @@
 2. Clique em **Conectar conta Google**, escolha a conta que vai acompanhar a agenda e autorize.
 3. Ao voltar, confira o progresso. Use **Abrir Google Agenda** para ver a agenda da esmalteria. No aplicativo do celular, use a mesma conta e deixe essa agenda marcada para exibição.
 4. Cadastre e altere horários pelo FlowAgenda-AI. Cada serviço confirmado aparece com a cliente, a profissional e a duração do agendamento. A agenda reúne todos os dias; no Google, escolha a visualização Dia ou Semana.
-5. Para aniversários, abra **Clientes → Editar** e preencha dia/mês. Também é possível informar a data ao cadastrar uma cliente no novo agendamento. O ano de nascimento não é necessário.
 
-As cores identificam profissionais; aniversários ficam em rosa, como eventos anuais de dia inteiro, sem bloquear horários. Pedidos ainda aguardando aceite e propostas ainda não aprovadas não viram novos horários no Google. Não são enviados convites nem mensagens às clientes.
+As cores identificam profissionais. Pedidos ainda aguardando aceite e propostas ainda não aprovadas não viram novos horários no Google. Não são enviados convites nem mensagens às clientes.
 
-Se aparecer um erro, a agenda do sistema continua salva. Use **Atualizar agora** para tentar novamente ou **Reconectar ou trocar conta** quando a autorização tiver expirado. Para 29/02, o lembrete ocorre no último dia de fevereiro. Faça correções no cadastro da cliente para atualizar a série inteira.
+Se aparecer um erro, a agenda do sistema continua salva. Use **Atualizar agora** para tentar novamente ou **Reconectar ou trocar conta** quando a autorização tiver expirado.
 
 ## Preparação única da instalação
 
@@ -34,15 +33,12 @@ Em aplicativos externos com publicação **Testing**, o Google normalmente expir
 - Conecte pelo botão do painel e confirme que a agenda da esmalteria apareceu na mesma conta Google.
 - Agende um serviço: confira data, início, fim, duração, cliente e profissional.
 - Reagende e confirme que o mesmo evento mudou, sem duplicar. Cancele e confira a remoção.
-- Preencha um aniversário, corrija a data e apague o campo: a série deve ser criada, atualizada e removida.
 - Em uma instalação publicada, feche o painel e confirme que novas alterações e tentativas pendentes continuam sendo processadas.
 
 Os testes automatizados usam uma API Google simulada e banco isolado. Eles não autorizam contas nem comprovam a configuração do projeto Google ou dos segredos da hospedagem.
 
 ## Dados e manutenção
 
-- `client.birthday`: vazio ou `MM-DD`. `lib/client-birthday.mjs` valida a data, aceita `DD/MM` na entrada e não exige migração para clientes existentes.
 - IDs estáveis permitem atualizar o mesmo evento. A assinatura de sincronização acompanha alterações em clientes, serviços, profissionais e horários. A rotina também recolhe mudanças futuras gravadas no banco por outros canais.
 - Lotes de 20 alterações por execução evitam grandes cargas iniciais. Repetir a execução continua de onde parou, inclusive após falha parcial. O painel só informa sincronização completa quando todas as alterações do lote de dados foram enviadas.
-- Aniversários usam eventos comuns com recorrência anual no calendário dedicado, sem integração com Google Contatos e sem depender do tipo especial de evento de aniversário. Referência: [eventos e recorrência](https://developers.google.com/workspace/calendar/api/concepts/events-calendars).
 - Mudanças feitas diretamente no Google não voltam ao painel. Desconectar preserva eventos anteriores; uma conexão posterior sem o vínculo salvo pode criar uma nova agenda.

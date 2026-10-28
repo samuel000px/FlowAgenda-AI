@@ -31,11 +31,10 @@ export default function CalendarPanel(){
    <div className="calendar-benefits">
     <div><strong>Serviços no horário certo</strong><p>Cliente, serviço e profissional no título. O início e o fim respeitam a duração do atendimento, com uma cor para cada profissional.</p></div>
     <div><strong>Mudanças acompanhadas</strong><p>Novos horários, remarcações aprovadas e cancelamentos atualizam a mesma agenda. Pedidos aguardando aceite só entram depois de aprovados.</p></div>
-    <div><strong>Aniversários lembrados</strong><p>Preencha dia e mês em Clientes → Editar, ou ao cadastrar no agendamento. O lembrete aparece todo ano, sem ocupar um horário de serviço.</p></div>
    </div>
    {!status?.connected&&<p className="notice">1. Toque em Conectar conta Google. 2. Escolha sua conta. 3. Autorize a agenda da esmalteria. Sua senha é informada somente na página do Google.</p>}
    {status&&!status.configured&&<p className="notice">A conexão precisa ser ativada pelo responsável pelo sistema. Depois disso, basta escolher sua conta Google.</p>}
-   {status?.connected&&<p className="muted small">{status.appointments} atendimento(s) e {status.birthdays} aniversário(s) na sincronização.{pending>0?` Faltam ${pending} atualização(ões); elas serão enviadas nas próximas sincronizações.`:status.error?' Aguardando nova tentativa de conexão.':' Todas as informações salvas estão em dia com o Google.'}</p>}
+   {status?.connected&&<p className="muted small">{status.appointments} atendimento(s) na sincronização.{pending>0?` Faltam ${pending} atualização(ões); elas serão enviadas nas próximas sincronizações.`:status.error?' Aguardando nova tentativa de conexão.':' Todas as informações salvas estão em dia com o Google.'}</p>}
    {status?.synced>0&&<p className="muted small">Última sincronização completa: {new Date(status.synced).toLocaleString('pt-BR',{timeZone:'America/Fortaleza'})}</p>}
    {(error||status?.error)&&<p role="alert" className="error">{error||status.error} Os dados do painel continuam salvos.</p>}
    <div className="actions">

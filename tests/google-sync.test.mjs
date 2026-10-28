@@ -29,7 +29,10 @@ async function setup(count=1){
  const db=new DatabaseSync(':memory:');for(const f of ['0000_young_lizard.sql','0001_foamy_klaw.sql','0002_whatsapp.sql'])db.exec(readFileSync(new URL('drizzle/'+f,root),'utf8'));
  const prepare=(sql,args=[])=>({bind:(...next)=>prepare(sql,next),first:async()=>db.prepare(sql).get(...args)||null,all:async()=>({results:db.prepare(sql).all(...args)}),run:async()=>({meta:{changes:db.prepare(sql).run(...args).changes}})});
  env.DB={prepare,batch:async statements=>{const results=[];for(const s of statements)results.push(await s.run());return results;}};
- const s=seedAdmin();s.clients=Array.from({length:count},(_,i)=>({id:'c'+i,name:'Cliente '+i,birthday:'10-25',consent:false}));
+ const s=seedAdmin();s.clients=Array.from({length:count},(_,i)=>({id:'c'+i,name:'Cliente '+i,consent:false}));
+ s.services=[{id:'s',name:'Manicure',price:45,duration:45}];
+ s.staff=[{id:'p',name:'Lia',active:true,start:540,end:1080,break_start:0,break_end:0,services:['s']}];
+ s.appointments=s.clients.map((c,i)=>({id:'a'+i,client_id:c.id,staff_id:'p',service_id:'s',date:new Date(Date.UTC(2030,0,i+1)).toISOString().slice(0,10),start:600,end:645,price:45,status:'booked',attendance:'unknown',result:null}));
  db.prepare('INSERT INTO rooms(id,manager,client,state,created,updated) VALUES(?,?,?,?,?,?)').run('test','manager','client',JSON.stringify(s),Date.now(),Date.now());
  const tokens=await seal({access:'old-access',refresh:'old-refresh',expires:Date.now()+3600000},env.CALENDAR_ENCRYPTION_KEY,'test');
  db.prepare('INSERT INTO calendar_connections(room,tokens,calendar,day) VALUES(?,?,?,?)').run('test',tokens,'old-calendar','2026-10-28');
@@ -50,11 +53,11 @@ async function mocked(fn){
  };
  try{await fn({events,calls,missing:()=>{missingOld=true},fail:(value)=>{fail=value}});}finally{globalThis.fetch=original;}
 }
-test('closed-panel cron imports 50 birthdays in bounded batches without WhatsApp and reports pending work',()=>mocked(async({events})=>{
+test('closed-panel cron imports 50 appointments in bounded batches without WhatsApp and reports pending work',()=>mocked(async({events})=>{
  const {db}=await setup(50);try{
   await google.runCalendarSchedule(env);assert.equal(events.size,20);assert.equal((await google.calendarStatus(env,'test',true)).pending,30);
   await google.runCalendarSchedule(env);await google.runCalendarSchedule(env);
-  const status=await google.calendarStatus(env,'test',true);assert.equal(events.size,50);assert.equal(status.pending,0);assert.ok(status.synced);assert.equal(status.birthdays,50);
+  const status=await google.calendarStatus(env,'test',true);assert.equal(events.size,50);assert.equal(status.pending,0);assert.ok(status.synced);assert.equal(status.appointments,50);
  }finally{db.close();}
 }));
 test('failed Google writes preserve local data and progress, release lock, and recover on forced retry',()=>mocked(async({events,fail})=>{
@@ -74,11 +77,11 @@ test('OAuth uses account chooser and PKCE, switches inaccessible calendars, cons
   await assert.rejects(google.finishOAuth(env,start.state,'test-code'),/expirou|usada/);
  }finally{db.close();}
 }));
-test('birthday-only admin edit synchronizes immediately and Google endpoints reject missing admin session',()=>mocked(async({events})=>{
+test('customer-name-only admin edit synchronizes immediately and Google endpoints reject missing admin session',()=>mocked(async({events})=>{
  const {db,cookie}=await setup();try{
   await google.syncCalendar(env,'test');
-  const res=await roomApi.POST(new Request('https://example.test/api/room',{method:'POST',headers:{Origin:'https://example.test',Cookie:cookie,'Content-Type':'application/json'},body:JSON.stringify({action:'client_save',id:'c0',name:'Cliente 0',birthday:'15/08',phone:'',consent:false})}));
-  assert.equal(res.status,200,JSON.stringify(await res.json()));assert.equal([...events.values()][0].start.date,'2000-08-15');
+  const res=await roomApi.POST(new Request('https://example.test/api/room',{method:'POST',headers:{Origin:'https://example.test',Cookie:cookie,'Content-Type':'application/json'},body:JSON.stringify({action:'client_save',id:'c0',name:'Cliente renomeada',phone:'',consent:false})}));
+  assert.equal(res.status,200,JSON.stringify(await res.json()));assert.match([...events.values()][0].summary,/Cliente renomeada/);
   const denied=await api.POST(new Request('https://example.test/api/google',{method:'POST',headers:{Origin:'https://example.test','Content-Type':'application/json'},body:JSON.stringify({action:'sync'})}));assert.equal(denied.status,400);assert.match((await denied.json()).error,/administração/);
  }finally{db.close();}
 }));
