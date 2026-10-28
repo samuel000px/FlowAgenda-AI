@@ -55,6 +55,20 @@ def fluxo_atual() -> Fluxo:
     return st.session_state.fluxo
 
 
+# O Streamlit apaga o valor de um seletor quando a página dele sai da tela (ex.: ir em
+# "Clientes e equipe"). Guardamos uma cópia com outro nome e devolvemos ao voltar, para a
+# remarcação em andamento não recomeçar.
+def lembrar_escolha(chave: str, padrao) -> None:
+    """Antes de desenhar o seletor: recupera a escolha guardada."""
+    if chave not in st.session_state:
+        st.session_state[chave] = st.session_state.get(f"guardado_{chave}", padrao)
+
+
+def guardar_escolha(chave: str) -> None:
+    """Depois de desenhar o seletor: guarda a escolha atual."""
+    st.session_state[f"guardado_{chave}"] = st.session_state[chave]
+
+
 def agir(acao, *args) -> None:
     """Roda a ação de um botão; se a IA ou a agenda externa falharem, mostra o erro sem perder o estado."""
     try:
@@ -79,12 +93,14 @@ def desenhar_topo() -> Fluxo:
         st.markdown("### Remarcação")
         st.caption("WhatsApp simulado · dados fictícios")
     with seletor:
+        lembrar_escolha("cenario_id", "S1")
         st.selectbox(
             "Cenário",
             ids,
             key="cenario_id",
             format_func=lambda i: f"Cenário {ids.index(i) + 1} de {len(ids)}: {cenarios[i].nome}",
         )
+        guardar_escolha("cenario_id")
     fluxo = fluxo_atual()
     with controle:
         st.metric("Profundidade", f"{min(fluxo.profundidade, MAX_PROF)} de {MAX_PROF}")
@@ -277,12 +293,14 @@ def tabela_de_candidatas(fluxo: Fluxo) -> list[dict]:
 aplicar_css("painel")
 exigir_senha()
 menu_do_painel()
+lembrar_escolha("com_historico", False)
 st.sidebar.toggle(
     "Usar e registrar histórico",
     key="com_historico",
     help="Desligado, nada é gravado (bom para demonstrar). Ligado, as propostas e as presenças vão para "
     "registro/historico.csv e entram nos números das clientes.",
 )
+guardar_escolha("com_historico")
 
 fluxo = desenhar_topo()
 desenhar_fechar_o_dia(fluxo)

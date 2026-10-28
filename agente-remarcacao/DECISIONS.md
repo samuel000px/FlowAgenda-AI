@@ -302,3 +302,29 @@ a não ser quando um item abaixo diz outra coisa.
   Streamlit); o experimento da IA escolhendo saiu de `src/` para `avaliacao_ia/escolha_com_ia.py`;
   "tentar de novo uma vez" ficou escrito de forma direta; imports organizados no padrão.
 - O README ganhou uma seção "Estrutura do projeto" e dois fluxogramas simples no lugar de três detalhados.
+
+## D27. O painel lembra o cenário ao trocar de página
+
+- Erro achado na demonstração: ir em "Clientes e equipe" e voltar recomeçava a remarcação em andamento.
+  O Streamlit apaga o valor de um seletor quando a página dele sai da tela; sem ele, o painel achava que
+  o cenário tinha mudado e criava um fluxo novo. O mesmo valia para a chave "Usar e registrar histórico".
+- Correção: `lembrar_escolha` e `guardar_escolha` em `paginas/painel.py` guardam uma cópia da escolha com
+  outro nome e devolvem ao voltar.
+
+## D28. Página pública no estilo "link na bio" da Santa Cor
+
+- Decisão: a página pública passou a seguir o site que a Santa Cor já usa (feito no Lovable): fundo rosado,
+  logo redondo, cartões em pilha, "Nossos diferenciais" em grade, os cartões de texto e o depoimento, com as
+  mesmas cores, fontes (Jost e Cormorant Garamond) e ícones de linha (Lucide, em `paginas/icones.py`).
+- Os cartões vêm de `links` nos dados do salão, com os mesmos endereços do site antigo: agendar e cada
+  serviço abrem o WhatsApp com a mensagem pronta; galeria, avaliações, mapa, Instagram e a lista de serviços
+  vão para os links que o salão já usava. Sem `links`, a página monta os cartões básicos
+  (`cartoes_da_pagina` em `src/salao.py`).
+- No rodapé, no lugar da linha de crédito do site original, fica "Acesso da equipe". O endereço vem de
+  `link_equipe`: o painel da equipe é o Encaixa (o app da raiz do repositório), onde a função de remarcação
+  está sendo colocada. Sem `link_equipe`, vai para o `/painel` daqui. Isso muda o D19: a página pública
+  agora tem um caminho para o painel, de propósito. Um teste confere que esse é o único.
+- O Agendar do site antigo aponta para o número sem o 9 (558393782040); aqui usa o mesmo número dos
+  serviços (5583993782040).
+- As fotos e o logo do site original não foram copiados; o logo virou o monograma num círculo.
+- Motivo: o autor pediu a página igual à que o salão já divulga, com o acesso ao painel escondido no fim.

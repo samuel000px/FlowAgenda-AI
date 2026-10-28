@@ -115,7 +115,7 @@ risco de ela faltar. Se ninguém compensa, o FlowAgenda **decide não mexer**, e
 - [x] Várias profissionais, com a preferida da cliente primeiro
 - [x] Aprovação da dona antes de qualquer mudança
 - [x] IA interpretando respostas (120 de 120 certas nos testes difíceis)
-- [x] Página pública do salão com botão para o WhatsApp
+- [x] Página pública do salão no estilo "link na bio", com os cartões levando ao WhatsApp
 - [x] Painel e cadastro escondidos, com senha
 - [x] Registro de visitas, faltas e propostas ("Fechar o dia")
 - [ ] IA entendendo a intenção de qualquer mensagem (marcar, cancelar, responder)
@@ -200,7 +200,9 @@ quando bate o limite por minuto, o código espera e tenta de novo.
 
 Os dados públicos do salão (nome, WhatsApp, endereço, serviços) ficam em `data/salao.local.json`, fora
 do git; o `data/salao.json` do repositório tem dados de exemplo. Numa hospedagem, use o segredo
-`SALAO_JSON`. Para o painel pedir senha, configure `APP_SENHA`. O passo a passo para publicar está em
+`SALAO_JSON`. O caminho para o painel é a linha "Acesso da equipe", no fim da página, que vai para `link_equipe`
+(o Encaixa) ou para o `/painel`. Para o painel
+pedir senha, configure `APP_SENHA`. O passo a passo para publicar está em
 [docs/hospedagem.md](docs/hospedagem.md).
 
 ## Estrutura do projeto
