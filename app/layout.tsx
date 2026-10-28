@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./staff.css";
+import "./operations.css";
 
 export const metadata: Metadata = {
   title: "Santa Cor Esmalteria",

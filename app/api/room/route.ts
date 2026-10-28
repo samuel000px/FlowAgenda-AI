@@ -1,3 +1,5 @@
+import {supportAction,supportView} from '../../../lib/support-core.mjs';
+import {financeAction} from '../../../lib/finance-core.mjs';
 import {env} from 'cloudflare:workers';
 import {actAdmin,candidates,tickAdmin,upgrade} from '../../../lib/flowagenda.mjs';
 import {calendarStatus,syncCalendar} from '../../../lib/google-calendar';
@@ -22,7 +24,7 @@ async function save(row:any,state:any){
  if(!result.meta.changes)throw Error('A agenda foi atualizada em outra tela. Atualize e tente novamente.');
  return JSON.stringify(JSON.parse(row.state).appointments)!==JSON.stringify(state.appointments);
 }
-function view(state:any){return {state,now:Date.now(),candidates:Object.fromEntries(state.gaps.filter((g:any)=>g.status==='open').map((g:any)=>[g.id,candidates(state,g.id)]))};}
+function view(state:any){return {state,tickets:supportView(state),now:Date.now(),candidates:Object.fromEntries(state.gaps.filter((g:any)=>g.status==='open').map((g:any)=>[g.id,candidates(state,g.id)]))};}
 export async function GET(req:Request){
  try{const {row,state}=await load(req);tickAdmin(state);await save(row,state);await processWhatsAppInbox(env,row.id);await syncCalendar(env,row.id);const fresh=await load(req);return json(view(fresh.state));}
  catch(e){return json({error:(e as Error).message},/Entre|sessão|acesso/i.test((e as Error).message)?401:400);}
@@ -40,7 +42,9 @@ export async function POST(req:Request){
    }
    p.interpretation=await classifyResponse([...state.messages].reverse().find((m:any)=>m.offer_id===offer.id&&m.sender==='agent')?.text||'',String(p.text||''),env.GEMINI_API_KEY,env.GEMINI_MODEL);p.result=p.interpretation.result;
   }
-  actAdmin(state,p.action,p);const changed=await save(row,state);if(changed)await syncCalendar(env,row.id);
+  if(['support_claim','support_close','support_demo'].includes(p.action))supportAction(state,p.action,p,{role:'admin',id:'admin',name:'Administração'});
+  else if(['payment_record','expense_add'].includes(p.action))financeAction(state,p.action,p);
+  else actAdmin(state,p.action,p);const changed=await save(row,state);if(changed)await syncCalendar(env,row.id);
   await flushWhatsApp(env,row.id);const fresh=await load(req);return json(view(fresh.state));
  }catch(e){return json({error:(e as Error).message},/Entre|sessão|acesso/i.test((e as Error).message)?401:400);}
 }

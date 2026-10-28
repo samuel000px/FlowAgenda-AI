@@ -151,7 +151,7 @@ A hospedagem usa React, Vinext, Cloudflare Workers e D1. Preserve `.openai/hosti
 
 Em **Equipe e serviços → Acesso das funcionárias**, crie e copie o link `/funcionarios-<48 caracteres aleatórios>`. Ele não aparece na página pública e a página sinaliza aos buscadores para não indexar. A entrada mostra as profissionais ativas do cadastro; não usa nomes fixos.
 
-A área prioriza o celular: até 760 px, a agenda usa cartões e o menu fica fixo na parte inferior (Agenda, Clientes e Aprovações). Os controles têm área de toque ampliada, campos de 16 px e espaço para a área segura do aparelho. Há atalhos para o dia anterior, próximo dia e hoje; no computador, a agenda continua em tabela. O endereço é o mesmo nos dois formatos.
+A área prioriza o celular: até 760 px, a agenda usa cartões e o menu fica fixo na parte inferior (Agenda, Novo horário e Atendimento). Os controles têm área de toque ampliada, campos de 16 px e espaço para a área segura do aparelho. Há atalhos para o dia anterior, próximo dia e hoje; no computador, a agenda continua em tabela. O endereço é o mesmo nos dois formatos.
 
 O link é uma credencial compartilhada: quem o receber pode escolher qualquer nome ativo. A escolha identifica a sessão e registra as ações, mas não comprova a identidade da pessoa. Para revogar acessos, a gerente pode trocar ou desativar o link; isso também invalida as sessões existentes. Inativar uma profissional bloqueia seu acesso. Sessões duram oito horas e são separadas das sessões administrativas.
 
@@ -164,9 +164,20 @@ Permissões da equipe, verificadas no servidor:
 - A resposta sobre antecipar, dada ali pessoalmente, atualiza o cadastro da cliente.
 - No cadastro da gerência vale o mesmo: número repetido é recusado e nome repetido pede confirmação.
 - **Data cheia**: se não houver horário livre no dia, a funcionária pode tocar em "Demonstrar interesse nesta data" e colocar a cliente na lista de espera daquele dia, com prioridade. No site, a cliente faz o mesmo deixando nome e celular.
-- Aprovar remarcações já aceitas pela cliente que envolvam a profissional escolhida (horário de origem ou destino). Disponibilidade e conflitos são conferidos novamente; a aprovação registra a responsável e mantém a sincronização Google e WhatsApp existente.
-- Não pode cancelar, reagendar livremente, rejeitar propostas, registrar faltas, modificar equipe/configurações, enviar mensagens avulsas ou acessar credenciais da integração.
+- Assumir e encerrar pedidos de conversa em Atendimento. Fechar a conversa não cancela nenhum horário. Propostas do agente e suas aprovações ficam exclusivamente com a administração, inclusive nas APIs.
+- Não pode cancelar horários, reagendar livremente, acessar/aprovar/rejeitar propostas do agente, registrar faltas, consultar Finanças, modificar equipe/configurações ou acessar credenciais da integração. Para conversar com a cliente, abre o WhatsApp do próprio aparelho; o envio é manual.
 
-O servidor devolve apenas os dados necessários à agenda e às aprovações. As ações ficam em `staffAudit` e na atividade da gerência. Link e dados locais não são transportados automaticamente para a hospedagem: depois de publicar, gere e copie o link na versão hospedada. Um endereço localhost só funciona no computador do servidor.
+O servidor devolve apenas os dados necessários à agenda, ao cadastro presencial e aos pedidos de conversa. As ações ficam em `staffAudit` e na atividade da gerência. Link e dados locais não são transportados automaticamente para a hospedagem: depois de publicar, gere e copie o link na versão hospedada. Um endereço localhost só funciona no computador do servidor.
 
 Arquivos principais: `app/staff-portal.tsx` (interface), `app/staff.css` (estilos da equipe), `app/staff-access-panel.tsx` (controle do link pela gerente), `app/[employeeEntry]/page.tsx`, `app/api/staff*/`, `lib/staff-auth.ts` e `lib/staff-core.mjs` (acesso e permissões). A configuração é armazenada no registro da agenda, sem nova migração de banco.
+
+## Ações e Finanças
+
+- **Agenda → Novo agendamento** permite escolher uma cliente existente ou cadastrar uma nova e salvar junto com o horário. A aba Clientes mantém consulta e edição.
+- **Ações → Testar conversa** demonstra as opções Agendar, Cancelar e Falar com atendente sem enviar mensagens. Cancelar no exemplo apenas orienta sobre o link exclusivo do agendamento; não cancela uma reserva. Falar com atendente cria um pedido de exemplo compartilhado com a equipe.
+- O webhook oficial já encaminha mensagens que exigem intervenção humana à fila de pedidos. A demonstração não ativa envio automático do menu inicial. O menu automático de saudação mencionado pelo colaborador não constava no código recebido nesta atualização.
+- Cada pedido pode ser assumido por uma pessoa. Outra funcionária não pode assumir ou encerrar o pedido ocupado; a administração pode encerrá-lo. Novas mensagens após o encerramento abrem um novo pedido. Não se trata de encaminhar mensagens automaticamente para um WhatsApp pessoal: o botão abre a conversa na conta conectada ao aparelho.
+- **Finanças**, exclusiva da administração, separa receita prevista de pagamentos registrados. Após marcar comparecimento em Fechamento, confirme o recebimento por Pix, dinheiro ou cartão. O pagamento entra na data local em que foi registrado, mesmo que o serviço seja de outro dia.
+- Registre as despesas do dia para obter o saldo recebido menos despesas. Esse saldo não é uma demonstração de lucro e não inclui despesas ainda não lançadas. Registros ficam no banco da agenda, sem nova migração.
+
+As conexões Google Agenda e WhatsApp ficam em **Configurações → Integrações**. Os atalhos da central de atendimento abrem essa mesma seção.
