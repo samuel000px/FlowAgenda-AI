@@ -1,6 +1,6 @@
 # Resultados
 
-Gerado por `python avaliar.py` em 27/10/2026 17:30, com o modelo `gemini-3.5-flash-lite`.
+Gerado por `python avaliar.py` em 27/10/2026 21:33, com o modelo `gemini-3.5-flash-lite`.
 
 > **Atenção:** são estimativas baseadas no próprio modelo de score, sobre **dados fictícios**, com
 > respostas das clientes roteirizadas. Não é uma medição no mundo real. A métrica está em
@@ -18,7 +18,8 @@ Entre parênteses, a redução em relação a "ninguém faz nada".
 | S4 Recusa | 0.59 | 0.44 (25%) | 0.44 (25%) | empate |
 | S5 Cliente nova | 0.61 | 0.32 (48%) | 0.30 (51%) | agente |
 | S6 Dia lotado | 0.62 | 0.36 (42%) | 0.06 (90%) | agente |
-| **Total** | **3.97** | **2.42 (39%)** | **1.87 (53%)** | |
+| S7 Profissional preferida | 0.58 | 0.06 (89%) | 0.06 (89%) | empate |
+| **Total** | **4.55** | **2.48 (46%)** | **1.94 (57%)** | |
 
 ## O que cada estratégia fez
 
@@ -30,6 +31,7 @@ Entre parênteses, a redução em relação a "ninguém faz nada".
 | S4 | Marina aceitou | Larissa recusou → Marina aceitou → não mexe | sim |
 | S5 | Gabriela aceitou | Fernanda aceitou → não mexe | sim |
 | S6 | Olivia aceitou | Natalia aceitou → não mexe | sim |
+| S7 | Talita recusou → Yasmin aceitou | Talita recusou → Yasmin aceitou → não mexe | sim |
 
 ## Leitura
 
@@ -37,6 +39,9 @@ Entre parênteses, a redução em relação a "ninguém faz nada".
   na Beatriz do mesmo jeito. Se a Elisa tivesse aceitado, ficaria um buraco no fim do dia sem fila; o
   agente nem chega a perguntar para ela (poda). No cenário 4, a preferida do agente (Larissa) recusou e
   as duas estratégias terminaram com a Marina.
+- **Cenário 7.** O agente chama primeiro quem prefere a profissional do horário, mesmo com valor
+  esperado menor. Isso é uma regra do salão, não uma conta: a métrica não mede preferência, então ali
+  o agente pode empatar ou até perder um pouco para a regra ingênua.
 - **Onde o agente ganha.** Quando a ordem cronológica escolhe alguém cujo horário seria difícil de
   preencher (cenários 3 e 6), quando outra cliente tem menos risco de falta (cenário 5) e quando a cascata
   troca mais um buraco difícil por um fácil (cenário 2). No cenário 3 a regra ingênua deixa a agenda

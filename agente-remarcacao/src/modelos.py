@@ -1,5 +1,5 @@
 """Estruturas de dados do domínio: cliente, horário, dia e cenário."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 
@@ -16,6 +16,7 @@ class Cliente:
     propostas_recebidas: int  # contadas pelo próprio sistema
     propostas_aceitas: int
     disposicao: int  # 0 a 10, dita pela cliente: quanto toparia trocar para um horário antes. 0 = nunca chamar
+    profissional_preferida: str | None = None  # id da profissional; None = qualquer uma
 
     @property
     def primeiro_nome(self) -> str:
@@ -35,6 +36,7 @@ class Slot:
     status: str  # "ocupado" ou "livre"
     cliente_id: str | None
     valor: float
+    profissional_id: str | None = None  # de quem é este horário
 
     @property
     def inicio(self) -> datetime:
@@ -64,6 +66,11 @@ class Cenario:
     dias: dict[str, Dia]
     respostas: dict[str, str]  # resposta pronta de cada cliente, para rodar sem interface
     esperado: dict
+    profissionais: dict[str, str] = field(default_factory=dict)  # id -> nome
+
+    def nome_profissional(self, profissional_id: str | None) -> str:
+        """Nome da profissional, ou "qualquer uma" quando não há preferência."""
+        return self.profissionais.get(profissional_id, "qualquer uma") if profissional_id else "qualquer uma"
 
     def slot(self, slot_id: str) -> Slot:
         """Busca um horário pelo id."""
@@ -109,6 +116,7 @@ class Candidato:
     ganho: float | None = None
     risco: float | None = None
     valor_esperado: float | None = None
+    mesma_profissional: bool = True  # o horário vago é com a profissional que ela prefere (ou ela não tem preferência)
 
     @property
     def elegivel(self) -> bool:

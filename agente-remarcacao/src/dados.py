@@ -25,8 +25,17 @@ def _ler(pasta: Path, nome: str):
         raise ErroDados(f"{caminho} não é um JSON válido: {e}") from e
 
 
-def carregar_clientes(pasta: Path = PASTA_DADOS) -> dict[str, Cliente]:
+def carregar_profissionais(pasta: Path = PASTA_DADOS) -> dict[str, str]:
+    """Lê profissionais.json: id -> nome."""
+    profissionais = {p["id"]: p["nome"] for p in _ler(pasta, "profissionais.json")}
+    if not profissionais:
+        raise ErroDados("profissionais.json precisa ter pelo menos uma profissional.")
+    return profissionais
+
+
+def carregar_clientes(pasta: Path = PASTA_DADOS, profissionais: dict[str, str] | None = None) -> dict[str, Cliente]:
     """Lê clientes.json e valida cada cliente."""
+    profissionais = carregar_profissionais(pasta) if profissionais is None else profissionais
     clientes: dict[str, Cliente] = {}
     for bruto in _ler(pasta, "clientes.json"):
         try:
@@ -43,11 +52,15 @@ def carregar_clientes(pasta: Path = PASTA_DADOS) -> dict[str, Cliente]:
             raise ErroDados(f"{c.id}: a duração precisa ser positiva.")
         if not (isinstance(c.disposicao, int) and 0 <= c.disposicao <= 10):
             raise ErroDados(f"{c.id}: disposicao precisa ser um número inteiro de 0 a 10.")
+        if c.profissional_preferida is not None and c.profissional_preferida not in profissionais:
+            raise ErroDados(f"{c.id}: a profissional preferida {c.profissional_preferida} não existe.")
         clientes[c.id] = c
     return clientes
 
 
-def montar_agenda(bruto: dict, cenario_id: str, clientes: dict[str, Cliente]) -> tuple[list[Slot], dict[str, Dia]]:
+def montar_agenda(
+    bruto: dict, cenario_id: str, clientes: dict[str, Cliente], profissionais: dict[str, str]
+) -> tuple[list[Slot], dict[str, Dia]]:
     """Monta os horários e os dias de um cenário, conferindo as referências."""
     dias = {data: Dia(**d) for data, d in bruto["dias"].items()}
     agenda: list[Slot] = []
@@ -59,6 +72,8 @@ def montar_agenda(bruto: dict, cenario_id: str, clientes: dict[str, Cliente]) ->
             raise ErroDados(f"{onde}: id de slot repetido.")
         if not HORA.match(slot.hora):
             raise ErroDados(f"{onde}: hora precisa estar no formato HH:MM.")
+        if slot.profissional_id not in profissionais:
+            raise ErroDados(f"{onde}: a profissional {slot.profissional_id} não existe.")
         if slot.data not in dias:
             raise ErroDados(f"{onde}: o dia {slot.data} não está em 'dias'.")
         if slot.status not in ("ocupado", "livre"):
@@ -80,14 +95,15 @@ def montar_agenda(bruto: dict, cenario_id: str, clientes: dict[str, Cliente]) ->
 
 def carregar_cenarios(pasta: Path = PASTA_DADOS) -> list[Cenario]:
     """Lê os três arquivos e devolve todos os cenários prontos para uso."""
-    clientes = carregar_clientes(pasta)
+    profissionais = carregar_profissionais(pasta)
+    clientes = carregar_clientes(pasta, profissionais)
     agendas = _ler(pasta, "agenda.json")
     cenarios = []
     for bruto in _ler(pasta, "cenarios.json"):
         cid = bruto["id"]
         if cid not in agendas:
             raise ErroDados(f"Cenário {cid} não tem agenda em agenda.json.")
-        agenda, dias = montar_agenda(agendas[cid], cid, clientes)
+        agenda, dias = montar_agenda(agendas[cid], cid, clientes, profissionais)
         cenario = Cenario(
             id=cid,
             nome=bruto["nome"],
@@ -99,6 +115,7 @@ def carregar_cenarios(pasta: Path = PASTA_DADOS) -> list[Cenario]:
             dias=dias,
             respostas=bruto.get("respostas", {}),
             esperado=bruto["esperado"],
+            profissionais=profissionais,
         )
         _validar_cancelamento(cenario)
         cenarios.append(cenario)

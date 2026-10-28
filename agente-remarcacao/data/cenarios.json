@@ -113,5 +113,25 @@
         {"profundidade": 1, "slot_id": "S6-05", "resultado": "nao_agir"}
       ]
     }
+  },
+  {
+    "id": "S7",
+    "nome": "Profissional preferida",
+    "o_que_prova": "Primeiro quem prefere a profissional do horário",
+    "agora": "2026-10-30T08:00",
+    "cancelamento": {"slot_id": "S7-02"},
+    "respostas": {
+      "C20": "Hoje não vou conseguir, obrigada!",
+      "C21": "Consigo sim! Pode ser com a Nina."
+    },
+    "esperado": {
+      "resumo": "Karina cancela as 15h com a Nina. Yasmin tem números melhores, mas prefere a Lia; Talita prefere a Nina, então é chamada primeiro. Talita recusa, e só então a Yasmin recebe a proposta, avisando que quem atende é a Nina. Ela aceita.",
+      "fora": {"C19": "tipo"},
+      "passos": [
+        {"profundidade": 0, "slot_id": "S7-02", "escolha": "C20", "resposta": "recusou"},
+        {"profundidade": 0, "slot_id": "S7-02", "escolha": "C21", "resposta": "aceitou"},
+        {"profundidade": 1, "slot_id": "S7-05", "resultado": "nao_agir"}
+      ]
+    }
   }
 ]

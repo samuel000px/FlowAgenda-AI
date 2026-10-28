@@ -5,7 +5,7 @@ from src.ferramentas import buscar_candidatos
 from src.llm import ErroFormato, Ferramenta, extrair_json, rodar_com_ferramentas
 from src.modelos import Candidato, Cenario, Decisao
 
-PROMPT_SISTEMA = """Você é a assistente de agenda de uma esmalteria com uma manicure só.
+PROMPT_SISTEMA = """Você é a assistente de agenda de uma esmalteria com algumas profissionais.
 Quando um horário fica livre por cancelamento, sua tarefa é escolher UMA cliente para
 antecipar e escrever a mensagem para ela.
 
@@ -20,6 +20,8 @@ Regras:
 - A justificativa cita os números usados, por exemplo: "0 faltas em 12 atendimentos, aceitou
   3 de 4 propostas, o horário dela fica com 47h de aviso e 2 na fila".
 - A proposta vai para uma cliente de cada vez. Nunca diga que o horário fica com quem responder primeiro.
+- A mensagem diz com qual profissional é o horário livre. Se a cliente prefere outra profissional,
+  deixe isso claro com gentileza (ex.: "seria com a Nina").
 
 No fim, responda SOMENTE em JSON, com o código da cliente (ex.: "C14"), não o nome:
 {"cliente_id": "...", "justificativa": "...", "mensagem": "..."}
@@ -45,6 +47,10 @@ def decidir(cenario: Cenario, slot_id: str, recusados: Collection[str] = (), pro
 def _uma_tentativa(cenario: Cenario, slot_id: str, recusados: Collection[str], profundidade: int, log: list[dict]) -> Decisao:
     """Uma rodada completa do laço de ferramentas."""
     candidatas = [c for c in buscar_candidatos(cenario, slot_id, recusados) if c.elegivel]
+    # Regra do salão: primeiro quem prefere a profissional deste horário (ou tanto faz).
+    # As outras só aparecem para o modelo quando não sobra ninguém desse grupo.
+    preferem = [c for c in candidatas if c.mesma_profissional]
+    candidatas = preferem or candidatas
     ids_validos = {c.cliente_id: cenario.clientes[c.cliente_id].primeiro_nome for c in candidatas}
     rascunhos: list[dict] = []
 
@@ -129,6 +135,7 @@ def _descrever_vago(cenario: Cenario, slot_id: str) -> dict:
         "slot_id": vago.id,
         "quando": _quando(vago.inicio),
         "servico": vago.tipo_atendimento,
+        "profissional": cenario.nome_profissional(vago.profissional_id),
         "duracao_min": vago.duracao_min,
         "aviso_h": round(cenario.antecedencia_h(vago), 1),
     }
@@ -142,7 +149,9 @@ def _para_o_modelo(cenario: Cenario, c: Candidato) -> dict:
     return {
         "cliente_id": c.cliente_id,
         "nome": cliente.primeiro_nome,  # só o primeiro nome sai do computador
-        "horario_atual": _quando(slot.inicio),
+        "horario_atual": f"{_quando(slot.inicio)} com {cenario.nome_profissional(slot.profissional_id)}",
+        "profissional_preferida": cenario.nome_profissional(cliente.profissional_preferida),
+        "prefere_a_profissional_deste_horario": c.mesma_profissional,
         "historico": (
             f"{cliente.faltas} faltas em {cliente.consultas_total} atendimentos, "
             f"aceitou {cliente.propostas_aceitas} de {cliente.propostas_recebidas} propostas"

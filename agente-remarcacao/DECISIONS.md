@@ -147,3 +147,17 @@ a não ser quando um item abaixo diz outra coisa.
   e Daniela, com nota 0. No cenário 1 elas agora ficam de fora por "não quer ser chamada".
 - Ficou de fora: um bônus extra para clientes fiéis (5+ visitas). A suavização já dá mais peso ao histórico
   de quem vem sempre; a dona do salão ainda vai dizer se quer algo além disso.
+
+## D16. Várias profissionais, com a preferida da cliente primeiro
+
+- Decisão: `data/profissionais.json` (Lia, Nina e Rafa, nomes do seed do Encaixa). Cada horário tem
+  `profissional_id` e cada cliente pode ter `profissional_preferida` (ou nenhuma). Todas fazem todos
+  os serviços. Entre as elegíveis, vem primeiro quem prefere a profissional do horário vago ou não tem
+  preferência; o modelo só vê esse grupo e, quando ele acaba, vê as outras. A mensagem diz com quem
+  seria o atendimento.
+- Motivo: o salão da tia tem 2 ou 3 profissionais e as clientes "preferem a sua, mas aceitam outra".
+  Colocar a regra no código (e não só no prompt) garante que ela sempre vale.
+- Ficou de fora: baixar a chance de aceitar quando a profissional é outra. Seria um número chutado;
+  a ordem de prioridade já faz o que o salão pediu.
+- Novo cenário 7 (Profissional preferida). As clientes dos cenários 1 a 6 ficaram sem preferência, então
+  os resultados deles não mudaram. Na métrica, o cenário 7 empata: ela não mede preferência.

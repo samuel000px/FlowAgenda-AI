@@ -1,4 +1,4 @@
-"""Roda os 6 cenários com as três estratégias e escreve resultados.md.
+"""Roda os cenários com as três estratégias e escreve resultados.md.
 
 Uso:  python avaliar.py
 
@@ -172,6 +172,9 @@ Entre parênteses, a redução em relação a "ninguém faz nada".
   na Beatriz do mesmo jeito. Se a Elisa tivesse aceitado, ficaria um buraco no fim do dia sem fila; o
   agente nem chega a perguntar para ela (poda). No cenário 4, a preferida do agente (Larissa) recusou e
   as duas estratégias terminaram com a Marina.
+- **Cenário 7.** O agente chama primeiro quem prefere a profissional do horário, mesmo com valor
+  esperado menor. Isso é uma regra do salão, não uma conta: a métrica não mede preferência, então ali
+  o agente pode empatar ou até perder um pouco para a regra ingênua.
 - **Onde o agente ganha.** Quando a ordem cronológica escolhe alguém cujo horário seria difícil de
   preencher (cenários 3 e 6), quando outra cliente tem menos risco de falta (cenário 5) e quando a cascata
   troca mais um buraco difícil por um fácil (cenário 2). No cenário 3 a regra ingênua deixa a agenda

@@ -43,6 +43,7 @@ def buscar_candidatos(cenario: Cenario, slot_id: str, recusados: Collection[str]
         cliente = cenario.clientes[slot.cliente_id]
         motivo = motivo_de_exclusao(cliente, slot, vago, cenario.agora, recusados)
         c = Candidato(cliente.id, cliente.nome, slot.id, motivo)
+        c.mesma_profissional = cliente.profissional_preferida in (None, vago.profissional_id)
         if motivo is None:
             buraco_novo = buraco(cenario, slot)
             c.taxa_falta = taxa_falta(cliente.faltas, cliente.consultas_total)
@@ -56,10 +57,11 @@ def buscar_candidatos(cenario: Cenario, slot_id: str, recusados: Collection[str]
                 c.motivo = "valor_negativo"  # poda: mexer deixaria a agenda pior
         candidatos.append(c)
 
-    # Elegíveis primeiro (maior valor esperado no topo), depois as podadas, depois o resto.
+    # Elegíveis primeiro, depois as podadas, depois o resto. Entre as elegíveis, primeiro quem prefere
+    # a profissional deste horário (ou não tem preferência); dentro de cada grupo, maior valor esperado.
     def ordem(c: Candidato) -> tuple:
         grupo = 0 if c.elegivel else 1 if c.motivo == "valor_negativo" else 2
-        return (grupo, -(c.valor_esperado or 0), cenario.slot(c.slot_atual_id).inicio)
+        return (grupo, not c.mesma_profissional, -(c.valor_esperado or 0), cenario.slot(c.slot_atual_id).inicio)
 
     return sorted(candidatos, key=ordem)
 

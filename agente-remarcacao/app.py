@@ -113,8 +113,9 @@ with col_agenda:
         for antes in slots:
             depois = atual.slot(antes.id)
             nome_antes = original.clientes[antes.cliente_id].nome
+            prof = original.nome_profissional(antes.profissional_id)
             if depois.cliente_id == antes.cliente_id:
-                st.markdown(f"{antes.hora} · {nome_antes}")
+                st.markdown(f"{antes.hora} · {prof} · {nome_antes}")
                 continue
             if antes.id == original.slot_cancelado_id:
                 origem = f"~~{nome_antes}~~ cancelou"
@@ -125,7 +126,7 @@ with col_agenda:
             else:
                 aviso = atual.antecedencia_h(depois)
                 destino = f":orange[**horário vago**] · {aviso:.0f}h de aviso · fila {atual.dias[data].fila_espera}"
-            st.markdown(f"{antes.hora} · {origem} → {destino}")
+            st.markdown(f"{antes.hora} · {prof} · {origem} → {destino}")
 
     sem_mexer = copy.deepcopy(original)
     liberar_horario(sem_mexer, original.slot_cancelado_id)
@@ -184,7 +185,8 @@ with col_razao:
     vago = atual.slot(fluxo.slot_atual)
     titulo = "Cancelamento" if fluxo.profundidade == 0 else f"Novo horário vago (nível {fluxo.profundidade})"
     st.markdown(
-        f"**{titulo}:** {quando(vago)} · {vago.duracao_min} min · {atual.antecedencia_h(vago):.0f}h de aviso"
+        f"**{titulo}:** {quando(vago)} com {atual.nome_profissional(vago.profissional_id)} · {vago.duracao_min} min · "
+        f"{atual.antecedencia_h(vago):.0f}h de aviso"
         + (f" · {fluxo.quem_cancelou} cancelou" if fluxo.profundidade == 0 else "")
     )
 
@@ -198,6 +200,7 @@ with col_razao:
             linhas.append({
                 "Cliente": c.nome,
                 "Falta": f"{c.taxa_falta:.0%}" if c.taxa_falta is not None else "-",
+                "Prefere": atual.nome_profissional(atual.clientes[c.cliente_id].profissional_preferida),
                 "Disposição": f"{atual.clientes[c.cliente_id].disposicao}/10",
                 "Aceita": f"{c.prob_aceitar:.0%}" if c.prob_aceitar is not None else "-",
                 "Valor esperado": f"R$ {c.valor_esperado:.2f}" if c.valor_esperado is not None else "-",

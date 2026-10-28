@@ -52,8 +52,8 @@ def rodar(cenario_id: str, automatico: bool) -> list:
     quem_cancelou = cenario.clientes[vago.cliente_id].nome
     liberar_horario(cenario, vago.id)
     console.print(
-        f"[bold]Cancelamento:[/bold] {quem_cancelou} liberou {_quando(vago)} "
-        f"({vago.duracao_min} min) com {cenario.antecedencia_h(vago):.0f}h de aviso."
+        f"[bold]Cancelamento:[/bold] {quem_cancelou} liberou {_quando(vago)} com {cenario.nome_profissional(vago.profissional_id)} "
+        f"({vago.duracao_min} min), {cenario.antecedencia_h(vago):.0f}h de aviso."
     )
 
     def perguntar(cliente_id: str) -> str:
@@ -77,7 +77,7 @@ def mostrar(cenario: Cenario, canal: CanalSimulado, evento: str, dados: dict) ->
     """Imprime cada evento da cascata."""
     if evento == "candidatos":
         slot = cenario.slot(dados["slot_id"])
-        console.print(f"\n[bold]Nível {dados['profundidade']} de {MAX_PROF}[/bold]: horário livre {_quando(slot)}")
+        console.print(f"\n[bold]Nível {dados['profundidade']} de {MAX_PROF}[/bold]: horário livre {_quando(slot)} com {cenario.nome_profissional(slot.profissional_id)}")
         mostrar_candidatos(cenario, dados["candidatos"])
     elif evento == "decisao":
         console.print(Panel(dados["decisao"].justificativa, title="Decisão do agente (gerada pelo modelo)"))
@@ -105,7 +105,7 @@ def mostrar(cenario: Cenario, canal: CanalSimulado, evento: str, dados: dict) ->
 def mostrar_candidatos(cenario: Cenario, candidatos: list[Candidato]) -> None:
     """Tabela com os números calculados pelo código."""
     tabela = Table(title="Candidatas (números calculados pelo código)")
-    for coluna in ("Cliente", "Horário dela", "Falta", "Aceita", "Aviso que sobra", "Fila", "Valor esperado", "Situação"):
+    for coluna in ("Cliente", "Horário dela", "Prefere", "Falta", "Aceita", "Aviso que sobra", "Fila", "Valor esperado", "Situação"):
         tabela.add_column(coluna)
     for c in candidatos:
         if c.motivo == "nao_posterior":
@@ -116,7 +116,8 @@ def mostrar_candidatos(cenario: Cenario, candidatos: list[Candidato]) -> None:
             else ["-"] * 5
         )
         situacao = "Elegível" if c.elegivel else MOTIVOS[c.motivo]
-        tabela.add_row(c.nome, _quando(cenario.slot(c.slot_atual_id)), *numeros, situacao)
+        prefere = cenario.nome_profissional(cenario.clientes[c.cliente_id].profissional_preferida)
+        tabela.add_row(c.nome, _quando(cenario.slot(c.slot_atual_id)), prefere, *numeros, situacao)
     console.print(tabela)
 
 

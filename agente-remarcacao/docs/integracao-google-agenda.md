@@ -34,12 +34,14 @@ class AgendaGoogle(AgendaExterna):
 
 ```json
 {"id": "...", "data": "2026-10-28", "hora": "13:00", "duracao_min": 45,
- "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C01", "valor": 45}
+ "tipo_atendimento": "manicure", "status": "ocupado", "cliente_id": "C01", "valor": 45,
+ "profissional_id": "P2"}
 ```
 
-O `cliente_id` precisa existir em `data/clientes.json`. Uma forma simples é guardá-lo no evento, em
-`extendedProperties.private.cliente_id`. Antes de usar, passe os horários por
-`src.dados.montar_agenda({"dias": ..., "slots": ...}, "google", clientes)`: é a mesma conferência que os
+O `cliente_id` precisa existir em `data/clientes.json` e o `profissional_id` em `data/profissionais.json`.
+Uma forma simples é guardar os dois no evento, em `extendedProperties.private`. Outra é ter uma agenda do
+Google por profissional e usar o ID da agenda para saber de quem é o horário. Antes de usar, passe os horários por
+`src.dados.montar_agenda({"dias": ..., "slots": ...}, "google", clientes, profissionais)`: é a mesma conferência que os
 cenários passam, e ela para com uma mensagem clara se algo não bater.
 
 **`registrar_movimento`** atualiza o evento da cliente para o novo horário (ou apaga um evento e cria

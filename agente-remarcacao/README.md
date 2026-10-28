@@ -11,7 +11,7 @@ Dados fictícios · canal de mensagens simulado · nenhuma mensagem real é envi
 
 ## O problema
 
-Numa esmalteria com uma manicure só, cada cancelamento em cima da hora é um horário pago que some.
+Numa esmalteria pequena, com duas ou três manicures, cada cancelamento em cima da hora é um horário pago que some.
 A cliente que cancelou não perde nada, mas a manicure perde o atendimento e a esmalteria perde a receita.
 Muitas vezes há outra cliente marcada para daqui a alguns dias que toparia vir antes. Só que puxar essa
 cliente abre um **buraco novo** no horário dela. Então a pergunta certa não é "quem pode vir?", e sim:
@@ -74,7 +74,7 @@ na lista que o modelo recebe, e um teste garante isso.
 
 ## Resultados
 
-Seis cenários, três estratégias. A métrica é **horas vagas esperadas no fim** (menor é melhor):
+Sete cenários, três estratégias. A métrica é **horas vagas esperadas no fim** (menor é melhor):
 a chance de cada horário mexido acabar vazio, vezes a duração dele. Detalhes em [docs/metrica.md](docs/metrica.md).
 
 | Cenário | O que prova | Ninguém faz nada | Regra ingênua | Agente |
@@ -85,10 +85,11 @@ a chance de cada horário mexido acabar vazio, vezes a duração dele. Detalhes 
 | 4 Recusa | plano B | 0,59 | 0,44 | 0,44 (empate) |
 | 5 Cliente nova | suavização da taxa de falta | 0,61 | 0,32 | **0,30** |
 | 6 Dia lotado | uso da ocupação do dia | 0,62 | 0,36 | **0,06** |
-| **Total** | | **3,97** | **2,42 (−39%)** | **1,87 (−53%)** |
+| 7 Profissional preferida | primeiro quem prefere a profissional do horário | 0,58 | 0,06 | 0,06 (empate) |
+| **Total** | | **4,55** | **2,48 (−46%)** | **1,94 (−57%)** |
 
 A "regra ingênua" oferece o horário em ordem cronológica para quem passa nos filtros duros, sem score,
-sem poda e sem cascata. Ela empata com o agente em dois cenários, e a explicação está em
+sem poda e sem cascata. Ela empata com o agente em três cenários, e a explicação está em
 [resultados.md](resultados.md), gerado por `python avaliar.py` com o Gemini.
 
 > **Atenção:** são estimativas feitas com o próprio modelo de score, sobre **dados fictícios** e com
@@ -117,11 +118,11 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 70 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
+| `pytest` | 78 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
 | `streamlit run app.py` | A interface: agenda, chat simulado e raciocínio do agente | Sim |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
 | `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |
-| `python avaliar.py` | Roda os 6 cenários com as 3 estratégias e reescreve `resultados.md` | Sim |
+| `python avaliar.py` | Roda os 7 cenários com as 3 estratégias e reescreve `resultados.md` | Sim |
 | `python prova_de_vida.py` | Confere se a chave funciona | Sim |
 
 Os cenários vão de `S1` a `S6`. Cada execução no terminal grava um log em `logs/`. A camada gratuita
@@ -135,6 +136,9 @@ do Gemini limita chamadas por minuto; quando isso acontece, o código espera e t
 - **Poucos dados pessoais.** O cadastro tem só nome, visitas, faltas e a nota de 0 a 10. Para o modelo vai
   só o primeiro nome, sem telefone nem anotações. Não guardamos distância: a própria cliente diz se
   consegue chegar, e o salão define um aviso mínimo (`AVISO_MINIMO_H` no `.env`, padrão 1h).
+- **Primeiro a profissional preferida.** Cada horário é de uma profissional. Quem prefere a profissional
+  do horário vago (ou tanto faz) é chamada antes, mesmo com valor esperado um pouco menor; as outras só
+  aparecem para o modelo quando esse grupo acaba, e a mensagem diz com quem seria o atendimento.
 - **Uma proposta de cada vez.** O horário fica reservado para quem recebeu a proposta. Se ela não
   responder, a dona do salão decide passar para a próxima (botão "Não respondeu"), e a cliente recebe
   um aviso educado. Não existe "quem responder primeiro leva".
@@ -150,8 +154,8 @@ Todas as decisões, com o motivo e a alternativa descartada, estão em [DECISION
 
 ## Limitações
 
-- Dados fictícios: 19 clientes e 6 cenários montados à mão.
-- Uma profissional e dois serviços.
+- Dados fictícios: 21 clientes, 3 profissionais e 7 cenários montados à mão.
+- Dois serviços, e todas as profissionais fazem os dois.
 - Os pesos da dificuldade de preencher (0,6/0,4, 48h, 3 pessoas) foram chutados, sem calibração com dados reais.
 - A fila de espera é só um número; ninguém da fila é chamado de fato.
 - "Outro horário" é entendido, mas não renegociado: conta como recusa.
@@ -162,7 +166,7 @@ Todas as decisões, com o motivo e a alternativa descartada, estão em [DECISION
 
 - `CanalWhatsApp`, implementando a mesma interface `Canal`.
 - Google Agenda como fonte da agenda. O ponto de encaixe já existe (`src/agenda_externa.py`); o passo a passo está em [docs/integracao-google-agenda.md](docs/integracao-google-agenda.md).
-- Várias profissionais e serviços.
+- Profissionais com serviços diferentes (hoje todas fazem tudo).
 - Mais fatores: valor do serviço, preferência de dia, histórico de remarcações.
 - Calibrar os pesos com dados reais de cancelamento e preenchimento.
 - Renegociar quando a cliente pede outro horário.
@@ -177,6 +181,6 @@ repositório. Nenhuma linha de código foi copiada (o Encaixa é TypeScript), ma
 - recusou, passa para a próxima, sem repetir quem já recusou;
 - os cuidados com o LLM: timeout, limite de tokens, conferir o formato da resposta e tratar o texto da
   cliente como dado, não como instrução;
-- os nomes das clientes fictícias.
+- os nomes das clientes e das profissionais fictícias.
 
 A análise completa do que foi aproveitado está em [AUDITORIA.md](AUDITORIA.md).
