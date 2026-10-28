@@ -1,8 +1,8 @@
 // Uma semana inteira de atendimentos fictícios (padrão: 25 a 31/10/2026) numa área separada do banco
 // local, para ver a agenda, Aceitações, Remarcações, Atendimento, Finanças e Fechamento funcionando
-// juntos. Só pessoas inventadas, sem telefone. Não existe modo remoto: o site publicado tem clientes
-// reais e WhatsApp ligado.
-//   node scripts/semana-ficticia.mjs [--inicio AAAA-MM-DD] [--check]
+// juntos. Só pessoas inventadas, sem telefone. Com --remote, grava no site publicado, também numa área
+// nova e separada: a agenda real, o /agendar e o WhatsApp (que só existe na área com conexão) não mudam.
+//   node scripts/semana-ficticia.mjs [--inicio AAAA-MM-DD] [--check] [--remote]
 import {readFileSync,readdirSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {join} from 'node:path';
@@ -13,6 +13,7 @@ import {bookInStore,interestInStore} from '../lib/agendamento.mjs';
 import {closeAppointment,financeAction} from '../lib/finance-core.mjs';
 import {openSupport} from '../lib/support-core.mjs';
 import {NEEDS_STAFF} from '../lib/whatsapp-core.mjs';
+import {banco} from './estado-banco.mjs';
 
 const args=process.argv.slice(2),inicio=args.includes('--inicio')?args[args.indexOf('--inicio')+1]:'2026-10-25';
 if(!/^\d{4}-\d{2}-\d{2}$/.test(inicio))throw Error('Use --inicio AAAA-MM-DD.');
@@ -124,7 +125,12 @@ const resumo={dias:porDia,atendimentos:s.appointments.length,pedidosDoSite:s.app
   pedidos:s.appointments.filter(a=>a.status==='requested').map(a=>a.date+' '+clock(a.start)+' '+a.service_id+' '+a.client_id),
   primeiro:`${s.appointments[0].date} ${clock(s.appointments[0].start)}`};
 
-if(!args.includes('--check')){
+if(args.includes('--remote')){
+  const room='semana-'+randomBytes(8).toString('hex'),db=banco(true,room);
+  if(db.ler())throw Error('Área já existe. Nada foi gravado.');
+  db.gravar(s);
+  resumo.link='https://santa.cor-esmalteria.workers.dev/painel#room='+room;
+}else if(!args.includes('--check')){
   const {DatabaseSync}=await import('node:sqlite');
   const pasta=join(root,'.wrangler/state/v3/d1/miniflare-D1DatabaseObject');
   const arquivos=readdirSync(pasta).filter(f=>f.endsWith('.sqlite')&&f!=='metadata.sqlite');
