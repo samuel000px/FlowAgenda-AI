@@ -79,18 +79,63 @@
   letter-spacing:.3em;text-transform:uppercase;color:var(--cobre)}
 .vitrine .assinatura::before,.vitrine .assinatura::after{content:"";width:2rem;height:1px;background:currentColor;opacity:.5}
 
-/* Lista completa de serviços (só quando o cartão "Todos os Serviços" aponta para cá). */
-.vitrine #servicos{text-align:left}
-.vitrine #servicos h3{font-size:1.4rem;font-weight:500;color:var(--malva);margin:1rem 0 .25rem}
-.vitrine #servicos ul{list-style:none;margin:0;padding:0}
-.vitrine #servicos li{display:flex;gap:.75rem;padding:.3rem 0;margin:0}
-.vitrine #servicos li::before{content:"✦";color:var(--cobre);font-size:.7rem;padding-top:.3rem}
-.vitrine #servicos .nome{flex:1}
-.vitrine #servicos .dur{color:var(--malva-60)}
-.vitrine #servicos .preco{font-weight:500}
+/* Páginas internas (agendar, serviços, meu agendamento): topo com voltar e cartões de escolha. */
+.vitrine .voltar{display:inline-flex;align-items:center;gap:.4rem;font-size:.85rem;color:var(--malva-70);padding:.4rem 0}
+.vitrine .titulo-pagina{text-align:center;padding:.5rem 0 1.5rem}
+.vitrine .titulo-pagina h1{font-size:2.4rem;font-weight:500;line-height:1.1;margin:.4rem 0 0}
+.vitrine .titulo-pagina p{font-size:.9rem;color:var(--malva-70);margin-top:.5rem}
+.vitrine .passo{margin-top:1.75rem}
+.vitrine .passo>.rotulo{display:block;margin-bottom:.75rem}
+.vitrine .escolha{display:flex;align-items:center;justify-content:flex-start;gap:1rem;font-weight:400;width:100%;padding:.9rem 1.25rem;border-radius:22px;text-align:left;cursor:pointer;
+  font:inherit;color:var(--malva);background:linear-gradient(135deg,oklch(1 0 0 / .75),oklch(1 0 0 / .55));
+  border:.8px solid oklch(0.68 0.08 40 / .35);box-shadow:var(--sombra);transition:transform .2s}
+.vitrine .escolha+.escolha{margin-top:.6rem}
+.vitrine .escolha:hover{transform:translateY(-1px)}
+.vitrine .escolha:focus-visible,.vitrine .chip:focus-visible,.vitrine .botao:focus-visible{outline:2px solid var(--cobre);outline-offset:3px}
+.vitrine .escolha strong{font-size:1.25rem;font-weight:600;line-height:1.2}
+.vitrine .escolha small{display:block;font-size:.8rem;color:var(--malva-60)}
+.vitrine .escolha .preco{margin-left:auto;font-weight:500;white-space:nowrap}
+.vitrine .escolha.marcada{border-color:var(--cobre);box-shadow:0 0 0 1.5px var(--cobre),var(--sombra)}
+.vitrine .trocar{margin-left:auto;font-size:.8rem;color:var(--cobre);background:none;border:0;cursor:pointer;font-family:inherit}
+.vitrine .chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.vitrine .chip{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:0;min-width:4.75rem;padding:.55rem .8rem;border-radius:16px;font:inherit;font-size:.9rem;color:var(--malva);cursor:pointer;text-align:center;
+  background:oklch(1 0 0 / .6);border:.8px solid oklch(0.68 0.08 40 / .35);line-height:1.25}
+.vitrine .chip small{display:block;font-size:.72rem;color:var(--malva-60)}
+.vitrine .chip[aria-pressed="true"]{background:var(--malva);border-color:var(--malva);color:#fff}
+.vitrine .chip[aria-pressed="true"] small{color:oklch(1 0 0 / .8)}
+.vitrine .chip:disabled{opacity:.35;cursor:default}
+.vitrine .dias{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.5rem}
+.vitrine .dias .chips{display:grid;grid-template-columns:repeat(3,1fr)}
+.vitrine .seta-dia{width:2.25rem;height:2.25rem;border-radius:50%;border:0;background:oklch(1 0 0 / .6);color:var(--malva);cursor:pointer;font-size:1.1rem}
+.vitrine .seta-dia:disabled{opacity:.3;cursor:default}
+.vitrine .avatar-p{flex:none;width:2.5rem;height:2.5rem;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:500;
+  color:var(--malva);background:linear-gradient(to bottom right,oklch(0.925 0.028 12),oklch(0.885 0.038 8))}
+.vitrine .formulario{display:flex;flex-direction:column;gap:.9rem;padding:1.5rem;border-radius:28px;
+  background:linear-gradient(135deg,oklch(1 0 0 / .75),oklch(1 0 0 / .55));border:.8px solid oklch(1 0 0 / .6);box-shadow:var(--sombra)}
+.vitrine .formulario label{display:flex;flex-direction:column;gap:.3rem;font-size:.85rem;color:var(--malva-70)}
+.vitrine .formulario input[type=text],.vitrine .formulario input[type=tel]{font:inherit;font-size:1rem;color:var(--malva);padding:.7rem .9rem;border-radius:14px;
+  border:.8px solid oklch(0.68 0.08 40 / .45);background:oklch(1 0 0 / .8)}
+.vitrine .formulario .marcar{flex-direction:row;align-items:flex-start;gap:.6rem;color:var(--malva)}
+.vitrine .formulario .marcar input{margin-top:.25rem;accent-color:var(--malva)}
+.vitrine .resumo{font-size:.9rem;color:var(--malva);padding:.75rem 1rem;border-radius:16px;background:oklch(1 0 0 / .55)}
+.vitrine .botao{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.9rem 1.25rem;border-radius:999px;border:0;cursor:pointer;
+  font:inherit;font-weight:500;color:#fff;background:var(--malva);box-shadow:var(--sombra)}
+.vitrine .botao.claro{color:var(--malva);background:oklch(1 0 0 / .7);border:.8px solid oklch(0.68 0.08 40 / .45)}
+.vitrine .botao:disabled{opacity:.6;cursor:default}
+.vitrine .botao+.botao{margin-top:.6rem}
+.vitrine .aviso{font-size:.85rem;padding:.75rem 1rem;border-radius:16px;color:oklch(0.42 0.12 25);background:oklch(0.95 0.03 25)}
+.vitrine .vazio{font-size:.9rem;color:var(--malva-60);text-align:center;padding:1rem 0}
+.vitrine .sucesso{text-align:center}
+.vitrine .sucesso .selo-ok{width:4rem;height:4rem;margin:0 auto 1rem;border-radius:50%;display:grid;place-items:center;font-size:1.8rem;background:oklch(1 0 0 / .7);box-shadow:var(--sombra)}
+.vitrine .detalhes{list-style:none;margin:1.25rem 0;padding:0;text-align:left}
+.vitrine .detalhes li{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-bottom:.8px solid oklch(0.68 0.08 40 / .2);margin:0}
+.vitrine .detalhes span{color:var(--malva-60)}
+
+/* Lista completa de serviços. */
+.vitrine .servicos-lista .escolha{cursor:default}
+.vitrine .servicos-lista .escolha a{margin-left:.75rem;font-size:.8rem;color:#fff;background:var(--malva);padding:.4rem .8rem;border-radius:999px;white-space:nowrap}
 
 /* Rodapé. "Acesso da equipe" fica no lugar e no tamanho da antiga linha de crédito. */
-.vitrine .whats{margin-top:3rem}
 .vitrine .rodape{text-align:center;padding:3.5rem 0 2rem;color:var(--malva-70)}
 .vitrine .rodape p{font-size:.75rem;margin:.5rem 0 0}
 .vitrine .rodape .rodape-nome{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--malva);margin-top:0}

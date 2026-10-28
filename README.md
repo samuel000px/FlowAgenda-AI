@@ -23,7 +23,25 @@ Abra o endereço mostrado no terminal (normalmente http://localhost:5173). O ace
 
 O Streamlit original continua independente: consulte o README dentro de `agente-remarcacao`.
 
-O site tem dois endereços: `/` é a página pública da Santa Cor, com os cartões que levam ao WhatsApp, e `/painel` é a administração, com senha. O único caminho da página para o painel é a linha "Acesso da equipe", no rodapé. Os textos e links da página vêm de `agente-remarcacao/data/salao.json` (exemplo) com `agente-remarcacao/data/salao.local.json` por cima, quando esse arquivo existe no computador que publica; ele fica fora do Git.
+O site tem estes endereços:
+
+| Endereço | O que é |
+|---|---|
+| `/` | Página pública com seis botões: Agendar, Todos os serviços, WhatsApp, Instagram, Localização e Avaliações |
+| `/agendar` | A cliente escolhe serviço, profissional, dia e horário, e deixa nome e celular |
+| `/servicos` | Preço e duração de cada serviço, com botão para agendar |
+| `/a/<código>` | Página pessoal do agendamento; quem tem o link vê os detalhes e pode cancelar |
+| `/painel` | Administração, com senha |
+
+O único caminho da página para o painel é a linha "Acesso da equipe", no rodapé. Textos e links da página vêm de `agente-remarcacao/data/salao.json` (exemplo) com `agente-remarcacao/data/salao.local.json` por cima, quando esse arquivo existe no computador que publica; ele fica fora do Git. Para os botões de localização e avaliações, coloque nesse arquivo `"mapa"` e `"avaliacoes"` com os links do Google; sem eles, os dois levam à busca pelo endereço no Google Maps. Serviços, profissionais e horários do agendamento vêm do painel.
+
+### Como funciona o agendamento pelo site
+
+1. Os horários seguem uma grade de blocos (45 minutos por padrão) dentro do funcionamento de cada dia, definido em **Configurações** (padrão: terça a sexta 9h–18h, sábado 8h–17h). Só aparecem inícios em que o serviço inteiro cabe, fora do intervalo da profissional e sem bater em outro atendimento.
+2. O pedido entra em **Aceitações** e já segura o horário. A gerência aceita ou recusa; o painel traz a mensagem pronta para avisar a cliente pelo WhatsApp. Pedido sem resposta até o horário é encerrado sozinho.
+3. No fim do pedido, a cliente toca em "Confirmar pelo WhatsApp" e manda ao salão uma mensagem já escrita, com o link do agendamento. Como a conversa parte dela, a resposta do salão não é cobrada.
+4. A cliente pode cancelar pelo link. Um horário confirmado que é cancelado vira vaga, e o motor de remarcação procura quem antecipar.
+5. Quem marca "quero ser avisada se abrir um horário mais cedo" entra como autorizada a antecipar.
 
 ## Publicar no Cloudflare
 
@@ -37,8 +55,8 @@ Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o ap
 
 ## Organizar a operação
 
-1. Em **Configurações**, informe o nome da esmalteria e a antecedência mínima.
-2. Em **Equipe e serviços**, revise preços, durações, especialidades e expedientes.
+1. Em **Configurações**, informe o nome da esmalteria, a antecedência mínima, o tamanho do bloco e o funcionamento de cada dia.
+2. Em **Equipe e serviços**, revise preços, durações, especialidades e expedientes. Use durações que sejam múltiplos do bloco (com bloco de 45 min: 45, 90, 135...).
 3. Em **Clientes**, cadastre contato, autorização para antecipação, disposição de 0 a 10 e profissional preferida.
 4. Cadastre horários em **Agenda → Novo agendamento**.
 5. Um cancelamento libera uma vaga e prepara uma proposta quando há candidata elegível e benefício esperado positivo.
@@ -84,6 +102,8 @@ Agendas antigas abertas com o link de gerente são preservadas após login. Os d
 | Caminho | Responsabilidade |
 |---|---|
 | `app/admin-dashboard.tsx`, `app/admin-modal.tsx` | Painel e formulários |
+| `app/agendar/`, `app/servicos/`, `app/a/[token]/` | Páginas públicas de agendamento |
+| `lib/agendamento.mjs`, `app/api/agendar/route.ts` | Horários livres, pedidos e cancelamento pelo site |
 | `app/globals.css` | Aparência e layout responsivo |
 | `lib/flowagenda.mjs` | Regras, classificação, aprovação e histórico |
 | `lib/response-agent.ts` | Interpretação limitada das respostas |

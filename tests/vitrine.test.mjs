@@ -5,22 +5,19 @@ import {cartoesDaPagina,juntarSalao,linkWhatsapp,servicosPorGrupo} from '../lib/
 
 const exemplo=JSON.parse(readFileSync(new URL('../agente-remarcacao/data/salao.json',import.meta.url),'utf8'));
 
-test('cartão de serviço abre o WhatsApp com o mesmo texto do site antigo',()=>{
-  const salao={whatsapp:'5583993782040',mensagem_whatsapp:'Oi!',links:[
-    {titulo:'Agendar Horário',mensagem:''},
-    {titulo:'Alongamentos',mensagem:'Olá, gostaria de agendar um horário para Alongamento. '},
-    {titulo:'Instagram',link:'https://www.instagram.com/santacoresmalteriajp/'},
-  ]};
-  const [agendar,servico,instagram]=cartoesDaPagina(salao).map(c=>c.endereco);
-  assert.equal(agendar,'https://wa.me/5583993782040');
-  assert.equal(servico,'https://wa.me/5583993782040?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20um%20hor%C3%A1rio%20para%20Alongamento.%20');
-  assert.equal(instagram,'https://www.instagram.com/santacoresmalteriajp/');
+test('a página tem os seis cartões, com agendar e serviços dentro do site',()=>{
+  const cartoes=cartoesDaPagina(juntarSalao(exemplo,{instagram:'santacor',avaliacoes:'https://g.page/r/santacor/review'}));
+  assert.deepEqual(cartoes.map(c=>c.titulo),['Agendar','Todos os serviços','WhatsApp','Instagram','Localização','Avaliações']);
+  assert.equal(cartoes[0].endereco,'/agendar');
+  assert.equal(cartoes[1].endereco,'/servicos');
+  assert.equal(cartoes[2].endereco,'https://wa.me/5511900000000?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20quero%20marcar%20um%20servi%C3%A7o.');
+  assert.equal(cartoes[5].endereco,'https://g.page/r/santacor/review');
 });
 
-test('sem links nos dados, a página tem os cartões básicos',()=>{
-  const titulos=cartoesDaPagina(juntarSalao(exemplo)).map(c=>c.titulo);
-  assert.equal(titulos[0],'Agendar Horário');
-  assert.ok(titulos.includes('Localização')&&titulos.includes('Todos os Serviços'));
+test('sem link de avaliações, o cartão leva ao endereço no Google Maps',()=>{
+  const cartoes=cartoesDaPagina(juntarSalao(exemplo));
+  assert.equal(cartoes.at(-1).endereco,cartoes.at(-2).endereco);
+  assert.match(cartoes.at(-1).endereco,/^https:\/\/www\.google\.com\/maps\/search\//);
 });
 
 test('dados reais ficam por cima do exemplo e número mal escrito é recusado',()=>{
