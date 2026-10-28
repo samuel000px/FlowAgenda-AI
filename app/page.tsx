@@ -32,7 +32,7 @@ export default function Vitrine(){
   const {espaco,para_voce,sobre,depoimento}=salao;
   return <div className="vitrine-fundo"><div className="vitrine">
     <header className="topo">
-      <div className="logo" aria-hidden="true"><span className="mono">{salao.monograma}</span><span className="logo-nome">{salao.nome}</span></div>
+      <div className="logo">{salao.logo?<img src={salao.logo} alt={`${salao.nome} ${salao.subtitulo||''}`}/>:<><span className="mono">{salao.monograma}</span><span className="logo-nome">{salao.nome}</span></>}</div>
       {salao.selo&&<p className="selo">{salao.selo}</p>}
       <h1>{salao.nome}<em>{salao.subtitulo}</em></h1>
       {salao.especialidade&&<p className="especialidade">{salao.especialidade}</p>}
@@ -62,7 +62,7 @@ export default function Vitrine(){
 
     <div className="whats"><Cartao endereco={linkWhatsapp(salao.whatsapp)} icone="message-circle" titulo="Agende pelo WhatsApp" subtitulo="Resposta rápida & atendimento exclusivo"/></div>
     <footer className="rodape">
-      <div className="logo pequeno" aria-hidden="true"><span className="mono">{salao.monograma}</span></div>
+      <div className="logo pequeno" aria-hidden="true">{salao.logo_pequeno?<img src={salao.logo_pequeno} alt=""/>:<span className="mono">{salao.monograma}</span>}</div>
       <p className="rodape-nome">{salao.nome} {salao.subtitulo}</p>
       {salao.rodape&&<p>{salao.rodape}</p>}
       <div className="hora"><Icone nome="clock"/><div>{salao.horarios?.length?salao.horarios.map(h=><p key={h.dias}>{h.dias}: {h.horas}</p>):<p>Atendimento com hora marcada</p>}</div></div>

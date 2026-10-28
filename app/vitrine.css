@@ -24,6 +24,8 @@
 .vitrine .logo{width:8.5rem;height:8.5rem;margin:0 auto 1.5rem;border-radius:50%;display:flex;flex-direction:column;
   align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#fff,oklch(0.93 0.028 8));
   box-shadow:0 0 0 6px oklch(1 0 0 / .7),var(--sombra)}
+.vitrine .logo img{width:88%;height:88%;object-fit:contain}
+.vitrine .logo.pequeno img{width:70%;height:70%}
 .vitrine .mono{font-family:'Pinyon Script',cursive;font-size:2.6rem;line-height:1;color:var(--cobre)}
 .vitrine .logo-nome{font-family:'Cormorant Garamond',serif;font-size:1.1rem;letter-spacing:.12em;text-transform:uppercase;color:var(--malva)}
 .vitrine .logo.pequeno{width:5rem;height:5rem;margin-bottom:.75rem}

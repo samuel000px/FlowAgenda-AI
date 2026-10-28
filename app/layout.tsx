@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   title: "Santa Cor Esmalteria",
   description: "Agendamentos e atendimento da Santa Cor Esmalteria.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "/logo-sc.png",
+    shortcut: "/logo-sc.png",
   },
 };
 

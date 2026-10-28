@@ -8,7 +8,7 @@ type Texto={titulo:string,texto:string,destaque?:string};
 export type Cartao={icone:string,titulo:string,subtitulo?:string,link?:string,mensagem?:string,endereco:string};
 export type Servico={grupo?:string,nome:string,duracao_min?:number,preco?:number};
 export type Salao={
-  nome:string,subtitulo?:string,monograma?:string,selo?:string,especialidade?:string,frase:string,
+  nome:string,subtitulo?:string,monograma?:string,logo?:string,logo_pequeno?:string,selo?:string,especialidade?:string,frase:string,
   destaques?:string[],whatsapp:string,mensagem_whatsapp:string,endereco:string,bairro_cidade:string,instagram?:string,
   horarios?:{dias:string,horas:string}[],diferenciais?:{icone:string,texto:string}[],
   espaco?:Texto,para_voce?:Texto,sobre?:Texto,depoimento?:string,rodape?:string,servicos?:Servico[],
