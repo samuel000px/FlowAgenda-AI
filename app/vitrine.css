@@ -131,6 +131,34 @@
 .vitrine .detalhes li{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-bottom:.8px solid oklch(0.68 0.08 40 / .2);margin:0}
 .vitrine .detalhes span{color:var(--malva-60)}
 
+/* Carrinho do agendamento. */
+.vitrine .area+.area{margin-top:1.25rem}
+.vitrine .area h3{font-size:1.35rem;font-weight:500;margin:0 0 .6rem}
+.vitrine .escolha-caixa{border-radius:22px}
+.vitrine .escolha-caixa+.escolha-caixa{margin-top:.6rem}
+.vitrine .escolha-caixa.marcada .escolha{border-color:var(--cobre);box-shadow:0 0 0 1.5px var(--cobre),var(--sombra)}
+.vitrine .config{display:flex;flex-direction:column;gap:.6rem;padding:1rem .5rem .25rem}
+.vitrine .mini{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--malva-60)}
+.vitrine .carrinho{padding:1.25rem;border-radius:28px;background:linear-gradient(135deg,oklch(1 0 0 / .8),oklch(1 0 0 / .6));
+  border:.8px solid oklch(0.68 0.08 40 / .35);box-shadow:var(--sombra)}
+.vitrine .carrinho .linha{display:flex;align-items:flex-start;gap:.75rem;padding:.65rem 0;border-bottom:.8px solid oklch(0.68 0.08 40 / .2)}
+.vitrine .carrinho .linha>div{flex:1;min-width:0}
+.vitrine .carrinho .linha strong{font-size:1.15rem;font-weight:600}
+.vitrine .carrinho .linha small{display:block;font-size:.8rem;color:var(--malva-60)}
+.vitrine .carrinho .linha .desconto{color:oklch(0.5 0.12 150)}
+.vitrine .carrinho .total{border-bottom:0;align-items:center;justify-content:space-between;font-size:.9rem}
+.vitrine .carrinho .total strong{font-size:1.4rem}
+.vitrine .tirar{width:1.75rem;height:1.75rem;border-radius:50%;border:0;padding:0;background:oklch(1 0 0 / .8);color:var(--malva);font-size:1.1rem;line-height:1;cursor:pointer}
+.vitrine .oferta{margin:.9rem 0 .4rem;padding:1rem;border-radius:20px;border:1px dashed var(--cobre);background:oklch(0.97 0.025 40 / .7);display:flex;flex-direction:column;gap:.4rem}
+.vitrine .oferta strong{font-size:1.15rem}
+.vitrine .oferta p{font-size:.9rem}
+.vitrine .oferta s{color:var(--malva-60)}
+.vitrine .oferta b{color:var(--cobre);font-size:1.05rem}
+.vitrine .area-equipe+.area-equipe{margin-top:.9rem}
+.vitrine .area-equipe .mini{margin-bottom:.4rem}
+.vitrine .resumo p+p{margin-top:.25rem}
+.vitrine .resumo-dia{margin-top:1rem;font-weight:500}
+
 /* Lista completa de serviços. */
 .vitrine .servicos-lista .escolha{cursor:default}
 .vitrine .servicos-lista .escolha a{margin-left:.75rem;font-size:.8rem;color:#fff;background:var(--malva);padding:.4rem .8rem;border-radius:999px;white-space:nowrap}
@@ -144,3 +172,4 @@
 .vitrine .rodape .hora p{margin:0}
 .vitrine .rodape .miudo{font-size:.7rem;color:oklch(0.48 0.05 15 / .5);margin-top:1.5rem}
 .vitrine .equipe{display:inline-block;margin-top:.25rem;font-size:.7rem;font-weight:500;color:var(--cobre)}
+.vitrine .extras{font-size:.8rem;color:var(--malva-60);margin:.6rem .5rem 0}

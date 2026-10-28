@@ -28,7 +28,7 @@ O site tem estes endereços:
 | Endereço | O que é |
 |---|---|
 | `/` | Página pública com seis botões: Agendar, Todos os serviços, WhatsApp, Instagram, Localização e Avaliações |
-| `/agendar` | A cliente escolhe serviço, profissional, dia e horário, e deixa nome e celular |
+| `/agendar` | Carrinho: a cliente escolhe os serviços (com opção e adicionais), a profissional de cada área, o dia e o horário, e deixa nome e celular |
 | `/servicos` | Preço e duração de cada serviço, com botão para agendar |
 | `/a/<código>` | Página pessoal do agendamento; quem tem o link vê os detalhes e pode cancelar |
 | `/painel` | Administração, com senha |
@@ -37,11 +37,15 @@ O único caminho da página para o painel é a linha "Acesso da equipe", no roda
 
 ### Como funciona o agendamento pelo site
 
-1. Os horários seguem uma grade de blocos (45 minutos por padrão) dentro do funcionamento de cada dia, definido em **Configurações** (padrão: terça a sexta 9h–18h, sábado 8h–17h). Só aparecem inícios em que o serviço inteiro cabe, fora do intervalo da profissional e sem bater em outro atendimento.
-2. O pedido entra em **Aceitações** e já segura o horário. A gerência aceita ou recusa; o painel traz a mensagem pronta para avisar a cliente pelo WhatsApp. Pedido sem resposta até o horário é encerrado sozinho.
-3. No fim do pedido, a cliente toca em "Confirmar pelo WhatsApp" e manda ao salão uma mensagem já escrita, com o link do agendamento. Como a conversa parte dela, a resposta do salão não é cobrada.
-4. A cliente pode cancelar pelo link. Um horário confirmado que é cancelado vira vaga, e o motor de remarcação procura quem antecipar.
-5. Quem marca "quero ser avisada se abrir um horário mais cedo" entra como autorizada a antecipar.
+1. O catálogo fica em **Equipe e serviços**, separado por área (Unhas, Cabelo). Cada serviço pode ter **opções** com tempo e valor próprios (o comprimento da escova) e **adicionais** da mesma área, que somam só no preço (francesinha, babyliss). "Importar serviços das fichas" traz a lista das fichas do salão, com valores de exemplo.
+2. O carrinho aceita até 3 serviços. Eles ficam **em sequência**, um começando quando o outro termina, com **uma profissional por área**: unhas com quem faz unhas, escova com quem faz escova.
+3. **Ofertas "Pegue também"**: em Equipe e serviços, cada oferta diz quem escolher o gatilho (um serviço ou qualquer serviço de uma área) ganha desconto, em % ou R$, no alvo. A cliente vê a oferta de maior desconto. O desconto vale só no item que entrou depois no carrinho, então duas ofertas cruzadas não somam.
+4. Os horários seguem uma grade de blocos (45 minutos por padrão) dentro do funcionamento de cada dia, definido em **Configurações** (padrão: terça a sexta 9h–18h, sábado 8h–17h). Só aparecem inícios em que o carrinho inteiro cabe, fora do intervalo das profissionais e sem bater em outro atendimento.
+5. O pedido entra em **Aceitações** e já segura os horários. Aceitar ou recusar vale para o pedido inteiro. A gerência aceita ou recusa; o painel traz a mensagem pronta para avisar a cliente pelo WhatsApp. Pedido sem resposta até o horário é encerrado sozinho.
+6. No fim do pedido, a cliente toca em "Confirmar pelo WhatsApp" e manda ao salão uma mensagem já escrita, com o link do agendamento. Como a conversa parte dela, a resposta do salão não é cobrada.
+7. A cliente pode cancelar pelo link (o pedido inteiro). Um horário confirmado que é cancelado vira vaga, e o motor de remarcação procura quem antecipar.
+8. Pedidos com mais de um atendimento ficam fora da antecipação automática, porque antecipar só um quebraria a sequência.
+9. Quem marca "quero ser avisada se abrir um horário mais cedo" entra como autorizada a antecipar.
 
 ## Publicar no Cloudflare
 

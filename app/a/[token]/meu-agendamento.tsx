@@ -1,5 +1,5 @@
 "use client";
-// Página pessoal do agendamento: quem tem o link vê os detalhes e pode cancelar.
+// Página pessoal do agendamento: quem tem o link vê os detalhes e pode cancelar o pedido inteiro.
 import {useEffect,useState} from 'react';
 import {reais} from '../../agendar/agendar';
 
@@ -15,15 +15,14 @@ export default function MeuAgendamento({token}:{token:string}){
   if(!dados)return erro?<p className="aviso" role="alert">{erro}</p>:<p className="vazio">Carregando…</p>;
   return <div className="formulario">
     <p className="resumo">Olá, {dados.name}! Situação: <strong>{dados.status}</strong></p>
+    <p className="resumo-dia">{dados.date.split('-').reverse().join('/')}</p>
     <ul className="detalhes">
-      <li><span>Serviço</span>{dados.service}</li>
-      <li><span>Profissional</span>{dados.staff}</li>
-      <li><span>Quando</span>{dados.date.split('-').reverse().join('/')} às {dados.time}</li>
-      <li><span>Valor</span>{reais(dados.price)}</li>
+      {(dados.items as any[]).map(x=><li key={x.name}><span>{x.time}–{x.end} · {x.staff}</span>{x.name}</li>)}
+      <li><span>Total</span><strong>{reais(dados.total)}</strong></li>
     </ul>
     {erro&&<p className="aviso" role="alert">{erro}</p>}
     {dados.open&&(confirmar
-      ?<><p>Tem certeza? O horário será liberado para outra cliente.</p><button className="botao" disabled={ocupado} onClick={cancelar}>{ocupado?'Cancelando…':'Sim, cancelar'}</button><button className="botao claro" onClick={()=>setConfirmar(false)}>Manter agendamento</button></>
+      ?<><p>Tem certeza? {dados.items.length>1?'Todos os horários deste pedido serão liberados':'O horário será liberado'} para outra cliente.</p><button className="botao" disabled={ocupado} onClick={cancelar}>{ocupado?'Cancelando…':'Sim, cancelar'}</button><button className="botao claro" onClick={()=>setConfirmar(false)}>Manter agendamento</button></>
       :<button className="botao claro" onClick={()=>setConfirmar(true)}>Cancelar agendamento</button>)}
   </div>;
 }

@@ -26,8 +26,9 @@ export async function GET(req:Request){
  try{
   const q=new URL(req.url).searchParams,{state}=await load();
   if(q.get('token'))return json(publicView(state,byToken(state,q.get('token'))));
-  const service=q.get('service'),date=q.get('date');
-  return json({...catalog(state),days:openDays(state),slots:service&&date?slots(state,service,q.get('staff')||'',date):[]});
+  const cart=q.get('cart'),date=q.get('date');
+  if(cart&&cart.length>2000)return json({error:'Carrinho grande demais.'},413);
+  return json({...catalog(state),days:openDays(state),slots:cart&&date?slots(state,JSON.parse(cart),date):[]});
  }catch(e){return json({error:(e as Error).message},400);}
 }
 export async function POST(req:Request){
@@ -43,6 +44,6 @@ export async function POST(req:Request){
    return json(publicView(state,result));
   }
   const {state,result}=await change(s=>requestBooking(s,p));
-  return json({token:result.token,...publicView(state,result)});
+  return json({token:result[0].token,...publicView(state,result[0])});
  }catch(e){return json({error:(e as Error).message},400);}
 }

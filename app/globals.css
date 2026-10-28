@@ -29,3 +29,10 @@
 .hours-field{border:0;padding:0;margin:0 0 .75rem;display:flex;flex-direction:column;gap:.5rem}
 .hours-field legend{font-size:.85rem;font-weight:500;margin-bottom:.5rem}
 .hours-row{display:grid;grid-template-columns:6rem 1fr auto 1fr;align-items:center;gap:.5rem;font-size:.9rem}
+
+/* Pedido do site com vários atendimentos, em Aceitações. */
+.order-items{display:flex;flex-direction:column;gap:6px;padding:12px 16px;border-radius:8px;background:#fbf6f6}
+.order-item{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:start;font-size:13px}
+.order-item small{font-size:11px}
+.order-item.total{grid-template-columns:1fr auto;border-top:1px solid #eadfe0;padding-top:6px;margin-top:2px}
+textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(--line,#e6dcdd);resize:vertical}
