@@ -22,7 +22,8 @@ async function save(row:any,state:any){
  const encoded=JSON.stringify(state);if(encoded===row.state)return false;
  const result=await env.DB!.prepare('UPDATE rooms SET state=?,version=version+1,updated=? WHERE id=? AND version=?').bind(encoded,Date.now(),row.id,row.version).run();
  if(!result.meta.changes)throw Error('A agenda foi atualizada em outra tela. Atualize e tente novamente.');
- return JSON.stringify(JSON.parse(row.state).appointments)!==JSON.stringify(state.appointments);
+ const previous=JSON.parse(row.state);
+ return ['appointments','clients','staff','services','salon'].some(key=>JSON.stringify(previous[key])!==JSON.stringify(state[key]));
 }
 function view(state:any){return {state,tickets:supportView(state),now:Date.now(),candidates:Object.fromEntries(state.gaps.filter((g:any)=>g.status==='open').map((g:any)=>[g.id,candidates(state,g.id)]))};}
 export async function GET(req:Request){

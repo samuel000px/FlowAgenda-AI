@@ -3,7 +3,7 @@ import { calendarStatus, managerRoom, startOAuth, syncCalendar } from '../../../
 export const dynamic='force-dynamic';
 const json=(value:unknown,status=200,headers={})=>Response.json(value,{status,headers:{'Cache-Control':'no-store',...headers}});
 export async function GET(req:Request){
-  try{return json(await calendarStatus(env,await managerRoom(req,env)))}catch(e){return json({error:(e as Error).message},400)}
+  try{return json(await calendarStatus(env,await managerRoom(req,env),true))}catch(e){return json({error:(e as Error).message},400)}
 }
 export async function POST(req:Request){
   try{
@@ -23,6 +23,6 @@ export async function POST(req:Request){
       if(active?.lease>Date.now())throw Error('Aguarde a sincronização terminar para desconectar.');
       await env.DB!.batch([env.DB!.prepare('DELETE FROM calendar_connections WHERE room=? AND lease<?').bind(room,Date.now()),env.DB!.prepare('DELETE FROM calendar_oauth WHERE room=?').bind(room)]);
     }else throw Error('Ação desconhecida.');
-    return json(await calendarStatus(env,room));
+    return json(await calendarStatus(env,room,true));
   }catch(e){return json({error:(e as Error).message},400)}
 }

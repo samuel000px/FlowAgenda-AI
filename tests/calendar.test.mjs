@@ -62,7 +62,7 @@ test('cancellation deletes even an event whose insertion was never acknowledged'
 test('partial failure preserves successful progress for retry',async()=>{
   const s=seed();s.appointments=s.appointments.slice(0,4);const failing=(await eventFor('room',s,s.appointments[0],'2026-10-27')).id;
   let saved;try{await pushEvents('room',s,'2026-10-27','calendar',{},async(path,method,body)=>{if(body.id===failing)throw Object.assign(Error('rate limit'),{status:429});return {}})}catch(e){saved=e.entries}
-  assert.equal(Object.keys(saved).length,3);let calls=0;await pushEvents('room',s,'2026-10-27','calendar',saved,async()=>{calls++;return {}});assert.equal(calls,1);
+  assert.equal(Object.values(saved).filter(v=>v!=='pending').length,3);assert.equal(saved[failing],'pending');let calls=0;await pushEvents('room',s,'2026-10-27','calendar',saved,async()=>{calls++;return {}});assert.equal(calls,1);
 });
 test('tokens are authenticated, encrypted and bound to their room',async()=>{
   const secret='a'.repeat(64),value={access:'private-access',refresh:'private-refresh'};

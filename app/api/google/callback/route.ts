@@ -9,7 +9,7 @@ export async function GET(req:Request){
     if(!state||!cookie||state!==cookie)throw Error('A autorização não corresponde a este navegador. Volte e conecte novamente.');
     if(url.searchParams.has('error'))throw Error('O acesso ao Google Agenda não foi autorizado.');
     await finishOAuth(env,state,url.searchParams.get('code')||'');
-    const destination=new URL('/painel',env.GOOGLE_REDIRECT_URI!);
+    const destination=new URL('/painel?integracao=google',env.GOOGLE_REDIRECT_URI!);
 
     return new Response(null,{status:303,headers:{...headers,Location:destination.toString()}});
   }catch(e){

@@ -90,11 +90,17 @@ A versão web acrescenta verificação de conflitos de cliente/profissional e pe
 
 ## Google Agenda
 
-Execute `npm run calendar:setup` e configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` e `GOOGLE_REDIRECT_URI` em `.dev.vars`. Cadastre exatamente o mesmo endereço de retorno no cliente OAuth Google (no ambiente local, `http://localhost:5173/api/google/callback`). Reinicie o servidor e conecte em **Integrações**.
+A administração acessa **Configurações → Integrações → Conectar conta Google**, escolhe a conta e autoriza. O retorno abre a mesma seção, com o progresso e o botão para abrir a agenda. A instalação precisa das credenciais do aplicativo uma única vez; cada administrador não precisa criar um projeto Google.
 
-A autorização permite gerenciar o calendário dedicado criado pela aplicação. Tokens são criptografados no banco. Cada atendimento mantém um identificador estável, com data própria e fuso America/Fortaleza. Novos agendamentos criam eventos, alterações aprovadas atualizam eventos e cancelamentos os removem. Não são enviados convites a clientes.
+- Agenda dedicada à esmalteria: título com serviço, cliente e profissional; uma cor estável por profissional; início e fim reais do atendimento, incluindo opções e adicionais. Cada serviço de um pedido com vários serviços tem seu próprio evento.
+- Horários confirmados, atuais e futuros, são sincronizados. Pedidos aguardando aceite não ocupam o Google antes da aprovação. Remarcações aprovadas atualizam o evento existente; cancelamentos o removem.
+- Aniversário opcional em **Clientes → Editar** e **Agenda → Novo agendamento → Cadastrar nova cliente**. Preencha dia/mês, sem ano de nascimento. O campo `client.birthday` guarda `MM-DD`; as ações também aceitam `DD/MM`. Cadastros antigos continuam válidos. Integrações futuras devem usar essa mesma validação; omitir o campo preserva a data, enviar vazio remove o lembrete.
+- Aniversário vira uma série anual de dia inteiro, sem bloquear horários. Para 29/02, aparece em 28/02 nos anos não bissextos. Alterar nome/data atualiza a mesma série. Remover a data ou o cadastro remove a série na próxima sincronização. Nenhum convite ou mensagem de aniversário é enviado à cliente.
+- Mudanças são enviadas ao salvar e reavaliadas periodicamente. A rotina da hospedagem trabalha com o painel fechado, independentemente da ativação do WhatsApp. Importações iniciais seguem em lotes de até 20 alterações; o painel informa o que falta. Em instalações com várias agendas, a rotina prioriza a menos recentemente sincronizada.
 
-A sincronização é do painel para o Google; edições diretamente no Google não são importadas. Se o Google falhar, a operação local fica salva e o painel mostra erro/pendência em Integrações, com nova tentativa. Isso difere do adaptador de teste Python, que desfaz o movimento quando o adaptador externo falha.
+A sincronização é **do painel para o Google**; edições diretamente no Google não são importadas. Dados locais permanecem salvos em caso de falha. Tokens são criptografados; autorização e renovação ficam no servidor. A permissão se limita às agendas criadas pelo aplicativo. Trocar a conta verifica o acesso à agenda anterior e cria outra quando necessário; a antiga permanece na conta anterior. Desconectar interrompe a sincronização, sem excluir os eventos já enviados.
+
+A configuração inicial do responsável técnico, a publicação e a conferência com uma conta real estão no [guia Google Agenda](docs/google-agenda.md).
 
 ## WhatsApp oficial da Meta
 
