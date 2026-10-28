@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import './sites-env.mjs';
 
-const NOME = 'santa-cor';
+const NOME = 'santa';
 const BANCO = 'santa-cor-db';
 const CONFIG = 'dist/server/wrangler.json';
 

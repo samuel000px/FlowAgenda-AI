@@ -55,7 +55,7 @@ Uma vez só: crie uma conta grátis em cloudflare.com e rode `npx wrangler login
 npm run deploy
 ```
 
-Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o app `santa-cor` e gera a chave que assina o login. No fim ele mostra o endereço (`https://santa-cor.<sua-conta>.workers.dev`) e quais segredos faltam. Cadastre a senha e a chave do Gemini, uma vez, com `npx wrangler secret put APP_SENHA --name santa-cor` e `npx wrangler secret put GEMINI_API_KEY --name santa-cor`. Nenhum dado publicado é apagado nas atualizações.
+Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o app `santa` e gera a chave que assina o login. Com o subdomínio da conta definido como `cor-esmalteria`, o endereço fica `https://santa.cor-esmalteria.workers.dev`. No fim o comando mostra o endereço e quais segredos faltam. Cadastre a senha e a chave do Gemini, uma vez, com `npx wrangler secret put APP_SENHA --name santa` e `npx wrangler secret put GEMINI_API_KEY --name santa`. Nenhum dado publicado é apagado nas atualizações.
 
 ## Painel da gerência
 
