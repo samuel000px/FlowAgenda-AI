@@ -1,0 +1,90 @@
+/* Reserved staff workspace: same salon identity, focused actions. */
+.staff-access-panel{padding:22px;display:grid;gap:16px}.staff-access-panel .field{margin:0}.staff-access-panel .notice{margin:0}.staff-entry{max-width:940px;padding:50px 28px;min-height:100vh}.staff-entry>.brand{color:var(--nav)}.staff-welcome{margin:65px 0 32px}.staff-welcome h1{font-size:36px;margin-bottom:13px}.staff-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.staff-choice{background:#fff;color:var(--ink);padding:24px;text-align:left;justify-content:flex-start;gap:18px}.staff-choice:hover{background:var(--green-light);border-color:var(--green)}.staff-choice>span:nth-child(2){flex:1}.staff-choice strong{display:block;font-size:16px}.staff-choice small{margin-top:7px;font-weight:400}.staff-entry-note{font-size:12px;color:var(--muted);margin-top:35px}.staff-topbar{background:var(--nav);color:white;display:flex;justify-content:space-between;align-items:center;padding:20px max(24px,calc((100vw - 1150px)/2));gap:20px}.staff-topbar .text-button{color:#f1c7cd}.staff-topbar strong{font-size:13px}.staff-main{max-width:1200px;padding:36px 25px}.staff-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}.staff-tabs .selected{background:var(--green)}.staff-main>.notice{display:flex;align-items:center;gap:10px}.staff-main .panel-heading .field{margin:0;min-width:140px}.staff-client-form{max-width:650px;padding:28px}.staff-client-form form{margin-top:24px;display:grid;gap:20px}.staff-client-form .field{margin:0}.staff-client-form .check-field{line-height:1.5}.staff-client-form button{justify-self:start}.staff-suggestions{display:grid;grid-template-columns:1fr 1fr;gap:20px}.staff-suggestion{padding:24px}.staff-suggestion>.muted{margin-top:6px}.staff-suggestions>.empty{grid-column:1/-1}.staff-shell .modal-content{display:grid;gap:16px}
+.staff-shell,.staff-entry{min-height:100vh;min-height:100dvh}
+.staff-shell button,.staff-entry button{min-height:48px;touch-action:manipulation}
+.staff-shell input,.staff-shell select{min-height:48px;font-size:16px}
+.staff-shell input[type=checkbox]{min-height:22px;width:22px;height:22px;flex-shrink:0;accent-color:var(--green)}
+.staff-entry .staff-choice{white-space:normal;min-width:0}
+.staff-choice>span:nth-child(2){min-width:0;overflow-wrap:anywhere}
+.staff-choice svg{flex-shrink:0}
+.staff-shell .page-heading h1,.staff-shell .notice,.staff-shell .error{overflow-wrap:anywhere}
+.staff-appointment-list{display:none}
+.staff-day-controls{display:flex;align-items:center;gap:8px;padding:0 22px 18px}
+.staff-day-controls>span{flex:1;text-align:right;color:var(--muted);font-size:12px;margin-right:8px}
+.staff-day-controls button{min-width:48px}
+.staff-tabs button{position:relative}
+.staff-shell .field small{line-height:1.5}
+.staff-shell .check-field{padding:12px 0;cursor:pointer}
+.staff-shell .staff-suggestion h2{overflow-wrap:anywhere}
+@media(max-width:760px){
+ .staff-entry{max-width:520px;padding:32px 20px max(28px,env(safe-area-inset-bottom))}
+ .staff-welcome{margin:38px 0 26px}
+ .staff-welcome h1{font-size:30px;line-height:1.2}
+ .staff-welcome p{font-size:15px}
+ .staff-choice-grid,.staff-suggestions{grid-template-columns:minmax(0,1fr);gap:12px}
+ .staff-choice{padding:20px 16px;min-height:92px;border-radius:14px;gap:14px}
+ .staff-choice small{font-size:13px;line-height:1.4}
+ .staff-entry-note{line-height:1.6}
+ .staff-topbar{padding:calc(14px + env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 14px max(16px,env(safe-area-inset-left));gap:12px}
+ .staff-topbar .brand{font-size:18px}
+ .staff-topbar>.row{display:grid;justify-items:end;gap:0;min-width:0}
+ .staff-topbar strong{max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .staff-topbar .avatar{display:none}
+ .staff-topbar .text-button{min-height:44px;padding:5px 0;font-size:12px}
+ .staff-main{max-width:620px;padding:24px max(16px,env(safe-area-inset-right)) calc(108px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+ .staff-main .page-heading{margin-bottom:22px}
+ .staff-main .page-heading h1{font-size:27px}
+ .staff-main .page-heading p{font-size:14px;line-height:1.6}
+ .staff-tabs{position:fixed;bottom:0;left:0;right:0;z-index:35;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0;padding:8px max(12px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 22px #36232609}
+ .staff-tabs button{display:flex;flex-direction:column;gap:5px;min-height:60px;padding:8px 2px;border:0;border-radius:12px;font-size:12px;background:transparent;color:#766268}
+ .staff-tabs button.selected{background:var(--green-light);color:var(--green)}
+ .staff-tabs button.selected::before{content:'';width:20px;height:3px;border-radius:3px;background:var(--green);position:absolute;top:0}
+ .staff-tabs .badge{position:absolute;top:3px;left:calc(50% + 10px);padding:2px 5px;background:var(--green);color:white;font-size:10px}
+ .staff-main .panel{border-radius:16px}
+ .staff-agenda .panel-heading{display:block;padding:20px 16px 16px}
+ .staff-agenda .panel-heading h2{font-size:17px}
+ .staff-agenda .panel-heading p{font-size:13px;line-height:1.5}
+ .staff-agenda .panel-heading .actions{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:20px}
+ .staff-main .staff-agenda .field{min-width:0}
+ .staff-agenda .field input,.staff-agenda .field select{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+ .staff-day-controls{padding:0 16px 18px;gap:6px}
+ .staff-day-controls>span{font-size:11px;margin-right:0}
+ .staff-day-controls button{padding:10px}
+ .staff-agenda-table{display:none}
+ .staff-appointment-list{display:grid;gap:0;padding:0 16px}
+ .staff-appointment{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;padding:20px 0;border-top:1px solid var(--line)}
+ .staff-appointment-time{border-right:2px solid #e7d5d9;padding-right:10px;display:flex;flex-direction:column;gap:6px}
+ .staff-appointment-time strong{font-size:20px;color:var(--green);letter-spacing:-.4px;font-variant-numeric:tabular-nums}
+ .staff-appointment-time>span{font-size:11px;color:var(--muted);white-space:nowrap}
+ .staff-appointment-info h3{font-size:16px;line-height:1.4;overflow-wrap:anywhere}
+ .staff-appointment-info p{font-size:14px;margin-top:4px;overflow-wrap:anywhere}
+ .staff-appointment-info small{font-size:12px;margin-top:5px;overflow-wrap:anywhere}
+ .staff-appointment-info .badge{display:inline-flex;margin-top:10px;font-size:11px}
+ .staff-appointment.is-cancelled{opacity:.65}
+ .staff-appointment.is-cancelled .staff-appointment-time strong{text-decoration:line-through}
+ .staff-client-form{padding:22px 18px}
+ .staff-client-form h2{font-size:19px}
+ .staff-client-form .muted.small{font-size:13px;margin-top:8px}
+ .staff-client-form form{gap:22px}
+ .staff-client-form .field>span{font-size:14px}
+ .staff-client-form button{width:100%;min-height:52px;font-size:15px}
+ .staff-client-form .check-field{font-size:14px;align-items:flex-start;gap:12px}
+ .staff-suggestion{padding:20px 18px}
+ .staff-suggestion>.row{flex-wrap:wrap;align-items:flex-start;gap:10px}
+ .staff-suggestion .movement{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:18px;margin:18px 0}
+ .staff-suggestion .movement svg{transform:rotate(90deg)}
+ .staff-suggestion .movement strong{font-size:15px}
+ .staff-suggestion>button{width:100%;min-height:52px;font-size:14px}
+ .staff-main .empty{padding:32px 20px}
+ .staff-main .empty p{font-size:14px;line-height:1.6}
+ .staff-main .page-footer{flex-wrap:wrap;justify-content:center;gap:8px;margin-top:24px;font-size:11px;text-align:center}
+ .staff-review-backdrop{align-items:flex-end;padding:0;z-index:60}
+ .staff-review-backdrop .modal{width:100%;max-width:620px;max-height:90dvh;overflow-y:auto;border-radius:22px 22px 0 0;overscroll-behavior:contain}
+ .staff-review-backdrop .modal-content{padding:26px 22px calc(24px + env(safe-area-inset-bottom))}
+ .staff-review-backdrop .modal-actions{display:flex;flex-direction:column-reverse;gap:10px}
+ .staff-review-backdrop .modal-actions button{width:100%;min-height:52px;font-size:15px}
+}
+@media(min-width:380px) and (max-width:760px){
+ .staff-agenda .panel-heading .actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+ .staff-agenda .field input,.staff-agenda .field select{padding-inline:8px}
+}

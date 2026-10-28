@@ -136,3 +136,22 @@ npm run build
 Os testes comparam ordem, elegibilidade, ganho, risco e probabilidade com os oito cenários do Python. Também verificam aprovação, rejeição, ambiguidade, conflitos, idempotência e sincronização de calendário com respostas controladas. Os arquivos `lib/salon.mjs` e `lib/agent.ts` são legado, mantidos para referência e testes; a API administrativa usa `flowagenda.mjs`.
 
 A hospedagem usa React, Vinext, Cloudflare Workers e D1. Preserve `.openai/hosting.json` e a integração Sites no Vite. Não foram alteradas as migrações existentes.
+
+## Área reservada das funcionárias
+
+Em **Equipe e serviços → Acesso das funcionárias**, crie e copie o link `/funcionarios-<48 caracteres aleatórios>`. Ele não aparece na página pública e a página sinaliza aos buscadores para não indexar. A entrada mostra as profissionais ativas do cadastro; não usa nomes fixos.
+
+A área prioriza o celular: até 760 px, a agenda usa cartões e o menu fica fixo na parte inferior (Agenda, Clientes e Aprovações). Os controles têm área de toque ampliada, campos de 16 px e espaço para a área segura do aparelho. Há atalhos para o dia anterior, próximo dia e hoje; no computador, a agenda continua em tabela. O endereço é o mesmo nos dois formatos.
+
+O link é uma credencial compartilhada: quem o receber pode escolher qualquer nome ativo. A escolha identifica a sessão e registra as ações, mas não comprova a identidade da pessoa. Para revogar acessos, a gerente pode trocar ou desativar o link; isso também invalida as sessões existentes. Inativar uma profissional bloqueia seu acesso. Sessões duram oito horas e são separadas das sessões administrativas.
+
+Permissões da equipe, verificadas no servidor:
+
+- Consultar a agenda por data, filtrando seus atendimentos ou toda a equipe.
+- Cadastrar novas clientes presenciais, sem editar clientes existentes ou criar reservas.
+- Aprovar remarcações já aceitas pela cliente que envolvam a profissional escolhida (horário de origem ou destino). Disponibilidade e conflitos são conferidos novamente; a aprovação registra a responsável e mantém a sincronização Google e WhatsApp existente.
+- Não pode cancelar, reagendar livremente, rejeitar propostas, registrar faltas, modificar equipe/configurações, enviar mensagens avulsas ou acessar credenciais da integração.
+
+O servidor devolve apenas os dados necessários à agenda e às aprovações. As ações ficam em `staffAudit` e na atividade da gerência. Link e dados locais não são transportados automaticamente para a hospedagem: depois de publicar, gere e copie o link na versão hospedada. Um endereço localhost só funciona no computador do servidor.
+
+Arquivos principais: `app/staff-portal.tsx`, `app/staff-access-panel.tsx`, `app/[employeeEntry]/page.tsx`, `app/api/staff*/`, `lib/staff-auth.ts`, `lib/staff-core.mjs`. A configuração é armazenada no registro da agenda, sem nova migração de banco.
