@@ -148,10 +148,11 @@ O link é uma credencial compartilhada: quem o receber pode escolher qualquer no
 Permissões da equipe, verificadas no servidor:
 
 - Consultar a agenda por data, filtrando seus atendimentos ou toda a equipe.
+- Identificar pedidos do site que ainda aguardam aceite; aceitar ou recusar esses pedidos continua sendo uma ação da gerência na aba Aceitações. Pedidos pendentes também impedem remarcações conflitantes.
 - Cadastrar novas clientes presenciais, sem editar clientes existentes ou criar reservas.
 - Aprovar remarcações já aceitas pela cliente que envolvam a profissional escolhida (horário de origem ou destino). Disponibilidade e conflitos são conferidos novamente; a aprovação registra a responsável e mantém a sincronização Google e WhatsApp existente.
 - Não pode cancelar, reagendar livremente, rejeitar propostas, registrar faltas, modificar equipe/configurações, enviar mensagens avulsas ou acessar credenciais da integração.
 
 O servidor devolve apenas os dados necessários à agenda e às aprovações. As ações ficam em `staffAudit` e na atividade da gerência. Link e dados locais não são transportados automaticamente para a hospedagem: depois de publicar, gere e copie o link na versão hospedada. Um endereço localhost só funciona no computador do servidor.
 
-Arquivos principais: `app/staff-portal.tsx`, `app/staff-access-panel.tsx`, `app/[employeeEntry]/page.tsx`, `app/api/staff*/`, `lib/staff-auth.ts`, `lib/staff-core.mjs`. A configuração é armazenada no registro da agenda, sem nova migração de banco.
+Arquivos principais: `app/staff-portal.tsx` (interface), `app/staff.css` (estilos da equipe), `app/staff-access-panel.tsx` (controle do link pela gerente), `app/[employeeEntry]/page.tsx`, `app/api/staff*/`, `lib/staff-auth.ts` e `lib/staff-core.mjs` (acesso e permissões). A configuração é armazenada no registro da agenda, sem nova migração de banco.
