@@ -118,7 +118,7 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 83 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
+| `pytest` | 86 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
 | `streamlit run app.py` | A interface: agenda, chat simulado e raciocínio do agente | Sim |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
 | `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |
@@ -139,6 +139,12 @@ Tudo vai para `registro/historico.csv`, uma linha por acontecimento (data, clien
 O arquivo abre no Excel e pode virar uma aba do Google Planilhas. Os números de cada cliente passam a
 ser o cadastro mais o registro. O arquivo fica fora do git, porque tem dados de clientes reais. Com o
 histórico desligado, que é o padrão, nada é gravado, e dá para demonstrar à vontade.
+
+### Usar pelo celular
+
+Coloque uma senha em `APP_SENHA` (no `.env` ou nos segredos da hospedagem) e a interface passa a
+pedir senha na entrada. As três formas de hospedar (Streamlit Community Cloud, computador do salão com
+Tailscale, ou servidor pago), com o passo a passo de cada uma, estão em [docs/hospedagem.md](docs/hospedagem.md).
 
 ## Decisões de projeto
 

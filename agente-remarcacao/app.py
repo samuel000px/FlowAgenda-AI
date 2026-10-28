@@ -4,10 +4,12 @@ Rodar com:  streamlit run app.py
 """
 import copy
 import html
+import time
 
 import pandas as pd
 import streamlit as st
 
+from src.acesso import senha_configurada, senha_confere
 from src.cascata import MAX_PROF
 from src.dados import carregar_cenarios
 from src.estado import ETAPAS, Fluxo
@@ -39,6 +41,25 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+
+def exigir_senha() -> None:
+    """Sem a senha certa, o resto da página nem é desenhado."""
+    if not senha_configurada() or st.session_state.get("autenticado"):
+        return
+    st.markdown("### Agente de remarcação")
+    with st.form("entrar"):
+        digitada = st.text_input("Senha", type="password")
+        if st.form_submit_button("Entrar", type="primary"):
+            if senha_confere(digitada):
+                st.session_state.autenticado = True
+                st.rerun()
+            time.sleep(1)  # deixa mais lento quem tenta adivinhar a senha
+            st.error("Senha errada.")
+    st.stop()
+
+
+exigir_senha()
 
 
 @st.cache_data
@@ -87,6 +108,9 @@ def quando(slot) -> str:
 
 
 # ---------- painel lateral: histórico ----------
+if senha_configurada() and st.sidebar.button("Sair"):
+    st.session_state.clear()
+    st.rerun()
 st.sidebar.toggle(
     "Usar e registrar histórico",
     key="com_historico",

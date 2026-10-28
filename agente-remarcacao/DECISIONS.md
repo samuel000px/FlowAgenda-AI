@@ -176,3 +176,15 @@ a não ser quando um item abaixo diz outra coisa.
 - Ficou de fora: contar visitas pelo Google Agenda (depende da integração do Samuel), ler conversas
   exportadas do WhatsApp (pouco confiável e ruim para a privacidade) e planilha editada à mão.
 - O terminal e a avaliação não gravam nada: rodam os cenários fictícios repetidas vezes.
+
+## D18. Senha na entrada e guia de hospedagem
+
+- Decisão: `src/acesso.py` lê `APP_SENHA`; com ela configurada, a interface só aparece depois da senha
+  certa (comparação em tempo constante, 1 s de espera a cada erro, botão Sair). Sem `APP_SENHA`, abre
+  direto, para uso no próprio computador. O guia `docs/hospedagem.md` compara três opções:
+  Streamlit Community Cloud, computador do salão com Tailscale e servidor pago.
+- Motivo: a dona do salão vai aprovar pelo celular, então o app vai estar acessível fora do computador.
+  A senha vale para qualquer hospedagem. A escolha de onde hospedar depende de onde fica o histórico:
+  no Community Cloud o disco é apagado quando o app reinicia.
+- Ficou de fora: contas de usuário separadas (só há uma pessoa aprovando) e login pelo Google (mais
+  configuração do que o caso pede agora).
