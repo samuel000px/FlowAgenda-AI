@@ -46,13 +46,25 @@ def link_whatsapp(numero: str, texto: str = "") -> str:
     return f"https://wa.me/{digitos}" + (f"?text={quote(texto)}" if texto else "")
 
 
-def telefone_formatado(numero: str) -> str:
-    """5583993782040 -> (83) 99378-2040."""
-    local = re.sub(r"\D", "", numero)[2:]  # tira o 55
-    ddd, resto = local[:2], local[2:]
-    return f"({ddd}) {resto[:-4]}-{resto[-4:]}"
-
-
 def link_mapa(salao: dict) -> str:
     """Abre o endereço no Google Maps."""
     return "https://www.google.com/maps/search/?api=1&query=" + quote(f"{salao['endereco']}, {salao['bairro_cidade']}")
+
+
+def cartoes_da_pagina(salao: dict) -> list[dict]:
+    """Os cartões em pilha da página pública, cada um com o "endereco" já pronto.
+
+    Vêm de "links" nos dados do salão; sem eles, ficam agendar, localização, Instagram e a lista de
+    serviços. Cartão sem "link" abre o WhatsApp do salão com a "mensagem" dele (vazia: sem texto).
+    """
+    itens = salao.get("links") or [
+        {"icone": "calendar", "titulo": "Agendar Horário", "subtitulo": "Reserve seu momento especial"},
+        {"icone": "map-pin", "titulo": "Localização", "subtitulo": "Como chegar", "link": link_mapa(salao)},
+        *([{"icone": "instagram", "titulo": "Instagram", "subtitulo": f"@{salao['instagram']}",
+            "link": f"https://www.instagram.com/{salao['instagram']}/"}] if salao.get("instagram") else []),
+        {"icone": "list-checks", "titulo": "Todos os Serviços", "subtitulo": "Veja nossa lista completa", "link": "#servicos"},
+    ]
+    return [
+        {**item, "endereco": item.get("link") or link_whatsapp(salao["whatsapp"], item.get("mensagem", salao["mensagem_whatsapp"]))}
+        for item in itens
+    ]

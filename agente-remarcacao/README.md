@@ -200,7 +200,8 @@ quando bate o limite por minuto, o código espera e tenta de novo.
 
 Os dados públicos do salão (nome, WhatsApp, endereço, serviços) ficam em `data/salao.local.json`, fora
 do git; o `data/salao.json` do repositório tem dados de exemplo. Numa hospedagem, use o segredo
-`SALAO_JSON`. O caminho para o painel é a linha "Acesso da equipe", no fim da página. Para o painel
+`SALAO_JSON`. O caminho para o painel é a linha "Acesso da equipe", no fim da página, que vai para `link_equipe`
+(o Encaixa) ou para o `/painel`. Para o painel
 pedir senha, configure `APP_SENHA`. O passo a passo para publicar está em
 [docs/hospedagem.md](docs/hospedagem.md).
 

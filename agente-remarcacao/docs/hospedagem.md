@@ -7,9 +7,10 @@
 ## O que fica público e o que fica protegido
 
 - `/` é a página do salão, aberta para qualquer pessoa. É ela que vai no Instagram e no status do WhatsApp.
-- `/painel` só tem um caminho na página: a linha discreta "Acesso da equipe", no fim do rodapé. `/equipe`
-  não aparece em nenhum link. "Escondido" só evita que alguém encontre por acaso; **quem protege de
-  verdade é a senha**.
+- O único caminho para o painel é a linha "Acesso da equipe", no fim do rodapé. Ela leva para o endereço
+  em `link_equipe` (o Encaixa publicado) ou, sem ele, para o `/painel` daqui. `/equipe` não aparece em
+  nenhum link. Se o painel for o Encaixa, ele também precisa de senha antes de ser publicado.
+  "Escondido" só evita que alguém encontre por acaso; **quem protege de verdade é a senha**.
 
 ## 1. A senha (vale para qualquer opção)
 

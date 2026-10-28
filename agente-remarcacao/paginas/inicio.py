@@ -1,37 +1,38 @@
 """Página pública do salão, no estilo "link na bio": cartões que levam ao WhatsApp, mapa e Instagram.
 
-Não mostra nada das clientes. O único caminho para o painel é a linha discreta "Acesso da equipe"
-no rodapé, e o painel pede senha. O conteúdo vem de data/salao.json (ou salao.local.json); cada
-seção só aparece se tiver conteúdo. O visual está em paginas/estilos/inicio.css.
+Não mostra nada das clientes. O único caminho para o painel da equipe é a linha discreta "Acesso da
+equipe" no rodapé; o endereço dela vem de "link_equipe" nos dados (sem ele, o /painel daqui). O
+conteúdo vem de data/salao.json (ou salao.local.json); cada seção só aparece se tiver conteúdo. O
+visual está em paginas/estilos/inicio.css e os ícones em paginas/icones.py.
 """
 from html import escape
 
 import streamlit as st
 
 from paginas.comum import aplicar_css
+from paginas.icones import icone
 from src.salao import (
     carregar_salao,
-    link_mapa,
+    cartoes_da_pagina,
     link_whatsapp,
     servicos_por_grupo,
-    telefone_formatado,
 )
 
 
-def link(endereco: str, conteudo: str, classe: str = "", nova_aba: bool = True) -> str:
-    """Um <a>; por padrão abre em outra aba (WhatsApp, mapa, Instagram)."""
-    alvo = 'target="_blank" rel="noopener"' if nova_aba else 'target="_self"'
-    return f'<a class="{classe}" href="{endereco}" {alvo}>{conteudo}</a>'
+def link(endereco: str, conteudo: str, classe: str = "") -> str:
+    """Um <a>; o que sai do site (WhatsApp, mapa, Instagram) abre em outra aba."""
+    alvo = 'target="_blank" rel="noopener"' if endereco.startswith("http") else 'target="_self"'
+    return f'<a class="{classe}" href="{escape(endereco)}" {alvo}>{conteudo}</a>'
 
 
-def cartao(endereco: str, icone: str, titulo: str, subtitulo: str, nova_aba: bool = True) -> str:
-    """Cartão clicável: ícone redondo, título, subtítulo e seta."""
+def cartao(endereco: str, nome_icone: str, titulo: str, subtitulo: str) -> str:
+    """Cartão clicável: ícone, título, subtítulo e seta."""
     miolo = (
-        f'<span class="icone">{icone}</span>'
+        f'<span class="icone">{icone(nome_icone)}</span>'
         f'<span class="textos"><strong>{escape(titulo)}</strong><small>{escape(subtitulo)}</small></span>'
         '<span class="seta">→</span>'
     )
-    return link(endereco, miolo, "cartao", nova_aba)
+    return link(endereco, miolo, "cartao")
 
 
 def topo(salao: dict) -> str:
@@ -49,21 +50,10 @@ def topo(salao: dict) -> str:
     </header>"""
 
 
-def cartoes(salao: dict) -> str:
-    """Agendar, um cartão por serviço em destaque e os atalhos (galeria, mapa, Instagram, lista)."""
-    whats = salao["whatsapp"]
-    itens = [cartao(link_whatsapp(whats, salao["mensagem_whatsapp"]), "📅", "Agendar Horário", "Reserve seu momento especial")]
-    for c in salao.get("cartoes", []):
-        pedido = f"Oi! Vim pelo site e quero agendar: {c['titulo']}."
-        itens.append(cartao(link_whatsapp(whats, pedido), c["icone"], c["titulo"], c["subtitulo"]))
-    if salao.get("instagram"):
-        perfil = f"https://instagram.com/{salao['instagram']}"
-        itens.append(cartao(perfil, "🖼️", "Galeria de Trabalhos", "Nossas criações no Instagram"))
-    itens.append(cartao(link_mapa(salao), "📍", "Localização", "Como chegar"))
-    if salao.get("instagram"):
-        itens.append(cartao(perfil, "📸", "Instagram", f"@{salao['instagram']}"))
-    itens.append(cartao("#servicos", "📋", "Todos os Serviços", "Veja nossa lista completa", nova_aba=False))
-    return f'<nav class="cartoes">{"".join(itens)}</nav>'
+def cartoes(itens: list[dict]) -> str:
+    """A pilha de cartões (agendar, serviços, galeria, mapa...)."""
+    blocos = "".join(cartao(c["endereco"], c.get("icone", ""), c["titulo"], c.get("subtitulo", "")) for c in itens)
+    return f'<nav class="cartoes">{blocos}</nav>'
 
 
 def diferenciais(salao: dict) -> str:
@@ -71,7 +61,7 @@ def diferenciais(salao: dict) -> str:
     itens = salao.get("diferenciais", [])
     if not itens:
         return ""
-    blocos = "".join(f'<div class="caixa"><span>{d["icone"]}</span><p>{escape(d["texto"])}</p></div>' for d in itens)
+    blocos = "".join(f'<div class="caixa">{icone(d["icone"])}<p>{escape(d["texto"])}</p></div>' for d in itens)
     return f"""
     <section>
       <p class="rotulo">Nossos diferenciais</p>
@@ -102,7 +92,7 @@ def textos(salao: dict) -> str:
 
 
 def servicos(salao: dict) -> str:
-    """Lista completa, por grupo. É para onde o cartão "Todos os Serviços" leva."""
+    """Lista completa, por grupo, para quando o cartão "Todos os Serviços" aponta para #servicos."""
     grupos = []
     for grupo, itens in servicos_por_grupo(salao).items():
         linhas = []
@@ -120,30 +110,30 @@ def servicos(salao: dict) -> str:
 
 
 def rodape(salao: dict) -> str:
-    """WhatsApp, endereço e, no lugar do crédito, a linha discreta que leva ao painel."""
-    agendar = link_whatsapp(salao["whatsapp"], salao["mensagem_whatsapp"])
+    """WhatsApp e, no lugar da linha de crédito, a linha discreta que leva ao painel da equipe."""
     horarios = "".join(f"<p>{escape(h['dias'])}: {escape(h['horas'])}</p>" for h in salao.get("horarios", []))
     return f"""
-    {cartao(agendar, "💬", "Agende pelo WhatsApp", f"{telefone_formatado(salao['whatsapp'])} · resposta rápida")}
+    {cartao(link_whatsapp(salao["whatsapp"]), "message-circle", "Agende pelo WhatsApp", "Resposta rápida & atendimento exclusivo")}
     <footer class="rodape">
       <div class="logo pequeno" aria-hidden="true"><span class="mono">{escape(salao.get("monograma", ""))}</span></div>
       <p class="rodape-nome">{escape(salao["nome"])} {escape(salao.get("subtitulo", ""))}</p>
       <p>{escape(salao.get("rodape", ""))}</p>
-      <p>{escape(salao["endereco"])}, {escape(salao["bairro_cidade"])}</p>
-      {horarios or "<p>🕐 Atendimento com hora marcada</p>"}
+      <div class="hora">{icone("clock")}<div>{horarios or "<p>Atendimento com hora marcada</p>"}</div></div>
       <p class="miudo">© 2026 · Todos os direitos reservados</p>
-      {link("painel", "Acesso da equipe", "equipe", nova_aba=False)}
+      {link(salao.get("link_equipe", "painel"), "Acesso da equipe", "equipe")}
     </footer>"""
 
 
 salao = carregar_salao()
+itens = cartoes_da_pagina(salao)
+lista = servicos(salao) if any(c["endereco"] == "#servicos" for c in itens) else ""
 pagina = f"""
 <div class="vitrine">
   {topo(salao)}
-  {cartoes(salao)}
+  {cartoes(itens)}
   {diferenciais(salao)}
   {textos(salao)}
-  {servicos(salao)}
+  {lista}
   {rodape(salao)}
 </div>"""
 

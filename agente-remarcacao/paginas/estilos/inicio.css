@@ -1,97 +1,110 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&family=Pinyon+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&family=Pinyon+Script&display=swap');
 
-/* Esconde a moldura do Streamlit e pinta o fundo rosado: aqui é a vitrine do salão. */
+/* Esconde a moldura do Streamlit e pinta o fundo rosado: aqui é a vitrine do salão.
+   As cores seguem o site que a Santa Cor já usava. */
 header[data-testid="stHeader"], [data-testid="stSidebarCollapsedControl"], [data-testid="stToolbar"] {display: none;}
-.stApp {background: linear-gradient(180deg, #F8E9EA 0%, #F4DEE0 50%, #F7E6E5 100%);}
+.stApp {background: linear-gradient(oklch(0.95 0.02 12) 0%, oklch(0.93 0.028 8) 50%, oklch(0.94 0.025 15) 100%) fixed;}
 .block-container {padding-top: 1.5rem; padding-bottom: 2rem;}
 
 /* Cores e fontes da página; ficam iguais no tema claro e no escuro do Streamlit. */
 .vitrine {
-  --texto: #6E4F55; --suave: #A88389; --cobre: #B57A68; --titulo: #8B5E66;
-  --cartao: rgba(255, 255, 255, .55); --borda: rgba(255, 255, 255, .85); --sombra: 0 8px 24px rgba(181, 122, 104, .12);
-  max-width: 30rem; margin: 0 auto; color: var(--texto);
-  font-family: 'Jost', system-ui, sans-serif; font-weight: 300; font-size: 1rem; line-height: 1.55;
+  --malva: oklch(0.48 0.05 15); --cobre: oklch(0.68 0.08 40);
+  --malva-70: oklch(0.48 0.05 15 / .7); --malva-60: oklch(0.48 0.05 15 / .6);
+  --sombra: 0 8px 24px -10px oklch(0.68 0.08 40 / .28), inset 0 0 0 1px oklch(1 0 0 / .4), 0 20px 40px -20px oklch(0.68 0.075 12 / .3);
+  max-width: 28rem; margin: 0 auto; color: var(--malva);
+  font-family: 'Jost', system-ui, sans-serif; font-weight: 400; font-size: 1rem; line-height: 1.55;
 }
 .vitrine h1, .vitrine h2, .vitrine h3, .vitrine strong, .vitrine blockquote {font-family: 'Cormorant Garamond', Georgia, serif;}
 .vitrine p {margin: 0;}
 .vitrine em {font-style: italic; color: var(--cobre);}
 .vitrine a {text-decoration: none !important;}
+.vitrine svg {width: 1.25rem; height: 1.25rem;}
 /* O Streamlit põe um ícone de âncora e espaço em todo título; aqui não precisa. */
 .vitrine [data-testid="stHeaderActionElements"] {display: none;}
 .vitrine h1, .vitrine h2, .vitrine h3 {padding: 0 !important;}
 
 /* Rótulos pequenos espaçados, como "NOSSOS DIFERENCIAIS". */
-.rotulo {font-size: .72rem; letter-spacing: .3em; text-transform: uppercase; color: var(--cobre); font-weight: 500;}
+.rotulo {font-size: .7rem !important; letter-spacing: .3em; text-transform: uppercase; color: var(--cobre); font-weight: 500;}
 
 /* Topo: logo redondo, nome, especialidade, frase e selos. */
-.topo {text-align: center; padding: 1rem 0 1.5rem;}
-.logo {width: 8.5rem; height: 8.5rem; margin: 0 auto 1.25rem; border-radius: 50%; display: flex; flex-direction: column;
-       align-items: center; justify-content: center; background: radial-gradient(circle at 35% 30%, #fff, #F6E3E4);
-       box-shadow: 0 0 0 6px rgba(255, 255, 255, .7), var(--sombra);}
+.topo {text-align: center; padding: 1rem 0 2rem;}
+.logo {width: 8.5rem; height: 8.5rem; margin: 0 auto 1.5rem; border-radius: 50%; display: flex; flex-direction: column;
+       align-items: center; justify-content: center; background: radial-gradient(circle at 35% 30%, #fff, oklch(0.93 0.028 8));
+       box-shadow: 0 0 0 6px oklch(1 0 0 / .7), var(--sombra);}
 .logo .mono {font-family: 'Pinyon Script', cursive; font-size: 2.6rem; line-height: 1; color: var(--cobre);}
-.logo-nome {font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; letter-spacing: .12em; text-transform: uppercase; color: var(--titulo);}
-.logo.pequeno {width: 5.5rem; height: 5.5rem; margin-bottom: .75rem;}
-.logo.pequeno .mono {font-size: 2rem;}
-.selo {display: flex; align-items: center; justify-content: center; gap: .75rem; font-size: .75rem;
+.logo-nome {font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; letter-spacing: .12em; text-transform: uppercase; color: var(--malva);}
+.logo.pequeno {width: 5rem; height: 5rem; margin-bottom: .75rem;}
+.logo.pequeno .mono {font-size: 1.8rem;}
+.selo {display: flex; align-items: center; justify-content: center; gap: .5rem; font-size: .7rem !important;
        letter-spacing: .3em; text-transform: uppercase; color: var(--cobre); font-weight: 500;}
-.selo::before, .selo::after {content: ""; width: 2rem; height: 1px; background: currentColor; opacity: .5;}
-.topo h1 {font-size: clamp(2.8rem, 12vw, 3.6rem); font-weight: 400; line-height: 1; margin: .9rem 0 .4rem; color: var(--titulo);}
-.topo h1 em {display: block; font-size: .7em; color: #D4A9AE;}
-.especialidade {font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--titulo); margin: .75rem 0 .5rem !important;}
-.frase {color: var(--suave); max-width: 24rem; margin: 0 auto !important;}
-.selos {display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: 1.25rem;}
-.selos span {font-size: .78rem; padding: .35rem .8rem; border-radius: 999px; background: var(--cartao); border: 1px solid var(--borda);}
+.selo::before, .selo::after {content: ""; width: 2.5rem; height: 1px; background: currentColor; opacity: .5;}
+.topo h1 {font-size: 3rem; font-weight: 500; line-height: 1.05; margin: .75rem 0 0; color: var(--malva);}
+.topo h1 em {display: block; font-size: 2.25rem; font-weight: 300; margin-top: .25rem;}
+.especialidade {font-size: .875rem !important; font-weight: 500; color: oklch(0.48 0.05 15 / .8); margin-top: 1rem !important;}
+.frase {font-size: .9rem !important; color: var(--malva-70); max-width: 24rem; margin: 1rem auto 0 !important;}
+.selos {display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: 1.5rem;}
+.selos span {font-size: .75rem; padding: .35rem .85rem; border-radius: 999px; color: var(--malva);
+             background: linear-gradient(135deg, oklch(1 0 0 / .7), oklch(1 0 0 / .45)); border: .8px solid oklch(1 0 0 / .6);}
 
 /* Cartões clicáveis em pilha. */
-.cartoes {display: flex; flex-direction: column; gap: .8rem;}
-.cartao {display: flex; align-items: center; gap: 1rem; padding: .95rem 1.1rem; border-radius: 1.4rem;
-         background: var(--cartao); border: 1px solid var(--borda); box-shadow: var(--sombra); color: var(--texto) !important;}
-.cartao:hover {background: rgba(255, 255, 255, .8);}
+.cartoes {display: flex; flex-direction: column; gap: .75rem;}
+.cartao {display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-radius: 28px;
+         background: linear-gradient(135deg, oklch(1 0 0 / .75), oklch(1 0 0 / .55));
+         border: .8px solid oklch(0.68 0.08 40 / .35); box-shadow: var(--sombra); color: var(--malva) !important;
+         transition: transform .3s;}
+.cartao:hover {transform: translateY(-2px);}
 .cartao:focus-visible {outline: 2px solid var(--cobre); outline-offset: 3px;}
-.cartao .icone {flex: none; width: 3rem; height: 3rem; border-radius: 50%; display: grid; place-items: center;
-                font-size: 1.25rem; background: #F6DDE0;}
-.cartao .textos {flex: 1; display: flex; flex-direction: column;}
-.cartao strong {font-size: 1.35rem; font-weight: 500; color: var(--titulo); line-height: 1.15;}
-.cartao small {font-size: .82rem; color: var(--suave);}
-.cartao .seta {color: #D7AFA6; font-size: 1.2rem;}
+.cartao .icone {flex: none; width: 3rem; height: 3rem; border-radius: 1rem; display: grid; place-items: center; color: var(--malva);
+                background: linear-gradient(to bottom right, oklch(0.925 0.028 12), oklch(0.885 0.038 8));
+                box-shadow: inset 0 2px 4px oklch(1 0 0 / .6);}
+.cartao .textos {flex: 1; min-width: 0; display: flex; flex-direction: column;}
+.cartao strong {font-size: 1.25rem; font-weight: 600; color: var(--malva); line-height: 1.25;}
+.cartao small {font-size: .75rem; letter-spacing: .025em; color: var(--malva-60); margin-top: .125rem;}
+.cartao .seta {color: var(--cobre); opacity: .6; transition: transform .5s, opacity .5s;}
+.cartao:hover .seta {opacity: 1; transform: translateX(4px);}
 
 /* Seções e blocos de texto. */
-.vitrine section, .bloco {margin-top: 2.25rem;}
+.vitrine section, .bloco {margin-top: 3rem;}
 .vitrine section > .rotulo {text-align: center;}
-.vitrine h2 {font-size: 2rem; font-weight: 400; text-align: center; color: var(--titulo); margin: .4rem 0 1.25rem; line-height: 1.15;}
-.grade {display: grid; grid-template-columns: 1fr 1fr; gap: .8rem;}
-.caixa {padding: 1.1rem; border-radius: 1.25rem; background: var(--cartao); border: 1px solid var(--borda); box-shadow: var(--sombra);}
-.caixa span {font-size: 1.1rem;}
-.caixa p {font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--titulo); margin-top: .5rem !important;}
-.bloco {padding: 1.75rem 1.5rem; border-radius: 1.6rem; text-align: center; background: var(--cartao);
-        border: 1px solid var(--borda); box-shadow: var(--sombra);}
+.vitrine h2 {font-size: 2rem; font-weight: 400; text-align: center; color: var(--malva); margin: .4rem 0 1.25rem; line-height: 1.2;}
+.grade {display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;}
+.caixa {padding: 1.25rem 1rem; border-radius: 40px; color: var(--cobre);
+        background: linear-gradient(135deg, oklch(1 0 0 / .7), oklch(1 0 0 / .45)); border: .8px solid oklch(1 0 0 / .6);
+        box-shadow: var(--sombra);}
+.caixa svg {margin-left: .25rem;}
+.caixa p {font-family: 'Cormorant Garamond', serif; font-size: 1.1rem !important; line-height: 1.3; color: var(--malva); margin-top: .75rem !important;}
+.bloco {padding: 2rem 1.5rem; border-radius: 28px; text-align: center;
+        background: linear-gradient(135deg, oklch(1 0 0 / .75), oklch(1 0 0 / .55)); border: .8px solid oklch(1 0 0 / .6);
+        box-shadow: var(--sombra);}
 .bloco h2 {margin-bottom: .75rem;}
-.bloco > p:last-child {color: var(--suave);}
-.bloco.escuro {background: linear-gradient(160deg, #6A4549, #3F2B2D); border-color: transparent; color: #F6E6E6;}
+.bloco > p:last-child {font-size: .9rem !important; color: var(--malva-70);}
+.bloco.escuro {background: linear-gradient(160deg, oklch(0.42 0.05 15), oklch(0.3 0.03 20)); border-color: transparent; color: #F6E6E6;}
 .bloco.escuro h2 {color: #FFFFFF;}
-.bloco.escuro em {color: #D9A08C;}
-.bloco.escuro .rotulo {color: #D9A08C;}
-.bloco.escuro > p:last-child {color: #EBD3D3;}
-.estrelas {color: var(--cobre); font-size: 1.4rem; letter-spacing: .2em;}
-.depoimento blockquote {font-size: 1.3rem; font-style: italic; color: var(--titulo); margin: .75rem 0 1rem; padding: 0; border: none;}
-.assinatura {display: flex; align-items: center; justify-content: center; gap: .75rem; font-size: .72rem;
+.bloco.escuro em, .bloco.escuro .rotulo {color: oklch(0.78 0.08 40);}
+.bloco.escuro > p:last-child {color: oklch(0.92 0.02 12);}
+.estrelas {color: var(--cobre); font-size: 1.2rem; letter-spacing: .2em;}
+.depoimento blockquote {font-size: 1.3rem; font-style: italic; color: var(--malva); margin: .75rem 0 1rem; padding: 0; border: none;}
+.assinatura {display: flex; align-items: center; justify-content: center; gap: .75rem; font-size: .7rem !important;
              letter-spacing: .3em; text-transform: uppercase; color: var(--cobre) !important;}
 .assinatura::before, .assinatura::after {content: ""; width: 2rem; height: 1px; background: currentColor; opacity: .5;}
 
-/* Lista completa de serviços. */
+/* Lista completa de serviços (só quando o cartão "Todos os Serviços" aponta para cá). */
 #servicos {text-align: left;}
-#servicos h3 {font-size: 1.4rem; font-weight: 500; color: var(--titulo); margin: 1rem 0 .25rem;}
+#servicos h3 {font-size: 1.4rem; font-weight: 500; color: var(--malva); margin: 1rem 0 .25rem;}
 #servicos ul {list-style: none; margin: 0; padding: 0;}
 #servicos li {display: flex; gap: .75rem; padding: .3rem 0; margin: 0;}
 #servicos li::before {content: "✦"; color: var(--cobre); font-size: .7rem; padding-top: .3rem;}
 #servicos .nome {flex: 1;}
-#servicos .dur {color: var(--suave);}
+#servicos .dur {color: var(--malva-60);}
 #servicos .preco {font-weight: 500;}
 
-/* Rodapé. O último link (Acesso da equipe) tem a mesma cor apagada do copyright: discreto de propósito. */
-.vitrine > .cartao {margin-top: 2.25rem;}
-.rodape {text-align: center; padding: 2.5rem 0 1rem; font-size: .85rem; color: var(--suave);}
-.rodape p {margin: .2rem 0 !important;}
-.rodape-nome {font-family: 'Cormorant Garamond', serif; font-size: 1.6rem !important; color: var(--titulo);}
-.miudo {font-size: .75rem; opacity: .8; margin-top: 1rem !important;}
-.equipe {display: inline-block; margin-top: .3rem; font-size: .75rem; color: var(--suave) !important; opacity: .7;}
+/* Rodapé. "Acesso da equipe" fica no lugar e no tamanho da antiga linha de crédito. */
+.vitrine > .cartao {margin-top: 3rem;}
+.rodape {text-align: center; padding: 3.5rem 0 2rem; color: var(--malva-70);}
+.rodape p {font-size: .75rem !important; margin: .5rem 0 0 !important;}
+.rodape .rodape-nome {font-family: 'Cormorant Garamond', serif; font-size: 1.5rem !important; color: var(--malva); margin-top: 0 !important;}
+.hora {display: inline-flex; align-items: center; gap: .5rem; margin-top: .75rem; color: var(--malva-60);}
+.hora svg {width: .9rem; height: .9rem;}
+.hora p {margin: 0 !important;}
+.rodape .miudo {font-size: .7rem !important; color: oklch(0.48 0.05 15 / .5); margin-top: 1.5rem !important;}
+.equipe {display: inline-block; margin-top: .25rem; font-size: .7rem; font-weight: 500; color: var(--cobre) !important;}

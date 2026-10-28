@@ -314,14 +314,17 @@ a não ser quando um item abaixo diz outra coisa.
 ## D28. Página pública no estilo "link na bio" da Santa Cor
 
 - Decisão: a página pública passou a seguir o site que a Santa Cor já usa (feito no Lovable): fundo rosado,
-  logo redondo, cartões em pilha (agendar, um por serviço em destaque, galeria, localização, Instagram e
-  lista completa), "Nossos diferenciais" em grade, os cartões de texto e o depoimento. Fontes Jost e
-  Cormorant Garamond. Cada cartão de serviço abre o WhatsApp já com o nome do serviço na mensagem.
-- No rodapé, no lugar da linha de crédito do site original, fica um link discreto "Acesso da equipe" que
-  leva ao `/painel`. Isso muda o D19: a página pública agora tem um caminho para o painel, de propósito.
-  Quem protege continua sendo a senha (`APP_SENHA`). Um teste confere que esse é o único link para o painel.
-- As fotos e o logo do site original não foram copiados; o logo virou o monograma num círculo. Se o salão
-  mandar as fotos, dá para colocar.
-- Cada seção só aparece se tiver conteúdo em `salao.local.json` (ou no segredo `SALAO_JSON`).
-- Motivo: o autor pediu a página parecida com a que o salão já divulga, com o acesso ao painel escondido
-  no fim da página.
+  logo redondo, cartões em pilha, "Nossos diferenciais" em grade, os cartões de texto e o depoimento, com as
+  mesmas cores, fontes (Jost e Cormorant Garamond) e ícones de linha (Lucide, em `paginas/icones.py`).
+- Os cartões vêm de `links` nos dados do salão, com os mesmos endereços do site antigo: agendar e cada
+  serviço abrem o WhatsApp com a mensagem pronta; galeria, avaliações, mapa, Instagram e a lista de serviços
+  vão para os links que o salão já usava. Sem `links`, a página monta os cartões básicos
+  (`cartoes_da_pagina` em `src/salao.py`).
+- No rodapé, no lugar da linha de crédito do site original, fica "Acesso da equipe". O endereço vem de
+  `link_equipe`: o painel da equipe é o Encaixa (o app da raiz do repositório), onde a função de remarcação
+  está sendo colocada. Sem `link_equipe`, vai para o `/painel` daqui. Isso muda o D19: a página pública
+  agora tem um caminho para o painel, de propósito. Um teste confere que esse é o único.
+- O Agendar do site antigo aponta para o número sem o 9 (558393782040); aqui usa o mesmo número dos
+  serviços (5583993782040).
+- As fotos e o logo do site original não foram copiados; o logo virou o monograma num círculo.
+- Motivo: o autor pediu a página igual à que o salão já divulga, com o acesso ao painel escondido no fim.

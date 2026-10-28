@@ -3,13 +3,14 @@ import shutil
 
 import pytest
 
+from paginas.icones import icone
 from src.dados import PASTA_DADOS, ErroDados
 from src.salao import (
     carregar_salao,
+    cartoes_da_pagina,
     link_mapa,
     link_whatsapp,
     servicos_por_grupo,
-    telefone_formatado,
 )
 
 
@@ -38,13 +39,8 @@ def test_numero_mal_escrito_gera_erro(tmp_path):
 def test_pagina_publica_nao_le_clientes():
     texto = (PASTA_DADOS.parent / "paginas" / "inicio.py").read_text(encoding="utf-8")
     assert "carregar_clientes" not in texto and "carregar_cenarios" not in texto
-    # o único caminho para o painel é a linha "Acesso da equipe" do rodapé (o painel pede senha)
-    assert texto.count('link("painel"') == 1 and "page_link" not in texto
-
-
-def test_telefone_formatado_para_mostrar():
-    assert telefone_formatado("5583993782040") == "(83) 99378-2040"
-    assert telefone_formatado("551134567890") == "(11) 3456-7890"
+    # o único caminho para o painel é a linha "Acesso da equipe" do rodapé
+    assert texto.count('salao.get("link_equipe"') == 1 and "page_link" not in texto
 
 
 def test_servicos_agrupados_e_sem_preco_tudo_bem():
@@ -61,3 +57,28 @@ def test_dados_da_hospedagem_por_cima_de_tudo(tmp_path, monkeypatch):
     salao = carregar_salao(tmp_path)
     assert salao["nome"] == "Santa Cor"
     assert "Santa%20Cor" not in link_mapa(salao)  # o mapa usa o endereço, não o nome
+
+
+def test_cartao_de_servico_abre_o_whatsapp_com_o_pedido():
+    salao = {"whatsapp": "5583993782040", "mensagem_whatsapp": "Oi!", "links": [
+        {"titulo": "Agendar Horário", "mensagem": ""},
+        {"titulo": "Alongamentos", "mensagem": "Olá, gostaria de agendar um horário para Alongamento. "},
+        {"titulo": "Instagram", "link": "https://www.instagram.com/santacoresmalteriajp/"},
+    ]}
+    agendar, servico, instagram = (c["endereco"] for c in cartoes_da_pagina(salao))
+    assert agendar == "https://wa.me/5583993782040"
+    # igual ao link do site antigo do salão
+    assert servico == ("https://wa.me/5583993782040?text=Ol%C3%A1%2C%20gostaria%20de%20agendar"
+                       "%20um%20hor%C3%A1rio%20para%20Alongamento.%20")
+    assert instagram == "https://www.instagram.com/santacoresmalteriajp/"
+
+
+def test_sem_links_nos_dados_a_pagina_tem_os_cartoes_basicos():
+    salao = carregar_salao()
+    salao.pop("links", None)
+    titulos = [c["titulo"] for c in cartoes_da_pagina(salao)]
+    assert titulos[0] == "Agendar Horário" and "Localização" in titulos and "Todos os Serviços" in titulos
+
+
+def test_icone_conhecido_vira_svg_e_o_resto_fica_como_texto():
+    assert icone("gem").startswith("<svg") and icone("💅") == "💅"
