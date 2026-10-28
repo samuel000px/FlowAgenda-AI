@@ -15,6 +15,13 @@
       "when": 1793127922594,
       "tag": "0001_foamy_klaw",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793194332369,
+      "tag": "0002_whatsapp",
+      "breakpoints": true
     }
   ]
 }

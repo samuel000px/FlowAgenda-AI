@@ -42,7 +42,7 @@ Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o ap
 3. Em **Clientes**, cadastre contato, autorização para antecipação, disposição de 0 a 10 e profissional preferida.
 4. Cadastre horários em **Agenda → Novo agendamento**.
 5. Um cancelamento libera uma vaga e prepara uma proposta quando há candidata elegível e benefício esperado positivo.
-6. Em **Atendimento**, copie a proposta para o canal usado pela esmalteria e registre a resposta recebida. Uma resposta ambígua gera um pedido de esclarecimento; uma segunda ambiguidade encerra aquela proposta.
+6. Em **Atendimento**, acompanhe o WhatsApp conectado em Integrações ou registre retornos de outros canais. Na conexão Meta, propostas novas são enviadas aos participantes autorizados quando existe uma janela de conversa ativa. Uma resposta ambígua gera um pedido de esclarecimento; uma segunda ambiguidade encerra aquela proposta.
 7. O aceite da cliente aguarda **Remarcações → Aprovar alteração**. Só então o horário muda; a vaga de origem pode gerar até dois desdobramentos. Recusas e encerramento sem resposta podem preparar a próxima proposta.
 8. Em **Fechamento**, registre presenças e faltas após o atendimento. O histórico alimenta os cálculos e pode ser exportado em CSV.
 
@@ -68,10 +68,20 @@ A autorização permite gerenciar o calendário dedicado criado pela aplicação
 
 A sincronização é do painel para o Google; edições diretamente no Google não são importadas. Se o Google falhar, a operação local fica salva e o painel mostra erro/pendência em Integrações, com nova tentativa. Isso difere do adaptador de teste Python, que desfaz o movimento quando o adaptador externo falha.
 
+## WhatsApp oficial da Meta
+
+Configure em **Integrações → WhatsApp Business · Meta**. O painel recebe o ID do telefone, a versão da API, o token de acesso, o App Secret e a lista de participantes. As credenciais ficam criptografadas no servidor. A configuração e o teste completo estão no [guia do WhatsApp](docs/whatsapp-meta.md).
+
+O servidor recebe respostas por webhook assinado, processa propostas sem remover a aprovação do gerente e acompanha estados de entrega. Há modos para número de teste e número da esmalteria. O número real precisa ser conectado à Cloud API pela Meta antes de preencher as credenciais. Ter o aplicativo WhatsApp Business instalado não basta. Mensagens livres respeitam a janela de 24 horas; modelos de encaixe e presença fora dela exigem aprovação da Meta e autorização explícita no painel para possíveis cobranças, desligada por padrão. Para receber mensagens, a aplicação precisa de HTTPS público.
+
+A publicação Cloudflare inclui a tabela WhatsApp e uma rotina a cada minuto para lembretes e filas, mesmo com o painel fechado. Ela só processa conexões com automação ativada. A data da última execução aparece em Integrações. Nenhuma mensagem real é enviada pelos testes automatizados.
+
+Após atualizar uma instalação existente, execute `npm run build` e `npm run db:init` para preparar a nova tabela sem apagar a agenda.
+
 ## Limites atuais
 
-- WhatsApp é um canal manual: há registro de conversas e mensagens preparadas, mas nenhum envio automático.
-- Lembretes são preparados 30 minutos antes enquanto o painel está aberto. Silêncio nunca cancela uma reserva.
+- WhatsApp exige conta Meta liberada e servidor HTTPS acessível. Sem conexão, o atendimento manual permanece disponível. Há suporte a texto, botões e dois modelos específicos; anexos e cadastro Embedded Signup não estão incluídos.
+- Lembretes são preparados na janela de 30 minutos antes pelo painel local ou pela rotina na hospedagem. Silêncio nunca cancela uma reserva. A confirmação final após aprovação da gerente ainda depende da janela de conversa ativa.
 - A lista de espera informa a demanda; novos encaixes dessa lista são agendados pela gerente. O motor importado antecipa clientes que já têm horário futuro.
 - Os parâmetros de probabilidade são heurísticos; não há promessa de aumento de receita.
 - Ainda não há contas individuais por funcionária, recuperação de senha ou importação de dados externos.
@@ -90,6 +100,10 @@ Agendas antigas abertas com o link de gerente são preservadas após login. Os d
 | `lib/admin-auth.ts`, `app/api/session/route.ts` | Acesso administrativo |
 | `app/api/room/route.ts` | API e persistência com controle de versão |
 | `lib/google-calendar.ts`, `lib/calendar-core.mjs` | OAuth e sincronização |
+| `app/whatsapp-panel.tsx`, `app/whatsapp-chat.tsx` | Configuração Meta e central de atendimento |
+| `lib/whatsapp-core.mjs`, `lib/whatsapp.ts`, `lib/whatsapp-inbox.ts` | Transporte, fila, assinatura e processamento de respostas |
+| `lib/whatsapp-templates.mjs`, `lib/whatsapp-scheduler.ts`, `worker/index.ts` | Modelos e lembretes automáticos na hospedagem |
+| `app/api/whatsapp/` | API administrativa e webhook público assinado |
 | `tests/fixtures/remarcacao-parity.json` | Resultados dos oito cenários executados no Python |
 | `agente-remarcacao/` | Projeto Python/Streamlit original |
 

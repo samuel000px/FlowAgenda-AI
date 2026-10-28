@@ -31,3 +31,6 @@ if(calendarTables.length===0){
 }else if(calendarTables.length!==2){
   throw new Error('Estrutura do calendário incompleta. Nenhum dado foi apagado.');
 }
+const whatsappTables=JSON.parse(wrangler(['--command',"SELECT name FROM sqlite_master WHERE type='table' AND name='whatsapp_connections'",'--json'])).flatMap(item=>item.results||[]);
+if(!whatsappTables.length)wrangler(['--file','drizzle/0002_whatsapp.sql','--json']);
+console.log('Integração WhatsApp preparada.');
