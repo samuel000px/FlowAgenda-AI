@@ -188,3 +188,20 @@ Arquivos principais: `app/staff-portal.tsx` (interface), `app/staff.css` (estilo
 - Registre as despesas do dia para obter o saldo recebido menos despesas. Esse saldo não é uma demonstração de lucro e não inclui despesas ainda não lançadas. Registros ficam no banco da agenda, sem nova migração.
 
 As conexões Google Agenda e WhatsApp ficam em **Configurações → Integrações**. Os atalhos da central de atendimento abrem essa mesma seção.
+
+## Finanças
+
+Em **Finanças** há quatro partes:
+
+- **Caixa do dia**: pagamentos e despesas do dia.
+- **Parceiras**: o fechamento da semana de cada parceira, como na planilha antiga: atendimentos, total, percentual de repasse, parte dela, descontos (lanche, adiantamento), valor a pagar e parte do salão. Um atendimento sem pagamento registrado entra com o preço da agenda.
+- **Resultado e previsão**: o mês com faturamento bruto, repasses, despesas, custos fixos e líquido; o gráfico mês a mês; e a previsão dos próximos meses em faixa (80%), com crescimento médio e o teste de quanto ela costuma errar. O modelo (`lib/previsao.mjs`) é tendência mais o efeito de cada mês do ano; precisa de pelo menos 6 meses.
+- **Custos e histórico**: custos fixos mensais, o percentual de repasse de cada parceira (padrão 40%) e a importação do histórico mensal (`mês;bruto;líquido;atendimentos`). Num mês que tem planilha e sistema, vale o maior, para a transição não perder números.
+
+Os números do salão não ficam no código: entram pelo painel.
+
+## Fechamento dos atendimentos
+
+"Fechar atendimento" registra que a cliente veio, quanto pagou de verdade (com o que mudou, como um babyboomer que não estava na agenda), como pagou e quem atendeu. A gerência fecha em **Fechamento**; a equipe fecha pelo celular, na aba **Fechamento** da área das funcionárias, inclusive o atendimento de uma colega. Faltas continuam com a gerência.
+
+Perguntas em aberto para o salão: `docs/perguntas-para-o-salao.md`.

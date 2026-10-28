@@ -138,3 +138,12 @@
 .staff-full p svg{vertical-align:-3px;margin-right:6px;color:#b0763a}
 .staff-full strong{margin-right:4px}
 .staff-full button{width:100%;min-height:50px}
+
+/* Fechamento: a lista aparece também no computador, com o botão ao lado. */
+.staff-appointment-list.always{display:grid;gap:0;padding:0 16px}
+.staff-appointment-list.always .staff-appointment{grid-template-columns:72px minmax(0,1fr) auto;align-items:center}
+.closing-form{display:flex;flex-direction:column;gap:14px}
+.closing-methods{border:0;padding:0;margin:0;display:flex;gap:8px;flex-wrap:wrap}
+.closing-methods legend{font-size:13px;font-weight:600;margin-bottom:8px}
+.closing-methods button{flex:1;min-width:90px}
+.closing-methods button[aria-pressed="true"]{background:#8a4f5c;border-color:#8a4f5c;color:#fff}

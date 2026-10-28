@@ -76,3 +76,30 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .booking-new-client .field{margin:0}
 .booking-new-client .check-field{line-height:1.5}
 @media(max-width:650px){.booking-client-mode{flex-direction:column;gap:6px}.booking-new-client input:not([type=checkbox]){font-size:16px;min-height:46px}}
+
+/* Finanças: abas, quadro das parceiras, gráfico e previsão. */
+.finance-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.total-row td,.finance-line.total-row{border-top:2px solid #eadfe0;background:#fbf6f6}
+.inline-field{display:inline-flex;align-items:center;gap:6px}
+.inline-field input{width:72px}
+.fin-chart{margin:8px 0 0;position:relative}
+.fin-chart svg{width:100%;height:auto;display:block}
+.fin-grid{stroke:#efe6e7;stroke-width:1}
+.fin-base{stroke:#d9cacc;stroke-width:1}
+.fin-axis{font-size:11px;fill:#8d7c7f}
+.fin-bar.real{fill:#8a4f5c}
+.fin-bar.parcial{fill:#c79aa4}
+.fin-bar.previsto{fill:#ead7db;stroke:#b98b95;stroke-width:1;stroke-dasharray:3 2}
+.fin-range{stroke:#8a4f5c;stroke-width:2}
+.fin-chart g:hover .fin-bar,.fin-chart g:focus .fin-bar{opacity:.85}
+.fin-chart g:focus{outline:none}
+.fin-tip{position:absolute;top:0;left:8px;font-size:12px;background:#fff;border:1px solid #eadfe0;border-radius:6px;padding:4px 8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.fin-legend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12px;color:#7d6c6f;margin:8px 0 0}
+.fin-legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:-8px}
+.fin-legend .sw.real{background:#8a4f5c}.fin-legend .sw.parcial{background:#c79aa4}.fin-legend .sw.previsto{background:#ead7db;border:1px dashed #b98b95}
+.fin-forecast{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:16px}
+.fin-forecast>div{padding:12px 14px;border-radius:8px;background:#fbf6f6;display:flex;flex-direction:column;gap:2px}
+.fin-forecast span{font-size:12px;color:#8d7c7f}
+.fin-forecast strong{font-size:18px}
+.fin-test{margin-top:12px}
+.fin-test summary{cursor:pointer;font-size:13px}
