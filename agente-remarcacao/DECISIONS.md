@@ -218,3 +218,20 @@ a não ser quando um item abaixo diz outra coisa.
   aparece se o salão informar a equipe, para não mostrar as profissionais fictícias dos cenários.
   Sem horário de funcionamento, a página convida a combinar pelo WhatsApp.
 - Motivo: o autor mandou o flyer, a lista de serviços e os contatos reais do salão da tia.
+
+## D21. Conjunto de casos difíceis para medir a IA
+
+- Decisão: `avaliacao_ia/` guarda 25 respostas de cliente difíceis (gíria, emoji, aceite com condição,
+  recusa educada, outro horário, pergunta solta e tentativas de dar instrução ao modelo) e 7 situações
+  de escolha montadas como armadilha (vencedora clara, empate exato, nota 10 com histórico ruim, só sobra
+  quem prefere outra profissional, margem mínima, cinco candidatas, nova animada contra veterana).
+  `avaliar_ia.py` roda tudo com o Gemini, repete cada escolha para medir consistência, confere as
+  mensagens por regras (hora, profissional, manter o horário, sem sobrenome, sem "quem responder
+  primeiro") e escreve `docs/avaliacao-ia.md`. `--recalcular` refaz as notas a partir do resultado salvo.
+- Motivo: antes de dar mais liberdade para a IA, medir onde ela acerta e onde erra. Os 7 cenários
+  originais tinham poucas escolhas de verdade.
+- Primeira rodada: interpretação 25 de 25; escolhas 14 de 14 aceitáveis e iguais nas duas rodadas;
+  10 de 14 iguais ao topo do código. As diferenças foram onde o caso permitia: na margem mínima a IA
+  preferiu não mexer, e no quase empate escolheu a veterana em vez da cliente nova, citando o risco de falta.
+- Ficou de fora: notas dadas por outro modelo ("LLM como juiz"). As regras em código bastam para o que
+  queremos conferir e não custam nada.

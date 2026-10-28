@@ -118,11 +118,12 @@ Copie `.env.example` para `.env` (`copy` no Windows, `cp` no Linux/macOS) e colo
 
 | Comando | O que faz | Usa o Gemini? |
 |---|---|---|
-| `pytest` | 90 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
+| `pytest` | 98 testes da lógica, da cascata, da tela e da ponte com agenda externa | Não |
 | `streamlit run app.py` | O site: página pública do salão em `/`, painel em `/painel` e clientes e equipe em `/equipe` | Sim (no painel) |
 | `python terminal.py S1` | Um cenário no terminal; você responde como a cliente e aprova | Sim |
 | `python terminal.py S1 --auto` | O mesmo, com as respostas prontas do cenário e aprovação automática | Sim |
 | `python avaliar.py` | Roda os 7 cenários com as 3 estratégias e reescreve `resultados.md` | Sim |
+| `python avaliar_ia.py` | Mede só a parte de IA com casos difíceis (respostas estranhas, empates, armadilhas) e escreve `docs/avaliacao-ia.md` | Sim |
 | `python prova_de_vida.py` | Confere se a chave funciona | Sim |
 
 Os cenários vão de `S1` a `S7`. Cada execução no terminal grava um log em `logs/`. A camada gratuita
