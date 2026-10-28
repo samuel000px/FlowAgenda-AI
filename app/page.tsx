@@ -2,8 +2,8 @@
 // o painel é a linha "Acesso da equipe" no rodapé, e o painel pede senha.
 import type {Metadata} from 'next';
 import {Award,ArrowLeftRight,Calendar,Clock,Droplets,Eye,Flower2,Gem,Heart,Images,ListChecks,MapPin,MessageCircle,Scissors,Sparkles,Star,WandSparkles,type LucideIcon} from 'lucide-react';
-import {cartoesDaPagina,linkWhatsapp,servicosPorGrupo} from '../lib/vitrine.mjs';
-import {salao,type Cartao as DadosCartao,type Servico} from './salao';
+import {cartoesDaPagina} from '../lib/vitrine.mjs';
+import {salao,type Cartao as DadosCartao} from './salao';
 import './vitrine.css';
 
 export const metadata:Metadata={title:`${salao.nome} ${salao.subtitulo||''} — Beleza em cada detalhe`.replace('  ',' '),description:salao.frase};
@@ -28,7 +28,6 @@ function Cartao({endereco,icone,titulo,subtitulo}:Pick<DadosCartao,'endereco'|'i
 
 export default function Vitrine(){
   const cartoes:DadosCartao[]=cartoesDaPagina(salao);
-  const grupos=Object.entries(servicosPorGrupo(salao)) as [string,Servico[]][];
   const {espaco,para_voce,sobre,depoimento}=salao;
   return <div className="vitrine-fundo"><div className="vitrine">
     <header className="topo">
@@ -53,14 +52,6 @@ export default function Vitrine(){
     {sobre&&<div className="bloco escuro"><p className="rotulo">{salao.nome}</p><h2>{sobre.titulo} <em>{sobre.destaque}</em></h2><p>{sobre.texto}</p></div>}
     {depoimento&&<div className="bloco depoimento"><p className="estrelas" aria-label="5 estrelas">★★★★★</p><blockquote>“{depoimento}”</blockquote><p className="assinatura">{salao.nome} {salao.subtitulo}</p></div>}
 
-    {cartoes.some(c=>c.endereco==='#servicos')&&grupos.length>0&&<section id="servicos" className="bloco">
-      <p className="rotulo">Todos os serviços</p>
-      {grupos.map(([grupo,itens])=><div key={grupo}><h3>{grupo}</h3><ul>{itens.map(s=><li key={s.nome}>
-        <span className="nome">{s.nome}</span>{!!s.duracao_min&&<span className="dur">{s.duracao_min} min</span>}{!!s.preco&&<span className="preco">R$ {s.preco}</span>}
-      </li>)}</ul></div>)}
-    </section>}
-
-    <div className="whats"><Cartao endereco={linkWhatsapp(salao.whatsapp)} icone="message-circle" titulo="Agende pelo WhatsApp" subtitulo="Resposta rápida & atendimento exclusivo"/></div>
     <footer className="rodape">
       <div className="logo pequeno" aria-hidden="true">{salao.logo_pequeno?<img src={salao.logo_pequeno} alt=""/>:<span className="mono">{salao.monograma}</span>}</div>
       <p className="rodape-nome">{salao.nome} {salao.subtitulo}</p>

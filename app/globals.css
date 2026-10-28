@@ -28,3 +28,8 @@
 @media(max-width:1100px){.wa-setup-grid{grid-template-columns:1fr}.wa-webhook{padding:25px 0 0;border-left:0;border-top:1px solid var(--line)}.wa-section-heading{align-items:flex-start;flex-wrap:wrap}}@media(max-width:650px){.wa-integration{padding:19px}.wa-section-heading h2{font-size:17px}.wa-config-form .form-grid{grid-template-columns:1fr}.wa-chat-toolbar{padding:13px}.wa-chat{min-height:800px}}
 
 .wa-readiness{background:var(--green-light);border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:26px}.wa-readiness p,.wa-readiness li{font-size:12px;line-height:1.7}.wa-readiness h3{margin-bottom:10px}.wa-readiness ol{padding-left:20px}.wa-template-fields{border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:14px;min-width:0}.wa-template-fields legend{font-size:12px;font-weight:600}.wa-template-guide summary{cursor:pointer;font-weight:600;color:var(--green)}.wa-template-guide article{margin-top:16px;padding:14px;background:var(--bg);border-radius:7px;display:grid;gap:8px}.wa-template-guide article strong{font-size:11px}.wa-template-guide article p{font-size:12px}.wa-template-guide>p{margin-top:12px}
+
+/* Funcionamento por dia, em Configurações. */
+.hours-field{border:0;padding:0;margin:0 0 .75rem;display:flex;flex-direction:column;gap:.5rem}
+.hours-field legend{font-size:.85rem;font-weight:500;margin-bottom:.5rem}
+.hours-row{display:grid;grid-template-columns:6rem 1fr auto 1fr;align-items:center;gap:.5rem;font-size:.9rem}

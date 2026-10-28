@@ -1,5 +1,5 @@
 {
-  "_comentario": "Dados de EXEMPLO da página pública. Os dados reais ficam em data/salao.local.json (fora do git) ou na variável SALAO_JSON da hospedagem, só com os campos que mudam. Preço e duração dos serviços são opcionais. \"links\" troca os cartões da página (cada um com icone, titulo, subtitulo e link, ou mensagem para o WhatsApp); \"link_equipe\" é para onde leva o \"Acesso da equipe\" do rodapé. diferenciais, espaco, para_voce, sobre e depoimento só aparecem se tiverem conteúdo. Ícones: nomes em paginas/icones.py, ou um emoji.",
+  "_comentario": "Dados de EXEMPLO da página pública. Os dados reais ficam em data/salao.local.json (fora do git) ou na variável SALAO_JSON da hospedagem, só com os campos que mudam. Preço e duração dos serviços são opcionais. Na página do Streamlit, \"links\" troca os cartões; na página web, os seis botões são fixos e \"mapa\" e \"avaliacoes\" trocam os links do Google. \"link_equipe\" é para onde leva o \"Acesso da equipe\" do rodapé. diferenciais, espaco, para_voce, sobre e depoimento só aparecem se tiverem conteúdo. Ícones: nomes em paginas/icones.py, ou um emoji.",
   "nome": "Esmalteria Exemplo",
   "subtitulo": "Esmalteria",
   "monograma": "ee",
@@ -11,7 +11,7 @@
     "🌸 Pé e mão"
   ],
   "whatsapp": "5511900000000",
-  "mensagem_whatsapp": "Oi! Quero agendar um horário.",
+  "mensagem_whatsapp": "Olá! Vim pelo site e quero marcar um serviço.",
   "endereco": "Rua das Flores, 123",
   "bairro_cidade": "Centro, São Paulo (SP)",
   "instagram": "esmalteriaexemplo",
