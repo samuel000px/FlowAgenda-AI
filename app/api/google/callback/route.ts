@@ -13,6 +13,6 @@ export async function GET(req:Request){
 
     return new Response(null,{status:303,headers:{...headers,Location:destination.toString()}});
   }catch(e){
-    return new Response(`Conexão Google Agenda: ${(e as Error).message}\n\nVolte à aba do FlowAgenda-AI e tente novamente.`,{status:400,headers:{...headers,'Content-Type':'text/plain; charset=utf-8'}});
+    return new Response(`Conexão Google Agenda: ${(e as Error).message}\n\nVolte à aba do painel da Santa Cor e tente novamente.`,{status:400,headers:{...headers,'Content-Type':'text/plain; charset=utf-8'}});
   }
 }

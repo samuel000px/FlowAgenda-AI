@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FlowAgenda-AI · Administração",
+  title: "Santa Cor · Administração",
   description: "Agenda, atendimento e gestão da sua esmalteria.",
   icons: {
     icon: "/favicon.svg",

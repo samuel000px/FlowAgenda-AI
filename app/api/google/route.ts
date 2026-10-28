@@ -13,7 +13,7 @@ export async function POST(req:Request){
     if(raw.length>1000)return json({error:'Solicitação inválida.'},413);
     const body=JSON.parse(raw);
     if(body.action==='connect'){
-      if(env.GOOGLE_REDIRECT_URI&&new URL(env.GOOGLE_REDIRECT_URI).origin!==origin)throw Error('Abra o FlowAgenda-AI no mesmo endereço configurado em GOOGLE_REDIRECT_URI.');
+      if(env.GOOGLE_REDIRECT_URI&&new URL(env.GOOGLE_REDIRECT_URI).origin!==origin)throw Error('Abra o painel no mesmo endereço configurado em GOOGLE_REDIRECT_URI.');
       const result=await startOAuth(env,room,String(body.day||''));
       return json({url:result.url},200,{'Set-Cookie':`encaixa_google_state=${result.state}; Path=/api/google; HttpOnly; SameSite=Lax; Max-Age=600${origin.startsWith('https:')?'; Secure':''}`});
     }

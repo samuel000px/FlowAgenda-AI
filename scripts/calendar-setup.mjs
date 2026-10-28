@@ -12,4 +12,4 @@ for(const [name,value] of Object.entries({GOOGLE_CLIENT_ID:'',GOOGLE_CLIENT_SECR
   if(!new RegExp(`^${name}=`, 'm').test(content))content+=`\n${name}="${value}"\n`;
 }
 writeFileSync(path,content,{mode:0o600});
-console.log('Configuração local preparada em .dev.vars. A chave de proteção existente foi preservada. Preencha as credenciais OAuth do Google e reinicie o Encaixa.');
+console.log('Configuração local preparada em .dev.vars. A chave de proteção existente foi preservada. Preencha as credenciais OAuth do Google e reinicie o painel.');
