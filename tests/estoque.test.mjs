@@ -14,6 +14,9 @@ test('estoque: cadastrar, entrada, saída sem passar de zero e lista de reposiç
  stockAction(s,'stock_move',{id:gel.id,delta:-2});
  assert.equal(s.stockLog.length,2);assert.equal(s.stockLog[0].by,'Lili');
  assert.deepEqual(stockView(s,'armario').places.map(([l])=>l),['Armário'],'busca sem acento');
+ stockAction(s,'stock_place_rename',{from:'Expositor 1',to:'Armário'});
+ assert.deepEqual(stockView(s).places.map(([l,i])=>[l,i.length]),[['Armário',2]],'renomear para um lugar que já existe junta os dois');
+ assert.throws(()=>stockAction(s,'stock_place_rename',{from:'Nada',to:'X'}),/não encontrado/);
  stockAction(s,'stock_remove',{id:gel.id});assert.equal(s.stock.length,1);
  assert.throws(()=>stockAction(s,'stock_save',{name:'',qty:1}),/nome/);
 });

@@ -46,7 +46,7 @@ export async function POST(req:Request){
   }
   if(['support_claim','support_close','support_demo'].includes(p.action))supportAction(state,p.action,p,{role:'admin',id:'admin',name:'Administração'});
   else if(['payment_record','expense_add'].includes(p.action))financeAction(state,p.action,p);
-  else if(['stock_save','stock_move','stock_remove'].includes(p.action))stockAction(state,p.action,p);
+  else if(['stock_save','stock_move','stock_remove','stock_place_rename'].includes(p.action))stockAction(state,p.action,p);
   else if(['closing_record','commission_save','deduction_add','deduction_remove','fixed_save','fixed_remove','history_import'].includes(p.action))financeAdminAction(state,p.action,p);
   else actAdmin(state,p.action,p);const changed=await save(row,state);if(changed)await syncCalendar(env,row.id);
   await flushWhatsApp(env,row.id);const fresh=await load(req);return json(view(fresh.state));
