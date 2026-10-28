@@ -109,7 +109,6 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .stock-place summary{cursor:pointer;padding:4px 0}
 .stock-alert td{background:#fdf3e6}
 .stock-low .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.import-box{border-top:1px solid #f0e6e7;padding-top:16px}
 
 /* Equipe: excluir profissional e serviço fora do site */
 .staff-card-actions{display:flex;gap:8px}

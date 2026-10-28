@@ -215,7 +215,7 @@ A planilha que o salão usava vira dados do sistema uma vez só. O arquivo `dado
 - **Equipe atual**, com os serviços das áreas que cada uma atende.
 - **Faturamento** mês a mês, **custos fixos** e **estoque**.
 
-Com o arquivo na pasta `dados/`, o `npm run deploy` importa sozinho no site publicado. No computador, `npm run importar` faz o mesmo no banco local. Também dá para enviar o arquivo em **Configurações → Trazer dados da planilha antiga**. Importar de novo não duplica: a cliente é reconhecida pelo celular ou pelo nome, e o que já está no sistema é mantido (só o que está vazio é completado).
+Com o arquivo na pasta `dados/`, o `npm run deploy` importa sozinho no site publicado. No computador, `npm run importar` faz o mesmo no banco local. Para rodar só a importação no site publicado: `node scripts/importar-planilha.mjs --remote`. Importar de novo não duplica: a cliente é reconhecida pelo celular ou pelo nome, e o que já está no sistema é mantido (só o que está vazio é completado).
 
 O banco publicado aceita no máximo ~100 KB por comando; por isso `scripts/importar-planilha.mjs` envia o cadastro em pedaços para uma tabela de passagem e só no fim troca o registro da agenda.
 
