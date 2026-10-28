@@ -103,3 +103,10 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .fin-forecast strong{font-size:18px}
 .fin-test{margin-top:12px}
 .fin-test summary{cursor:pointer;font-size:13px}
+
+/* Estoque */
+.stock-place{border-top:1px solid #f0e6e7;padding:10px 0}
+.stock-place summary{cursor:pointer;padding:4px 0}
+.stock-alert td{background:#fdf3e6}
+.stock-low .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.import-box{border-top:1px solid #f0e6e7;padding-top:16px}

@@ -61,3 +61,6 @@ service-account*.json
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Dados da planilha do salão (clientes, telefones): nunca vão para o GitHub
+/dados/

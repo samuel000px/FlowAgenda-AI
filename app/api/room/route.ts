@@ -1,5 +1,7 @@
 import {supportAction,supportView} from '../../../lib/support-core.mjs';
 import {financeAction,financeAdminAction} from '../../../lib/finance-core.mjs';
+import {importPackage} from '../../../lib/importacao.mjs';
+import {stockAction} from '../../../lib/estoque.mjs';
 import {env} from 'cloudflare:workers';
 import {actAdmin,candidates,tickAdmin,upgrade} from '../../../lib/flowagenda.mjs';
 import {calendarStatus,syncCalendar} from '../../../lib/google-calendar';
@@ -33,7 +35,8 @@ export async function GET(req:Request){
 export async function POST(req:Request){
  try{
   sameOrigin(req);const {row,state}=await load(req),raw=await req.text();
-  if(raw.length>12000)return json({error:'Solicitação muito longa.'},413);
+  // O arquivo da planilha (clientes, estoque) é grande; só ele passa do limite comum.
+  const importando=raw.startsWith('{"action":"import_package"');if(raw.length>(importando?3000000:12000))return json({error:'Solicitação muito longa.'},413);
   const p=JSON.parse(raw);
   if(p.action==='response'&&!p.result){
    const offer=state.offers.find((o:any)=>o.id===p.id&&o.status==='pending');if(!offer)throw Error('Proposta indisponível.');
@@ -45,6 +48,8 @@ export async function POST(req:Request){
   }
   if(['support_claim','support_close','support_demo'].includes(p.action))supportAction(state,p.action,p,{role:'admin',id:'admin',name:'Administração'});
   else if(['payment_record','expense_add'].includes(p.action))financeAction(state,p.action,p);
+  else if(p.action==='import_package')importPackage(state,p.data);
+  else if(['stock_save','stock_move','stock_remove'].includes(p.action))stockAction(state,p.action,p);
   else if(['closing_record','commission_save','deduction_add','deduction_remove','fixed_save','fixed_remove','history_import'].includes(p.action))financeAdminAction(state,p.action,p);
   else actAdmin(state,p.action,p);const changed=await save(row,state);if(changed)await syncCalendar(env,row.id);
   await flushWhatsApp(env,row.id);const fresh=await load(req);return json(view(fresh.state));

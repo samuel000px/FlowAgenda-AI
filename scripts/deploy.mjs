@@ -69,6 +69,10 @@ if (!segredos.includes('CALENDAR_ENCRYPTION_KEY')) {
 }
 
 console.log(`\nPublicado${endereco ? ` em ${endereco}` : ''}.`);
+
+// Dados da planilha antiga: se dados/santa-cor.json estiver na pasta, entram uma vez só.
+const importacao = spawnSync(process.execPath, ['scripts/importar-planilha.mjs', '--remote'], { stdio: 'inherit' });
+if (importacao.status !== 0) console.error('A importação da planilha falhou; o site foi publicado. Rode de novo: node scripts/importar-planilha.mjs --remote');
 const faltam = ['APP_SENHA', 'GEMINI_API_KEY'].filter((s) => !segredos.includes(s));
 if (faltam.length) {
   console.log('\nFalta cadastrar (cada comando pede o valor, que não aparece na tela):');

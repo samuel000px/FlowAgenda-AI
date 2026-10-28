@@ -205,3 +205,17 @@ Os números do salão não ficam no código: entram pelo painel.
 "Fechar atendimento" registra que a cliente veio, quanto pagou de verdade (com o que mudou, como um babyboomer que não estava na agenda), como pagou e quem atendeu. A gerência fecha em **Fechamento**; a equipe fecha pelo celular, na aba **Fechamento** da área das funcionárias, inclusive o atendimento de uma colega. Faltas continuam com a gerência.
 
 Perguntas em aberto para o salão: `docs/perguntas-para-o-salao.md`.
+
+## Dados da planilha antiga e estoque
+
+A planilha que o salão usava vira dados do sistema uma vez só. O arquivo `dados/santa-cor.json` (fora do Git, porque tem nomes e telefones de clientes) traz:
+
+- **Clientes**: nome, celular, aniversário, quantas vezes veio, última visita, quanto gastou, último serviço e profissional mais frequente.
+- **Equipe atual**, com os serviços das áreas que cada uma atende.
+- **Faturamento** mês a mês, **custos fixos** e **estoque**.
+
+Com o arquivo na pasta `dados/`, o `npm run deploy` importa sozinho no site publicado. No computador, `npm run importar` faz o mesmo no banco local. Também dá para enviar o arquivo em **Configurações → Trazer dados da planilha antiga**. Importar de novo não duplica: a cliente é reconhecida pelo celular ou pelo nome, e o que já está no sistema é mantido (só o que está vazio é completado).
+
+O banco publicado aceita no máximo ~100 KB por comando; por isso `scripts/importar-planilha.mjs` envia o cadastro em pedaços para uma tabela de passagem e só no fim troca o registro da agenda.
+
+**Estoque** fica no menu do painel: itens por lugar, quantidade, mínimo, entrada e saída (com quem fez e o motivo). Itens no mínimo ou abaixo aparecem em "Para repor".
