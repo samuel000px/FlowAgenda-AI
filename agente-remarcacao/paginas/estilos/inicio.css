@@ -1,55 +1,97 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;500;600&family=Pinyon+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&family=Pinyon+Script&display=swap');
 
-/* esconde a moldura do Streamlit: aqui é a vitrine do salão */
+/* Esconde a moldura do Streamlit e pinta o fundo rosado: aqui é a vitrine do salão. */
 header[data-testid="stHeader"], [data-testid="stSidebarCollapsedControl"], [data-testid="stToolbar"] {display: none;}
-.block-container {padding-top: 1rem; padding-bottom: 3rem;}
+.stApp {background: linear-gradient(180deg, #F8E9EA 0%, #F4DEE0 50%, #F7E6E5 100%);}
+.block-container {padding-top: 1.5rem; padding-bottom: 2rem;}
 
+/* Cores e fontes da página; ficam iguais no tema claro e no escuro do Streamlit. */
 .vitrine {
-  --perola: #F6ECE8; --perola-funda: #E9D6CD; --cacau: #3E302B; --dourado: #B98B6B; --dourado-claro: #DDBFA8;
-  max-width: 34rem; margin: 0 auto;
-  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.2rem; line-height: 1.55;
+  --texto: #6E4F55; --suave: #A88389; --cobre: #B57A68; --titulo: #8B5E66;
+  --cartao: rgba(255, 255, 255, .55); --borda: rgba(255, 255, 255, .85); --sombra: 0 8px 24px rgba(181, 122, 104, .12);
+  max-width: 30rem; margin: 0 auto; color: var(--texto);
+  font-family: 'Jost', system-ui, sans-serif; font-weight: 300; font-size: 1rem; line-height: 1.55;
 }
-.vitrine h1, .vitrine h2 {font-family: 'Cinzel', Georgia, serif; font-weight: 400;}
+.vitrine h1, .vitrine h2, .vitrine h3, .vitrine strong, .vitrine blockquote {font-family: 'Cormorant Garamond', Georgia, serif;}
+.vitrine p {margin: 0;}
+.vitrine em {font-style: italic; color: var(--cobre);}
+.vitrine a {text-decoration: none !important;}
+/* O Streamlit põe um ícone de âncora e espaço em todo título; aqui não precisa. */
+.vitrine [data-testid="stHeaderActionElements"] {display: none;}
+.vitrine h1, .vitrine h2, .vitrine h3 {padding: 0 !important;}
 
-/* o cartão perolado, como o flyer: fica igual no tema claro e no escuro */
-.cartao {
-  position: relative; overflow: hidden; text-align: center; color: var(--cacau);
-  padding: 2rem 1.5rem 2.25rem; border-radius: 1.25rem;
-  background:
-    radial-gradient(60% 45% at 20% 10%, rgba(255,255,255,.85), rgba(255,255,255,0)),
-    radial-gradient(70% 55% at 85% 95%, rgba(221,191,168,.55), rgba(221,191,168,0)),
-    linear-gradient(160deg, var(--perola), var(--perola-funda));
-  box-shadow: inset 0 0 0 1px rgba(185,139,107,.35);
-}
-.monograma {font-family: 'Pinyon Script', cursive; font-size: 3.2rem; line-height: 1; color: var(--dourado); margin-bottom: .25rem;}
-.cartao h1 {font-size: clamp(2.3rem, 10vw, 3.1rem); line-height: 1.05; letter-spacing: .04em; margin: 0; color: var(--cacau);}
-.subtitulo {font-family: 'Cinzel', Georgia, serif; font-size: .95rem; letter-spacing: .45em; margin: .35rem 0 0 .45em;}
-.ornamento {display: flex; align-items: center; gap: .6rem; margin: 1.25rem auto; max-width: 14rem; color: var(--dourado);}
-.ornamento::before, .ornamento::after {content: ""; flex: 1; height: 1px; background: var(--dourado-claro);}
-.cartao .frase {margin: 0 auto 1.5rem; max-width: 22rem; font-size: 1.25rem;}
+/* Rótulos pequenos espaçados, como "NOSSOS DIFERENCIAIS". */
+.rotulo {font-size: .72rem; letter-spacing: .3em; text-transform: uppercase; color: var(--cobre); font-weight: 500;}
 
-.agendar {
-  display: block; text-decoration: none !important; font-family: 'Cormorant Garamond', Georgia, serif;
-  font-weight: 600; font-size: 1.3rem; letter-spacing: .02em;
-  background: var(--cacau); color: var(--perola) !important; padding: .9rem 1.25rem; border-radius: 999px;
-}
-.agendar:hover {background: #2D221E;}
-.agendar:focus-visible {outline: 2px solid var(--dourado); outline-offset: 3px;}
-.telefone {font-size: 1.6rem; margin: .9rem 0 0; letter-spacing: .02em;}
-.telefone a {color: var(--cacau) !important; text-decoration: none;}
+/* Topo: logo redondo, nome, especialidade, frase e selos. */
+.topo {text-align: center; padding: 1rem 0 1.5rem;}
+.logo {width: 8.5rem; height: 8.5rem; margin: 0 auto 1.25rem; border-radius: 50%; display: flex; flex-direction: column;
+       align-items: center; justify-content: center; background: radial-gradient(circle at 35% 30%, #fff, #F6E3E4);
+       box-shadow: 0 0 0 6px rgba(255, 255, 255, .7), var(--sombra);}
+.logo .mono {font-family: 'Pinyon Script', cursive; font-size: 2.6rem; line-height: 1; color: var(--cobre);}
+.logo-nome {font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; letter-spacing: .12em; text-transform: uppercase; color: var(--titulo);}
+.logo.pequeno {width: 5.5rem; height: 5.5rem; margin-bottom: .75rem;}
+.logo.pequeno .mono {font-size: 2rem;}
+.selo {display: flex; align-items: center; justify-content: center; gap: .75rem; font-size: .75rem;
+       letter-spacing: .3em; text-transform: uppercase; color: var(--cobre); font-weight: 500;}
+.selo::before, .selo::after {content: ""; width: 2rem; height: 1px; background: currentColor; opacity: .5;}
+.topo h1 {font-size: clamp(2.8rem, 12vw, 3.6rem); font-weight: 400; line-height: 1; margin: .9rem 0 .4rem; color: var(--titulo);}
+.topo h1 em {display: block; font-size: .7em; color: #D4A9AE;}
+.especialidade {font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--titulo); margin: .75rem 0 .5rem !important;}
+.frase {color: var(--suave); max-width: 24rem; margin: 0 auto !important;}
+.selos {display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-top: 1.25rem;}
+.selos span {font-size: .78rem; padding: .35rem .8rem; border-radius: 999px; background: var(--cartao); border: 1px solid var(--borda);}
 
-.vitrine section {padding: 2rem .25rem 0;}
-.vitrine h2 {font-size: 1.45rem; letter-spacing: .06em; margin: 0 0 .5rem;}
-.vitrine ul {list-style: none; margin: 0; padding: 0;}
-.vitrine ul li {margin: 0; padding-left: 0;}  /* o Streamlit recua listas; aqui as linhas vão de ponta a ponta */
-.servicos li {display: flex; gap: .75rem; align-items: baseline; padding: .3rem 0;}
-.servicos li::before {content: "✦"; color: var(--dourado); font-size: .8rem;}
-.servicos .nome {flex: 1;}
-.servicos .dur {opacity: .7;}
-.servicos .preco {font-weight: 600;}
-.horarios li {display: flex; padding: .35rem 0; border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent);}
-.horarios li span:first-child {flex: 1;}
-.vitrine section p {margin: .2rem 0;}
-.vitrine a {color: inherit; text-decoration-color: var(--dourado); text-underline-offset: 3px;}
-.rodape {padding-top: 2.25rem; font-size: 1.1rem;}
-@media (prefers-reduced-motion: no-preference) { .agendar {transition: background-color .15s;} }
+/* Cartões clicáveis em pilha. */
+.cartoes {display: flex; flex-direction: column; gap: .8rem;}
+.cartao {display: flex; align-items: center; gap: 1rem; padding: .95rem 1.1rem; border-radius: 1.4rem;
+         background: var(--cartao); border: 1px solid var(--borda); box-shadow: var(--sombra); color: var(--texto) !important;}
+.cartao:hover {background: rgba(255, 255, 255, .8);}
+.cartao:focus-visible {outline: 2px solid var(--cobre); outline-offset: 3px;}
+.cartao .icone {flex: none; width: 3rem; height: 3rem; border-radius: 50%; display: grid; place-items: center;
+                font-size: 1.25rem; background: #F6DDE0;}
+.cartao .textos {flex: 1; display: flex; flex-direction: column;}
+.cartao strong {font-size: 1.35rem; font-weight: 500; color: var(--titulo); line-height: 1.15;}
+.cartao small {font-size: .82rem; color: var(--suave);}
+.cartao .seta {color: #D7AFA6; font-size: 1.2rem;}
+
+/* Seções e blocos de texto. */
+.vitrine section, .bloco {margin-top: 2.25rem;}
+.vitrine section > .rotulo {text-align: center;}
+.vitrine h2 {font-size: 2rem; font-weight: 400; text-align: center; color: var(--titulo); margin: .4rem 0 1.25rem; line-height: 1.15;}
+.grade {display: grid; grid-template-columns: 1fr 1fr; gap: .8rem;}
+.caixa {padding: 1.1rem; border-radius: 1.25rem; background: var(--cartao); border: 1px solid var(--borda); box-shadow: var(--sombra);}
+.caixa span {font-size: 1.1rem;}
+.caixa p {font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--titulo); margin-top: .5rem !important;}
+.bloco {padding: 1.75rem 1.5rem; border-radius: 1.6rem; text-align: center; background: var(--cartao);
+        border: 1px solid var(--borda); box-shadow: var(--sombra);}
+.bloco h2 {margin-bottom: .75rem;}
+.bloco > p:last-child {color: var(--suave);}
+.bloco.escuro {background: linear-gradient(160deg, #6A4549, #3F2B2D); border-color: transparent; color: #F6E6E6;}
+.bloco.escuro h2 {color: #FFFFFF;}
+.bloco.escuro em {color: #D9A08C;}
+.bloco.escuro .rotulo {color: #D9A08C;}
+.bloco.escuro > p:last-child {color: #EBD3D3;}
+.estrelas {color: var(--cobre); font-size: 1.4rem; letter-spacing: .2em;}
+.depoimento blockquote {font-size: 1.3rem; font-style: italic; color: var(--titulo); margin: .75rem 0 1rem; padding: 0; border: none;}
+.assinatura {display: flex; align-items: center; justify-content: center; gap: .75rem; font-size: .72rem;
+             letter-spacing: .3em; text-transform: uppercase; color: var(--cobre) !important;}
+.assinatura::before, .assinatura::after {content: ""; width: 2rem; height: 1px; background: currentColor; opacity: .5;}
+
+/* Lista completa de serviços. */
+#servicos {text-align: left;}
+#servicos h3 {font-size: 1.4rem; font-weight: 500; color: var(--titulo); margin: 1rem 0 .25rem;}
+#servicos ul {list-style: none; margin: 0; padding: 0;}
+#servicos li {display: flex; gap: .75rem; padding: .3rem 0; margin: 0;}
+#servicos li::before {content: "✦"; color: var(--cobre); font-size: .7rem; padding-top: .3rem;}
+#servicos .nome {flex: 1;}
+#servicos .dur {color: var(--suave);}
+#servicos .preco {font-weight: 500;}
+
+/* Rodapé. O último link (Acesso da equipe) tem a mesma cor apagada do copyright: discreto de propósito. */
+.vitrine > .cartao {margin-top: 2.25rem;}
+.rodape {text-align: center; padding: 2.5rem 0 1rem; font-size: .85rem; color: var(--suave);}
+.rodape p {margin: .2rem 0 !important;}
+.rodape-nome {font-family: 'Cormorant Garamond', serif; font-size: 1.6rem !important; color: var(--titulo);}
+.miudo {font-size: .75rem; opacity: .8; margin-top: 1rem !important;}
+.equipe {display: inline-block; margin-top: .3rem; font-size: .75rem; color: var(--suave) !important; opacity: .7;}

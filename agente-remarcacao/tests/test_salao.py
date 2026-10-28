@@ -38,7 +38,8 @@ def test_numero_mal_escrito_gera_erro(tmp_path):
 def test_pagina_publica_nao_le_clientes():
     texto = (PASTA_DADOS.parent / "paginas" / "inicio.py").read_text(encoding="utf-8")
     assert "carregar_clientes" not in texto and "carregar_cenarios" not in texto
-    assert "/painel" not in texto and "page_link" not in texto  # nenhum caminho para o painel
+    # o único caminho para o painel é a linha "Acesso da equipe" do rodapé (o painel pede senha)
+    assert texto.count('link("painel"') == 1 and "page_link" not in texto
 
 
 def test_telefone_formatado_para_mostrar():

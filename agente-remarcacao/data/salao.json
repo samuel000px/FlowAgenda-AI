@@ -1,9 +1,12 @@
 {
-  "_comentario": "Dados de EXEMPLO da página pública. Os dados reais ficam em data/salao.local.json (fora do git) ou na variável SALAO_JSON da hospedagem, só com os campos que mudam. Preço e duração dos serviços são opcionais.",
+  "_comentario": "Dados de EXEMPLO da página pública. Os dados reais ficam em data/salao.local.json (fora do git) ou na variável SALAO_JSON da hospedagem, só com os campos que mudam. Preço e duração dos serviços são opcionais, e as seções cartoes, diferenciais, espaco, para_voce, sobre e depoimento só aparecem se tiverem conteúdo.",
   "nome": "Esmalteria Exemplo",
   "subtitulo": "Esmalteria",
   "monograma": "ee",
+  "selo": "Esmalteria de bairro",
+  "especialidade": "Manicure, pedicure e unhas em gel",
   "frase": "Unhas feitas com calma, no horário que cabe no seu dia.",
+  "destaques": ["💅 Manicure", "🌸 Pé e mão"],
   "whatsapp": "5511900000000",
   "mensagem_whatsapp": "Oi! Quero agendar um horário.",
   "endereco": "Rua das Flores, 123",
@@ -13,6 +16,15 @@
     {"dias": "Terça a sexta", "horas": "9h às 19h"},
     {"dias": "Sábado", "horas": "9h às 16h"}
   ],
+  "cartoes": [
+    {"icone": "💅", "titulo": "Manicure", "subtitulo": "Cutilagem e esmaltação"},
+    {"icone": "🌸", "titulo": "Pé e mão", "subtitulo": "Manicure e pedicure"}
+  ],
+  "diferenciais": [
+    {"icone": "✨", "texto": "Material esterilizado"},
+    {"icone": "☕", "texto": "Ambiente tranquilo"}
+  ],
+  "rodape": "💅 Manicure · 🌸 Pé e mão",
   "servicos": [
     {"grupo": "Unhas", "nome": "Manicure", "duracao_min": 45, "preco": 45},
     {"grupo": "Unhas", "nome": "Pé e mão", "duracao_min": 90, "preco": 80}

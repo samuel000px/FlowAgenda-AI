@@ -7,8 +7,9 @@
 ## O que fica público e o que fica protegido
 
 - `/` é a página do salão, aberta para qualquer pessoa. É ela que vai no Instagram e no status do WhatsApp.
-- `/painel` e `/equipe` não aparecem em nenhum link. "Escondido" só evita que alguém encontre por
-  acaso; **quem protege de verdade é a senha**.
+- `/painel` só tem um caminho na página: a linha discreta "Acesso da equipe", no fim do rodapé. `/equipe`
+  não aparece em nenhum link. "Escondido" só evita que alguém encontre por acaso; **quem protege de
+  verdade é a senha**.
 
 ## 1. A senha (vale para qualquer opção)
 

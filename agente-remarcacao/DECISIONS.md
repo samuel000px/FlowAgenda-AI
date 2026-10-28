@@ -310,3 +310,18 @@ a não ser quando um item abaixo diz outra coisa.
   o cenário tinha mudado e criava um fluxo novo. O mesmo valia para a chave "Usar e registrar histórico".
 - Correção: `lembrar_escolha` e `guardar_escolha` em `paginas/painel.py` guardam uma cópia da escolha com
   outro nome e devolvem ao voltar.
+
+## D28. Página pública no estilo "link na bio" da Santa Cor
+
+- Decisão: a página pública passou a seguir o site que a Santa Cor já usa (feito no Lovable): fundo rosado,
+  logo redondo, cartões em pilha (agendar, um por serviço em destaque, galeria, localização, Instagram e
+  lista completa), "Nossos diferenciais" em grade, os cartões de texto e o depoimento. Fontes Jost e
+  Cormorant Garamond. Cada cartão de serviço abre o WhatsApp já com o nome do serviço na mensagem.
+- No rodapé, no lugar da linha de crédito do site original, fica um link discreto "Acesso da equipe" que
+  leva ao `/painel`. Isso muda o D19: a página pública agora tem um caminho para o painel, de propósito.
+  Quem protege continua sendo a senha (`APP_SENHA`). Um teste confere que esse é o único link para o painel.
+- As fotos e o logo do site original não foram copiados; o logo virou o monograma num círculo. Se o salão
+  mandar as fotos, dá para colocar.
+- Cada seção só aparece se tiver conteúdo em `salao.local.json` (ou no segredo `SALAO_JSON`).
+- Motivo: o autor pediu a página parecida com a que o salão já divulga, com o acesso ao painel escondido
+  no fim da página.
