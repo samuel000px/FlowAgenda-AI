@@ -33,7 +33,12 @@ export default function CalendarPanel(){
     <div><strong>Mudanças acompanhadas</strong><p>Novos horários, remarcações aprovadas e cancelamentos atualizam a mesma agenda. Pedidos aguardando aceite só entram depois de aprovados.</p></div>
    </div>
    {!status?.connected&&<p className="notice">1. Toque em Conectar conta Google. 2. Escolha sua conta. 3. Autorize a agenda da esmalteria. Sua senha é informada somente na página do Google.</p>}
-   {status&&!status.configured&&<p className="notice">A conexão precisa ser ativada pelo responsável pelo sistema. Depois disso, basta escolher sua conta Google.</p>}
+   {status&&!status.configured&&<div className="notice google-setup"><p><strong>Falta uma preparação única, feita pelo responsável pelo sistema.</strong> {status.missing?.length?`Ainda não cadastrado no servidor: ${status.missing.join(', ')}.`:'A chave de proteção do servidor está faltando ou é inválida.'}</p>
+    <ol><li>No Google Cloud, ative a Google Calendar API e crie um <em>ID do cliente OAuth</em> do tipo <em>Aplicativo da Web</em>.</li>
+     <li>Em <em>URIs de redirecionamento autorizados</em>, cadastre exatamente:<br/><code>{status.redirect}</code> <button type="button" className="text-button" onClick={()=>navigator.clipboard.writeText(status.redirect)}>Copiar</button></li>
+     <li>No computador, na pasta do sistema, rode <code>npm.cmd run google:configurar</code> e cole o ID e a chave secreta quando pedir.</li></ol>
+    <p className="muted small">Detalhes em docs/google-agenda.md. Depois disso, este botão fica ativo e basta escolher a conta Google.</p></div>}
+   {status?.configured&&status.redirectConfigured&&status.redirectConfigured!==status.redirect&&<p className="error">O endereço configurado ({status.redirectConfigured}) é diferente do endereço deste painel ({status.redirect}). Abra o painel pelo endereço configurado ou rode npm.cmd run google:configurar de novo.</p>}
    {status?.connected&&<p className="muted small">{status.appointments} atendimento(s) na sincronização.{pending>0?` Faltam ${pending} atualização(ões); elas serão enviadas nas próximas sincronizações.`:status.error?' Aguardando nova tentativa de conexão.':' Todas as informações salvas estão em dia com o Google.'}</p>}
    {status?.synced>0&&<p className="muted small">Última sincronização completa: {new Date(status.synced).toLocaleString('pt-BR',{timeZone:'America/Fortaleza'})}</p>}
    {(error||status?.error)&&<p role="alert" className="error">{error||status.error} Os dados do painel continuam salvos.</p>}

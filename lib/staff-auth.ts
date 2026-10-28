@@ -42,6 +42,6 @@ export async function requireStaff(req:Request,env:Cloudflare.Env){
   const row=await env.DB!.prepare('SELECT state FROM rooms WHERE id=?').bind(data.room).first<any>();if(!row)throw Error();
   const state=JSON.parse(row.state);if(!state.staffAccess||state.staffAccess.hash!==data.grant)throw Error();
   activeStaff(state,data.staffId);
-  return {room:data.room as string,staffId:data.staffId as string,grant:data.grant as string,state};
+  return {room:data.room as string,staffId:data.staffId as string,grant:data.grant as string,state,expires:data.expires as number};
  }catch{throw Error('Abra o link da equipe e escolha seu nome para entrar.');}
 }

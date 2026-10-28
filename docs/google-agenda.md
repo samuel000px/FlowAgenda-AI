@@ -13,6 +13,9 @@ Se aparecer um erro, a agenda do sistema continua salva. Use **Atualizar agora**
 
 ## Preparação única da instalação
 
+**Atalho:** depois de criar o cliente OAuth no Google Cloud (passos 1 a 3 abaixo), rode na pasta do sistema `npm.cmd run google:configurar`. Ele mostra o endereço de retorno exato, pede o ID e a chave secreta e grava os três segredos no Cloudflare. O painel (Configurações → Integrações) também mostra o que falta e o endereço para copiar.
+
+
 O administrador só escolhe a conta, mas o responsável pelo sistema precisa configurar o aplicativo Google uma vez por instalação.
 
 1. No Google Cloud, habilite **Google Calendar API** no projeto.

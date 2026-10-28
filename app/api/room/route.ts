@@ -4,13 +4,13 @@ import {stockAction} from '../../../lib/estoque.mjs';
 import {env} from 'cloudflare:workers';
 import {actAdmin,candidates,tickAdmin,upgrade} from '../../../lib/flowagenda.mjs';
 import {calendarStatus,syncCalendar} from '../../../lib/google-calendar';
-import {requireAdmin,sameOrigin} from '../../../lib/admin-auth';
+import {renewSession,requireAdmin,sameOrigin} from '../../../lib/admin-auth';
 import {classifyResponse} from '../../../lib/response-agent';
 import {connection,flushWhatsApp} from '../../../lib/whatsapp';
 import {queueNewMessages} from '../../../lib/whatsapp-core.mjs';
 import {processWhatsAppInbox} from '../../../lib/whatsapp-inbox';
 export const dynamic='force-dynamic';
-const json=(value:unknown,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'}});
+const json=(value:unknown,status=200,cookie='')=>Response.json(value,{status,headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer',...(cookie?{'Set-Cookie':cookie}:{})}});
 async function load(req:Request){
  const room=await requireAdmin(req,env);
  const row=await env.DB!.prepare('SELECT * FROM rooms WHERE id=?').bind(room).first<any>();
@@ -36,7 +36,7 @@ async function current(req:Request,row:any,state:any){
 }
 function view(state:any){return {state,tickets:supportView(state),now:Date.now(),candidates:Object.fromEntries(state.gaps.filter((g:any)=>g.status==='open').map((g:any)=>[g.id,candidates(state,g.id)]))};}
 export async function GET(req:Request){
- try{const {row,state,ids}=await load(req);tickAdmin(state);await save(row,state,ids);await processWhatsAppInbox(env,row.id);await syncCalendar(env,row.id);return json(view(await current(req,row,state)));}
+ try{const {row,state,ids}=await load(req);tickAdmin(state);await save(row,state,ids);await processWhatsAppInbox(env,row.id);await syncCalendar(env,row.id);return json(view(await current(req,row,state)),200,await renewSession(req,env));}
  catch(e){return json({error:(e as Error).message},/Entre|sessão|acesso/i.test((e as Error).message)?401:400);}
 }
 export async function POST(req:Request){

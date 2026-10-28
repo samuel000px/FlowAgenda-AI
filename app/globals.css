@@ -114,3 +114,6 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .staff-card-actions{display:flex;gap:8px}
 .staff-card-actions .secondary{flex:1}
 .off-site{color:#a84642!important}
+.notice.google-setup{display:block}
+.google-setup ol{margin:8px 0 8px 18px;padding:0;display:flex;flex-direction:column;gap:6px}
+.google-setup code{word-break:break-all}

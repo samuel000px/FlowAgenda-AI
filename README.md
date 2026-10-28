@@ -229,3 +229,7 @@ O plano grátis dá 10 ms de processamento por pedido, e o cadastro inteiro é l
 
 - `npm run limpar-clientes` (ou `node scripts/limpar-clientes.mjs --remote` no site publicado; `--simular` só mostra) tira as clientes da planilha que vieram uma vez e não deixaram celular nem aniversário, e junta nomes completos quase iguais ("Andrea Gomes" e "Andreia Gomes", somando as visitas). Só primeiro nome nunca é juntado. Quem já tem agendamento, mensagem ou histórico no sistema novo nunca é mexida. A importação já aplica a mesma limpeza.
 - O painel lê o cadastro uma vez por pedido e só relê quando o WhatsApp ou o Google Agenda gravaram algo.
+
+### Sessões
+
+O login da gerência e o das funcionárias duram 8 horas, mas são renovados enquanto o painel está aberto e em uso: ninguém é derrubada no meio do expediente. Se o link das funcionárias tiver sido criado com outra chave do servidor, Equipe e serviços mostra "Gerar novo link" no lugar de pedir a senha.

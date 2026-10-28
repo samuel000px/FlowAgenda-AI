@@ -3,7 +3,11 @@ import { calendarStatus, managerRoom, startOAuth, syncCalendar } from '../../../
 export const dynamic='force-dynamic';
 const json=(value:unknown,status=200,headers={})=>Response.json(value,{status,headers:{'Cache-Control':'no-store',...headers}});
 export async function GET(req:Request){
-  try{return json(await calendarStatus(env,await managerRoom(req,env),true))}catch(e){return json({error:(e as Error).message},400)}
+  try{
+    // Só os NOMES do que falta (nunca os valores), e o endereço de retorno que o Google precisa conhecer.
+    const missing=(['GOOGLE_CLIENT_ID','GOOGLE_CLIENT_SECRET','GOOGLE_REDIRECT_URI'] as const).filter(k=>!env[k]);
+    return json({...await calendarStatus(env,await managerRoom(req,env),true),missing,redirect:new URL('/api/google/callback',req.url).href,redirectConfigured:env.GOOGLE_REDIRECT_URI||''});
+  }catch(e){return json({error:(e as Error).message},400)}
 }
 export async function POST(req:Request){
   try{

@@ -21,7 +21,8 @@
     "calendar:setup": "node scripts/calendar-setup.mjs",
     "deploy": "node scripts/deploy.mjs",
     "importar": "node scripts/importar-planilha.mjs",
-    "limpar-clientes": "node scripts/limpar-clientes.mjs"
+    "limpar-clientes": "node scripts/limpar-clientes.mjs",
+    "google:configurar": "node scripts/configurar-google.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
