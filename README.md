@@ -153,7 +153,10 @@ Permissões da equipe, verificadas no servidor:
 
 - Consultar a agenda por data, filtrando seus atendimentos ou toda a equipe.
 - Identificar pedidos do site que ainda aguardam aceite; aceitar ou recusar esses pedidos continua sendo uma ação da gerência na aba Aceitações. Pedidos pendentes também impedem remarcações conflitantes.
-- Marcar horário para quem chegou na loja (aba **Novo horário**): serviço, profissional, dia, horário, nome, WhatsApp opcional e se quer antecipar. Entra direto como confirmado, a partir de agora, sem a antecedência mínima do site. Se o celular já for de uma cliente cadastrada, o horário vai para ela sem mudar o cadastro.
+- Marcar horário para quem chegou na loja ou para outro dia (aba **Novo horário**): serviço, profissional (qualquer uma da equipe; já vem quem está usando), dia, horário, cliente e se ela quer antecipar. Entra direto como confirmado, a partir de agora, sem a antecedência mínima do site.
+- A cliente é buscada por nome (sem ligar para acento) ou por parte do número; a busca mostra só o nome e o final do número. Cadastro novo com o número de outra cliente é bloqueado e oferece usar o cadastro dela; com o mesmo nome, pede para escolher a existente ou confirmar que é outra pessoa. Se a cliente da lista trocou de número, o novo substitui o antigo (fica registrado nas atividades). Um número que já é de outra cliente não pode ser usado.
+- A resposta sobre antecipar, dada ali pessoalmente, atualiza o cadastro da cliente.
+- No cadastro da gerência vale o mesmo: número repetido é recusado e nome repetido pede confirmação.
 - Aprovar remarcações já aceitas pela cliente que envolvam a profissional escolhida (horário de origem ou destino). Disponibilidade e conflitos são conferidos novamente; a aprovação registra a responsável e mantém a sincronização Google e WhatsApp existente.
 - Não pode cancelar, reagendar livremente, rejeitar propostas, registrar faltas, modificar equipe/configurações, enviar mensagens avulsas ou acessar credenciais da integração.
 

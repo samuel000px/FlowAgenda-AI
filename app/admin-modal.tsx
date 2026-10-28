@@ -1,7 +1,7 @@
 "use client";
 import {type FormEvent} from 'react';
 import {X} from 'lucide-react';
-import {clock} from '../lib/flowagenda.mjs';
+import {clock,nameKey} from '../lib/flowagenda.mjs';
 import {Field,money,dateLabel,type Row} from './admin-dashboard';
 const minutes=(v:string)=>Number(v.split(':')[0])*60+Number(v.split(':')[1]);
 type Props={modal:Row,setModal:(v:Row|null)=>void,busy:boolean,error:string,run:(action:string,p:Row)=>Promise<boolean>,clients:Row[],staff:Row[],services:Row[],date:string};
@@ -9,6 +9,9 @@ export default function AdminModal({modal,setModal,busy,error,run,clients,staff,
  const lookup=(rows:Row[],id:string)=>rows.find(x=>x.id===id)?.name||'—';
  async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();const form=new FormData(e.currentTarget),p:Row=Object.fromEntries(form);if(modal.id)p.id=modal.id;
   const kind=modal.kind;if(kind==='client')p.consent=form.get('consent')==='sim';
+  // Mesmo nome de outra cliente: pode ser a mesma pessoa, então pergunta antes de criar outro cadastro.
+  const xara=kind==='client'&&nameKey(p.name)!==nameKey(modal.name)&&clients.find(c=>c.id!==modal.id&&nameKey(c.name)===nameKey(p.name));
+  if(xara){if(!confirm(`Já existe ${xara.name}${xara.phone?' (final '+String(xara.phone).slice(-4)+')':''} no cadastro. É outra pessoa com o mesmo nome?`))return;p.confirmNew=true;}
   if(kind==='staff'){p.services=form.getAll('services');p.active=form.has('active');for(const k of ['start','end','break_start','break_end'])p[k]=minutes(String(p[k]||'00:00'));}
   if(kind==='service'){p.price=Number(p.price);p.duration=Number(p.duration||0);p.applyMissing=form.has('applyMissing');p.addon=form.has('addon');
     // Uma opção por linha: "Cabelo longo | 90 | 60" (nome, minutos, valor).

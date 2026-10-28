@@ -239,15 +239,43 @@ test('na loja o horário entra confirmado, a partir de agora, e a resposta sim o
   const [a]=bookInStore(s,{name:'Joana',phone:'',cart:manicure('P2'),date:TERCA,start:630,earlier:false},'Nina',agora);
   assert.deepEqual([a.status,a.source,a.staff_id],['booked','loja','P2']);
   assert.equal(s.clients.at(-1).consent,false);
-  assert.match(s.events[0].text,/Nina marcou na loja: Joana/);
+  assert.match(s.events[0].text,/Nina marcou: Joana/);
   assert.throws(()=>bookInStore(s,{name:'Bia',cart:manicure('P2'),date:TERCA,start:675},'Nina',agora),/antecipar/);
 });
 
-test('na loja, o celular de quem já é cliente só marca o horário, sem mexer no cadastro',()=>{
+test('na loja, o celular de quem já é cliente vai para o cadastro dela; a resposta dada ali vale',()=>{
   const s=salao(),c=antiga(s),agora=Date.parse('2026-10-27T10:20:00-03:00');
   const [a]=bookInStore(s,{name:'Maria',phone:'83999990000',cart:manicure('P2'),date:TERCA,start:630,earlier:false},'Nina',agora);
   assert.equal(a.client_id,'C1');
-  assert.deepEqual([c.consent,c.name,s.clients.length],[true,'Maria Joaquina',1]);
+  assert.deepEqual([c.consent,c.name,s.clients.length],[false,'Maria Joaquina',1]);
+});
+
+test('na loja, nome igual (com ou sem acento) não vira outro cadastro sem confirmar',()=>{
+  const s=salao(),agora=Date.parse('2026-10-27T10:20:00-03:00');antiga(s);
+  const base={cart:manicure('P2'),date:TERCA,start:630,earlier:true};
+  assert.throws(()=>bookInStore(s,{...base,name:'maria  JOAQUINA'},'Nina',agora),/Já existe Maria Joaquina/);
+  bookInStore(s,{...base,name:'Maria Joaquina',newClient:true},'Nina',agora);
+  assert.equal(s.clients.length,2,'confirmado que é outra pessoa');
+});
+
+test('cliente da lista que trocou de número: o novo substitui o antigo, sem roubar o de outra',()=>{
+  const s=salao(),c=antiga(s),agora=Date.parse('2026-10-27T10:20:00-03:00');
+  s.clients.push({id:'C2',name:'Bia',phone:'5583988887777',consent:true,preferred:'',visits:0,missed:0,proposals:0,accepted:0});
+  const base={client_id:'C1',cart:manicure('P2'),date:TERCA,earlier:true};
+  assert.throws(()=>bookInStore(s,{...base,start:630,phone:'(83) 98888-7777'},'Nina',agora),/cadastro de Bia/);
+  bookInStore(s,{...base,start:630,phone:'(83) 97777-1234'},'Nina',agora);
+  assert.equal(c.phone,'5583977771234');
+  assert.ok(s.events.some(e=>e.text.includes('Nina trocou o número de Maria Joaquina (final 0000) pelo final 1234')));
+  assert.equal(s.clients.length,2);
+});
+
+test('cadastro da gerência: número repetido é recusado e nome repetido pede confirmação',()=>{
+  const s=salao();antiga(s);
+  assert.throws(()=>actAdmin(s,'client_save',{name:'Outra',phone:'5583999990000',consent:true},now),/cadastro de Maria Joaquina/);
+  assert.throws(()=>actAdmin(s,'client_save',{name:'Maria Joaquina',phone:'',consent:true},now),/Já existe/);
+  actAdmin(s,'client_save',{name:'Maria Joaquina',phone:'',consent:true,confirmNew:true},now);
+  actAdmin(s,'client_save',{id:'C1',name:'Maria Joaquina',phone:'(83) 99999-0000',consent:false},now);
+  assert.deepEqual([s.clients.length,s.clients[0].consent],[2,false],'editar a própria cliente não acusa repetição');
 });
 
 test('agendas antigas: nota 0 vira "não quer antecipar" e a nota some do cadastro',()=>{

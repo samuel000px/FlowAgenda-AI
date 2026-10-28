@@ -114,3 +114,20 @@
  .staff-slots{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 @media(max-width:379px){.staff-slots{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Escolha da cliente: busca no cadastro, cliente escolhida e avisos de nome ou número repetido. */
+.staff-step .field+.field,.staff-step .field+.staff-match,.staff-match+.field{margin-top:16px}
+.staff-found{display:grid;gap:8px;margin-top:10px}
+.staff-found button{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:52px;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);text-align:left;font-weight:500}
+.staff-found button:hover{background:var(--green-light)}
+.staff-found strong{font-size:15px;overflow-wrap:anywhere}
+.staff-found small{color:var(--muted);font-size:12px;white-space:nowrap}
+.staff-booking .staff-new{width:100%;min-height:50px;margin-top:10px}
+.staff-picked{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;background:var(--green-light);margin-bottom:16px}
+.staff-picked strong{display:block;font-size:15px;overflow-wrap:anywhere}
+.staff-picked small{color:var(--muted);font-size:12px}
+.staff-picked .text-button{min-height:44px;color:var(--green);font-weight:600}
+.staff-match{display:grid;gap:10px;padding:14px 16px;border-radius:12px;border:1px solid #e9c9a8;background:#fdf6ee;font-size:14px;line-height:1.5}
+.staff-match button{width:100%;min-height:48px}
+.staff-match .check-field{margin:0;font-size:14px;color:var(--ink)}
+.staff-step>.text-button{margin-top:10px;min-height:44px}
