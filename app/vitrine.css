@@ -179,3 +179,7 @@
 .vitrine .data-cheia p{font-size:.9rem;color:var(--malva-70)}
 .vitrine .data-cheia strong{color:var(--malva)}
 .vitrine .formulario .dica{font-size:.75rem;color:var(--malva-60)}
+
+/* Foto da profissional no botão de escolha */
+.chip.chip-foto{display:inline-flex;align-items:center;gap:8px;padding-left:5px}
+.chip.chip-foto img{width:28px;height:28px;border-radius:50%;object-fit:cover}

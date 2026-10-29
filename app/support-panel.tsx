@@ -12,8 +12,8 @@ export default function SupportPanel({tickets,actor,busy,run,admin=false,error='
   <p className="muted small">Encerrar uma conversa não cancela o agendamento. O WhatsApp abre na conta conectada ao aparelho de quem clicar; a mensagem só é enviada após tocar em Enviar.</p>
 
   <div className="support-grid">{tickets.map(t=><article className="panel support-card" key={t.id}>
-   <div className="row between wrap"><h2>{t.name}</h2><span className="badge neutral">{t.source==='demo'?'Exemplo':t.owner?'Em atendimento':'Aguardando'}</span></div>
-   <p className="support-preview">{t.text}</p><small>{new Date(t.updated).toLocaleString('pt-BR')} {t.owner&&`· Com ${t.owner.name}`}</small>
+   <div className="row between wrap"><h2>{t.name}</h2>{t.kind==='cancel'&&<span className="badge amber">Cancelamento</span>}<span className="badge neutral">{t.source==='demo'?'Exemplo':t.owner?'Em atendimento':'Aguardando'}</span></div>
+   <p className="support-preview">{t.text}</p>{t.appointment&&<small className="support-horario">Horário encontrado: {t.appointment}</small>}<small>{new Date(t.updated).toLocaleString('pt-BR')} {t.owner&&`· Com ${t.owner.name}`}</small>
    <div className="support-buttons"><button className="secondary" disabled={busy} onClick={()=>{setSelected(t);}}>Ver atendimento</button>{(!t.owner||(admin&&!mine(t)))&&<button disabled={busy} onClick={()=>run('support_claim',{id:t.id})}>{t.owner?'Assumir atendimento':'Vou atender'}</button>}{t.owner&&!mine(t)&&<small>{t.owner.name} está cuidando deste pedido.</small>}{(mine(t)||admin)&&<button className="text-button" disabled={busy} onClick={()=>setClosing(t)}>Encerrar conversa</button>}</div>
   </article>)}</div>
   {!tickets.length&&<section className="panel empty"><MessageCircle size={30}/><h3>Nenhuma conversa aguardando</h3><p>Os pedidos para falar com a equipe aparecerão aqui.</p></section>}

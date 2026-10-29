@@ -20,6 +20,6 @@ export default function Atendimento(){
   <label className="atendimento-consent"><input name="consent" type="checkbox" required disabled={busy}/><span>Autorizo a equipe a entrar em contato pelo WhatsApp para responder a este pedido.</span></label>
   {error&&<p className="atendimento-erro" role="alert">{error}</p>}
   <button className="botao" type="submit" disabled={busy}><MessageCircle size={20}/>{busy?'Enviando seu pedido…':'Solicitar atendimento'}</button>
-  <p className="atendimento-nota">Este pedido não altera nem cancela seus horários agendados.</p>
+  <p className="atendimento-nota">Este pedido não agenda nem cancela horários.</p>
  </form>;
 }

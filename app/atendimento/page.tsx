@@ -13,5 +13,5 @@ export default async function Page(){
  <a className="voltar" href="/">← Voltar para o início</a>
  <header className="titulo-pagina"><img src="/logo-sc.png" alt="" className="atendimento-logo"/><p className="rotulo">{name}</p><h1>Como podemos ajudar?</h1><p>Deixe seu pedido. Uma pessoa da nossa equipe vai responder pelo WhatsApp.</p></header>
  <Atendimento/>
- <p className="atendimento-rodape">Quer marcar um horário? <a href="/agendar">Ir para agendamento</a></p>
+ <p className="atendimento-rodape">Quer marcar um horário? <a href="/agendar">Ir para agendamento</a><br/>Precisa cancelar? <a href="/cancelar">Pedir cancelamento</a></p>
  </main></div>;}

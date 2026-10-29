@@ -155,3 +155,23 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .staff-area{border:1px solid var(--line);border-radius:8px;padding:6px 14px 0;margin:0 0 12px}
 .staff-area legend{padding:0 6px}
 .staff-area legend .check-field{margin:0}
+
+/* Fotos de perfil da equipe */
+.avatar-foto{object-fit:cover;padding:0;display:inline-block}
+.staff-card-foto{position:relative;cursor:pointer;display:inline-grid;justify-items:center;gap:4px}
+.staff-card-foto span{font-size:10px;color:var(--muted)}
+.staff-card-foto:hover .avatar{box-shadow:0 0 0 3px #e7c3c9}
+
+/* Ações em duas partes */
+.acoes{display:grid;gap:18px}
+.acoes-partes{display:flex;gap:8px;flex-wrap:wrap}
+.acoes-partes button{gap:8px}
+.acoes-partes b{background:#fad5da;color:#4e3035;font-size:11px;border-radius:4px;padding:1px 6px}
+.acoes-cupom{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;padding:0 22px 6px}
+.acoes-cupom .field{margin:0;max-width:150px}
+.acoes-lista{display:grid}
+.acoes-linha{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 22px;border-top:1px solid var(--line)}
+.acoes-linha small{margin-top:4px}
+.acoes-linha.is-hoje{background:#fdf1f3}
+@media(max-width:560px){.acoes-linha{flex-wrap:wrap}.acoes-linha button{width:100%}.acoes-partes button{flex:1}}
+.support-horario{color:#8a5a2c!important;font-weight:600}

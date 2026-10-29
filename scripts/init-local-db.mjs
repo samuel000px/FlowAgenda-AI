@@ -26,4 +26,6 @@ if (rows.length===2) {
 
 const whatsappTables=JSON.parse(wrangler(['--command',"SELECT name FROM sqlite_master WHERE type='table' AND name='whatsapp_connections'",'--json'])).flatMap(item=>item.results||[]);
 if(!whatsappTables.length)wrangler(['--file','drizzle/0002_whatsapp.sql','--json']);
+const fotos=JSON.parse(wrangler(['--command',"SELECT name FROM sqlite_master WHERE type='table' AND name='fotos'",'--json'])).flatMap(item=>item.results||[]);
+if(!fotos.length)wrangler(['--file','drizzle/0003_fotos.sql','--json']);
 console.log('Integração WhatsApp preparada.');

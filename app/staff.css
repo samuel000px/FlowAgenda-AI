@@ -185,3 +185,11 @@
  .staff-topbar .brand{font-size:16px;gap:8px}
  .staff-topbar strong{max-width:110px}
 }
+
+/* Meu perfil */
+.staff-perfil-botao{background:none;border:0;color:inherit;padding:4px;gap:10px}
+.staff-perfil-botao:hover{background:#f6eef0}
+.staff-perfil{padding:28px 20px;display:grid;justify-items:center;gap:14px;text-align:center}
+.staff-perfil-foto{width:120px;height:120px;font-size:34px}
+.staff-perfil-trocar{display:inline-flex;gap:8px;min-height:48px}
+.staff-topbar .staff-perfil-botao .avatar{display:inline-flex;width:32px;height:32px;font-size:11px}

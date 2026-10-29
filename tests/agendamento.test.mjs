@@ -414,3 +414,31 @@ test('agenda com o catálogo inicial antigo recebe o catálogo inteiro e a equip
   assert.equal(completeStaff(nova,pacote),0,'uma vez só: o que a gerência desmarcou não volta');
   assert.ok(!nova.staff[1].services.includes('S11'));
 });
+
+test('aniversariantes dos próximos 7 dias, mensagem com cupom e marca para não repetir',async()=>{
+  const {aniversariantes,mensagemAniversario,cupom}=await import('../lib/aniversario.mjs');
+  const s=salao();
+  s.clients=[{id:'C1',name:'Ana Souza',phone:'5583999990000',birthday:'10-26'},{id:'C2',name:'Bia',phone:'',birthday:'10-30'},{id:'C3',name:'Carla',birthday:'12-25'},{id:'C4',name:'Duda',birthday:''}];
+  const lista=aniversariantes(s,now);
+  assert.deepEqual(lista.map(a=>[a.name,a.inDays]),[['Ana Souza',0],['Bia',4]]);
+  assert.deepEqual(cupom(s),{percent:10,days:7});
+  actAdmin(s,'birthday_settings',{percent:15,days:5},now);
+  assert.match(mensagemAniversario(s,lista[0]),/Ana! .*15% de desconto em qualquer serviço até 31\/10/);
+  actAdmin(s,'birthday_wished',{client_id:'C1',year:'2026'},now);
+  assert.equal(aniversariantes(s,now)[0].wished,true);
+  assert.throws(()=>actAdmin(s,'birthday_settings',{percent:0,days:5},now),/desconto/);
+});
+
+test('pedido de cancelamento pelo site vira pedido em Ações, acha o horário e não cancela nada',async()=>{
+  const {requestCancellation,supportView}=await import('../lib/support-core.mjs');
+  const s=salao();pedido(s);const a=s.appointments[0];actAdmin(s,'request_accept',{id:a.id},now);
+  const base={name:'Ana Souza',phone:'(83) 99999-0000',service:'Manicure',date:TERCA,time:'09:00',reason:'Fiquei doente.',consent:true,requestId:crypto.randomUUID()};
+  requestCancellation(s,base,now);requestCancellation(s,base,now);
+  const t=supportView(s);
+  assert.equal(t.length,1,'repetir o mesmo envio não duplica');
+  assert.equal(t[0].kind,'cancel');assert.match(t[0].text,/cancelamento: Manicure, 27\/10\/2026 às 09:00\. Motivo: Fiquei doente\./);
+  assert.match(t[0].appointment,/Manicure com Lia, 27\/10\/2026 às 09:00/);
+  assert.equal(a.status,'booked','o horário continua até a equipe confirmar');
+  assert.throws(()=>requestCancellation(s,{...base,reason:'',requestId:crypto.randomUUID()},now),/motivo/);
+  assert.throws(()=>requestCancellation(s,{...base,time:'9h',requestId:crypto.randomUUID()},now),/horário/);
+});

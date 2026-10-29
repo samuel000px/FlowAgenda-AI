@@ -7,11 +7,12 @@ import {useEffect,useState,type FormEvent} from 'react';
 import {linkWhatsapp} from '../../lib/vitrine.mjs';
 import {MAX_ITENS,prices} from '../../lib/agendamento.mjs';
 import {salao} from '../salao';
+import {fotoUrl} from '../avatar';
 
 type Opcao={name:string,duration:number,price:number};
 export type Servico={id:string,name:string,duration:number,price:number,group:string,variants:Opcao[]};
 export type Adicional={id:string,name:string,price:number,group:string};
-type Pessoa={id:string,name:string,services:string[]};
+type Pessoa={id:string,name:string,services:string[],photo?:string};
 type Oferta={id:string,trigger:string,target:string,type:'percent'|'amount',value:number};
 type Plano={start:number,end:number,staff:string};
 type Horario={start:number,time:string,plan:Plano[]};
@@ -171,7 +172,7 @@ export default function Agendar(){
       {areas.map(g=>{const fazem=dados.staff.filter(p=>itens.every(x=>{const v=dados.services.find(v=>v.id===x.service)!;return v.group!==g||p.services.includes(v.id);}));
         return <div key={g} className="area-equipe"><p className="mini">{ICONE_AREA[g]||'✨'} {g}</p><div className="chips">
           <button className="chip" aria-pressed={equipe[g]===''} onClick={()=>setEquipe({...equipe,[g]:''})}>Sem preferência</button>
-          {fazem.map(p=><button key={p.id} className="chip" aria-pressed={equipe[g]===p.id} onClick={()=>setEquipe({...equipe,[g]:p.id})}>{p.name}</button>)}
+          {fazem.map(p=><button key={p.id} className={'chip'+(p.photo?' chip-foto':'')} aria-pressed={equipe[g]===p.id} onClick={()=>setEquipe({...equipe,[g]:p.id})}>{p.photo&&<img src={fotoUrl(p.photo)} alt="" loading="lazy"/>}{p.name}</button>)}
         </div>{!fazem.length&&<p className="aviso">Nenhuma profissional faz todos os serviços de {g} juntos. Tire um deles do carrinho.</p>}</div>;})}
     </div>}
 

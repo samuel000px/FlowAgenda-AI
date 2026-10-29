@@ -46,7 +46,7 @@ writeFileSync(CONFIG, JSON.stringify(config));
 const sql = (args) => json(rodar(['d1', 'execute', 'DB', '--remote', '--config', CONFIG, '--json', ...args]));
 const tabelas = (nomes) => sql(['--command', `SELECT name FROM sqlite_master WHERE type='table' AND name IN (${nomes.map((n) => `'${n}'`).join(',')})`])
   .flatMap((item) => item.results || []).length;
-for (const [arquivo, nomes] of [['drizzle/0000_young_lizard.sql', ['rooms', 'limits']], ['drizzle/0002_whatsapp.sql', ['whatsapp_connections']]]) {
+for (const [arquivo, nomes] of [['drizzle/0000_young_lizard.sql', ['rooms', 'limits']], ['drizzle/0002_whatsapp.sql', ['whatsapp_connections']], ['drizzle/0003_fotos.sql', ['fotos']]]) {
   const achadas = tabelas(nomes);
   if (achadas === 0) { sql(['--file', arquivo]); console.log(`Tabelas criadas: ${nomes.join(', ')}.`); }
   else if (achadas !== nomes.length) throw new Error(`Banco publicado incompleto (${nomes.join(', ')}). Nada foi apagado; confira antes de continuar.`);
