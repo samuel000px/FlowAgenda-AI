@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {seedAdmin} from '../lib/flowagenda.mjs';
+import {free,seedAdmin} from '../lib/flowagenda.mjs';
 import {moverAtendimento} from '../lib/assistente/mover.mjs';
 import {slots} from '../lib/agendamento.mjs';
-import {acharProfissional,acharCliente,acharAtendimento,consultarAgenda,consultarHorariosLivres,consultarHistoricoCliente,consultarResumoDia} from '../lib/assistente/consultas.mjs';
+import {dm,acharProfissional,acharCliente,acharAtendimento,consultarAgenda,consultarHorariosLivres,consultarHistoricoCliente,consultarResumoDia} from '../lib/assistente/consultas.mjs';
 import {planoRemarcar,planoTrocarProfissional,planoAusencia,planoDesfazer,aplicarPlano} from '../lib/assistente/planos.mjs';
 import {FERRAMENTAS,executarFerramenta,instrucoes} from '../lib/assistente/ferramentas.mjs';
 
@@ -301,9 +301,16 @@ test('confirmar depois que a agenda mudou não grava nada pela metade',()=>{
   // A Nina foi ocupada no horário da Bia depois do plano: a primeira linha também não é gravada.
   const t=comFalta();const p=planoAusencia(t,{profissional:'Lia',data:TERCA},now).plano;
   t.appointments.push({...t.appointments[1],id:'A9',client_id:'C9',staff_id:'P2'});
+  // Uma proposta pendente da Ana: mover a primeira linha a encerraria (e escreveria uma mensagem) na cópia.
+  t.offers.push({id:'O1',client_id:'C1',staff_id:'P2',date:'2026-10-28',start:540,end:585,status:'pending',origin_id:'A1',gap_id:'G1',service_id:'S1'});
+  const antesT=JSON.stringify(t);
   assert.throws(()=>aplicarPlano(t,p,now),/agenda mudou/);
   assert.deepEqual(t.appointments.map(a=>a.staff_id),['P1','P1','P2']);
   assert.equal(t.assistente,undefined);
+  assert.equal(JSON.stringify(t),antesT,'nem a proposta, nem as mensagens, nem as vagas mudam');
+  // Sem o conflito, a mesma proposta é encerrada de verdade.
+  t.appointments.pop();aplicarPlano(t,planoAusencia(t,{profissional:'Lia',data:TERCA},now).plano,now);
+  assert.equal(t.offers[0].status,'invalidated');assert.equal(t.messages.length,1);
 });
 
 test('plano vencido e plano com mais de 15 linhas',()=>{
@@ -417,8 +424,32 @@ test('desfazer volta o último pacote, menos o que mudou depois',()=>{
   const p=planoDesfazer(t,now).plano;
   assert.equal(p.linhas[0].para,null);
   assert.match(p.linhas[0].aviso,/mudou depois/);
-  assert.deepEqual(aplicarPlano(t,p,now).avisos,[]);
+  const nada=aplicarPlano(t,p,now);
+  assert.deepEqual(nada.avisos,[]);
+  assert.deepEqual([nada.pacoteId,nada.desfazivel],[null,false]);
   assert.deepEqual([t.appointments[0].start,t.appointments[0].staff_id],[600,'P2']);
+  // Nenhuma linha voltou: o pacote não é marcado como desfeito e continua podendo ser desfeito.
+  assert.equal(t.assistente.pacotes.length,1);assert.equal(t.assistente.pacotes[0].desfeito,undefined);
+  assert.equal(planoDesfazer(t,now).plano.desfaz,t.assistente.pacotes[0].id);
+});
+
+test('desfazer pelo pacote: só o último que ainda não voltou, nunca um mais antigo',()=>{
+  const s=comAna();
+  s.clients.push({id:'C2',name:'Bia Lima',phone:''});
+  s.appointments.push({...s.appointments[0],id:'A2',client_id:'C2',start:840,end:885});
+  const a=aplicarPlano(s,planoTrocarProfissional(s,{cliente:'Ana',data:TERCA,nova_profissional:'Nina'},now).plano,now);
+  assert.deepEqual([a.pacoteId,a.desfazivel],[a.pacote.id,true]);
+  const b=aplicarPlano(s,planoTrocarProfissional(s,{cliente:'Bia',data:TERCA,nova_profissional:'Nina'},now).plano,now);
+  const NAO=/Esta mudança não dá mais para desfazer por aqui/;
+  assert.match(planoDesfazer(s,now,a.pacoteId).texto,NAO,'A não é o último');
+  const pb=planoDesfazer(s,now,b.pacoteId).plano;assert.equal(pb.desfaz,b.pacoteId);
+  const u=aplicarPlano(s,pb,now);
+  assert.deepEqual([u.desfazivel,typeof u.pacoteId],[false,'string'],'desfazer não ganha botão de desfazer');
+  assert.equal(s.assistente.pacotes.find(p=>p.id===b.pacoteId).desfeito,true);
+  for(const k of [u.pacoteId,b.pacoteId])assert.match(planoDesfazer(s,now,k).texto,NAO);
+  // Um plano de desfazer não vale duas vezes.
+  assert.throws(()=>aplicarPlano(s,pb,now),NAO);
+  assert.equal(planoDesfazer(s,now,a.pacoteId).plano.desfaz,a.pacoteId,'agora A é o último');
 });
 
 test('desfazer uma remarcação fecha a vaga aberta e abre a do horário novo',()=>{
@@ -436,6 +467,58 @@ test('desfazer uma remarcação fecha a vaga aberta e abre a do horário novo',(
   const l=planoDesfazer(t,now).plano.linhas[0];
   assert.equal(l.para,null);
   assert.match(l.aviso,/não está mais livre/);
+});
+
+// Oráculo do jeito antigo: as trocas gravadas no cadastro inteiro (sem filtro de dias nem cache) e as sugestões
+// calculadas com slots() sobre ele, na mesma regra de planoAusencia.
+function sugestoesNoCadastroInteiro(s,plano,ausente){
+  const r=structuredClone(s);aplicarPlano(r,plano,now);
+  const semEla={...r,staff:r.staff.map(p=>p.id===ausente?{...p,active:false}:p)};
+  return plano.linhas.filter(l=>!l.para).map(l=>{
+    const a=s.appointments.find(x=>x.id===l.atendimento_id),grupo=s.services.find(v=>v.id===a.service_id).group,achados=[];
+    for(let i=0;i<=3&&achados.length<2;i++){
+      const dia=addDias(a.date,i),base=i?r:semEla;
+      for(const x of slots(base,{items:[{service:a.service_id}],staff:{[grupo]:''}},dia,now,0))
+        if((i||x.start>a.start)&&achados.length<2)achados.push(`${i?dm(dia)+' ':''}${x.time} (${base.staff.find(p=>p.id===x.plan[0].staff).name})`);
+    }
+    return achados.length?`sem vaga neste dia. Sugestões: ${achados.join(', ')}`:'sem vaga; oferecer a lista de espera';
+  });
+}
+const addDias=(d,n)=>{const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10);};
+
+test('falta num dia cheio: o rascunho só com o dia e os 3 seguintes dá o mesmo plano que o cadastro inteiro',()=>{
+  // Lia, Nina e Duda com 12 horários por dia em 10 semanas (histórico, a semana da falta e depois): ~1.200 atendimentos.
+  const s=salao();
+  s.staff.push({id:'P4',name:'Duda',active:true,start:480,end:1080,break_start:0,break_end:0,services:['S1','S2']});
+  s.clients=Array.from({length:300},(_,i)=>({id:'C'+i,name:'Cliente '+i,phone:''}));
+  // Horários que ficam livres: no dia da falta, Nina 10:30 e Duda 15:00 (as duas trocas); na quarta, Nina 09:00 e
+  // 13:30 (esta com uma proposta pendente); a quinta cheia; na sexta, Duda 12:45. As sugestões precisam chegar à
+  // sexta, então um rascunho que perdesse um dia da janela (ou as propostas) daria outro texto. Na outra semana,
+  // fora da janela, tudo livre para a Nina; no histórico, uma em cada 17 cancelada.
+  const livre=new Set([`${TERCA}|P2|630`,`${TERCA}|P4|900`,'2026-10-28|P2|540','2026-10-28|P2|810','2026-10-30|P4|765']);
+  let n=0;
+  for(let d=-56;d<=13;d++){
+    const dia=addDias(TERCA,d),w=new Date(dia+'T12:00:00Z').getUTCDay();if(w<2||w>5)continue;
+    for(const pro of ['P1','P2','P4'])for(let k=0;k<12;k++){
+      const start=540+45*k;
+      if(livre.has(`${dia}|${pro}|${start}`)||(d>=7&&pro==='P2'))continue;
+      s.appointments.push({id:'A'+n,client_id:'C'+(n%300),service_id:k%3?'S1':'S2',staff_id:pro,date:dia,start,end:start+45,price:30,status:d<0&&n%17===0?'cancelled':'booked',attendance:'unknown',reminded:false,result:null});n++;
+    }
+  }
+  // A Lia às 12:45 faz SPA Relaxante, que só ela faz: o cache por serviço não pode emprestar os horários da manicure.
+  s.appointments.find(a=>a.date===TERCA&&a.staff_id==='P1'&&a.start===765).service_id='S5';
+  s.offers.push({id:'O1',client_id:'C1',staff_id:'P2',date:'2026-10-28',start:810,end:855,status:'pending',gap_id:'G1',origin_id:'A0',service_id:'S1'});
+  assert.ok(s.appointments.length>=1200,'cadastro grande');
+  const {plano}=planoAusencia(s,{profissional:'Lia',data:TERCA},now);
+  const movidas=plano.linhas.filter(l=>l.para),semVaga=plano.linhas.filter(l=>!l.para);
+  assert.deepEqual(movidas.map(l=>[l.de.hora,l.para.profissional]),[['10:30','Nina'],['15:00','Duda']]);
+  assert.equal(semVaga.length,10);
+  // As trocas são as mesmas do cadastro inteiro: cada uma cabe nele sem conflito, e nenhuma linha sem vaga tinha alguém livre.
+  const r=structuredClone(s);aplicarPlano(r,plano,now);
+  for(const l of semVaga){const a=s.appointments.find(x=>x.id===l.atendimento_id);
+    assert.ok(!['P2','P4'].some(k=>free(r,a.client_id,k,a.date,a.start,a.end,a.id)),'ninguém livre no cadastro inteiro');}
+  assert.deepEqual(semVaga.map(l=>l.aviso),sugestoesNoCadastroInteiro(s,plano,'P1'));
+  for(const l of semVaga)assert.equal(l.aviso,l.de.hora==='12:45'?'sem vaga; oferecer a lista de espera':'sem vaga neste dia. Sugestões: 28/10 09:00 (Nina), 30/10 12:45 (Duda)');
 });
 
 test('falta: cliente com duas linhas recebe um aviso só, com as duas frases',()=>{

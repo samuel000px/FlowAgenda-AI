@@ -168,16 +168,57 @@ test('descartar tira o plano e desfazer monta o plano de volta, sem Gemini e sem
   const chamadas=gemini(500);
   const d=await (await post({action:'descartar',planoId:plano.id})).json();
   assert.equal(d.restante,59);assert.equal(state().assistente.planos.length,0);
-  assert.equal((await (await post({action:'desfazer'})).json()).resposta,'Não há nenhuma mudança do assistente para desfazer.');
+  assert.equal((await (await post({action:'desfazer',pacoteId:'Kqualquer'})).json()).resposta,'Não há nenhuma mudança do assistente para desfazer.');
+  assert.equal((await post({action:'desfazer'})).status,400,'desfazer sem pacoteId é recusado');
   gemini(chama('registrar_ausencia_profissional',{profissional:'Lia',data:DIA}));
   const {plano:p2}=await (await perguntar('A Lia vai faltar')).json();
-  await post({action:'confirmar',planoId:p2.id});
-  const volta=await (await post({action:'desfazer'})).json();
-  assert.equal(volta.plano.tipo,'desfazer');assert.equal(volta.plano.linhas[0].para.staff_id,'P1');assert.equal(volta.restante,58);
+  const {aplicado}=await (await post({action:'confirmar',planoId:p2.id})).json();
+  assert.equal(aplicado.desfazivel,true);assert.equal(aplicado.pacoteId,state().assistente.pacotes[0].id);
+  const volta=await (await post({action:'desfazer',pacoteId:aplicado.pacoteId})).json();
+  assert.equal(volta.plano.tipo,'desfazer');assert.equal(volta.plano.desfaz,aplicado.pacoteId);assert.equal(volta.plano.linhas[0].para.staff_id,'P1');assert.equal(volta.restante,58);
   assert.equal(state().assistente.planos.at(-1).id,volta.plano.id);
-  await post({action:'confirmar',planoId:volta.plano.id});
+  const desfeito=(await (await post({action:'confirmar',planoId:volta.plano.id})).json()).aplicado;
+  assert.equal(desfeito.desfazivel,false,'o resultado de um desfazer não ganha botão Desfazer');assert.ok(desfeito.pacoteId);
   assert.equal(state().appointments[0].staff_id,'P1');
   assert.equal(usado(),2);assert.equal(chamadas.length,0);
+ }finally{db.close();}
+});
+
+test('Desfazer depois de um desfazer ou de um plano sem mudança não oferece um pacote antigo sem relação',async()=>{
+ // Ana (A1) com a Lia às 10:00 e Bia (A2) com a Nina às 14:00.
+ const s0=fixture();
+ s0.clients.push({id:'C2',name:'Bia Lima',phone:'5583999990002'});
+ s0.appointments.push({...s0.appointments[0],id:'A2',client_id:'C2',staff_id:'P2',start:840,end:885});
+ const {db,state}=setup({state:s0});try{
+  const confirmar=async planoId=>(await (await post({action:'confirmar',planoId})).json()).aplicado;
+  const desfazer=async pacoteId=>await (await post({action:'desfazer',pacoteId})).json();
+  // Pacote A: a Lia falta e a Ana vai para a Nina. Pacote B: a Bia troca da Nina para a Lia.
+  gemini(chama('registrar_ausencia_profissional',{profissional:'Lia',data:DIA}));
+  const a=await confirmar((await (await perguntar('A Lia vai faltar')).json()).plano.id);
+  gemini(chama('trocar_profissional',{cliente:'Bia',data:DIA,nova_profissional:'Lia'}));
+  const b=await confirmar((await (await perguntar('Bia com a Lia')).json()).plano.id);
+  assert.ok(a.desfazivel&&b.desfazivel&&a.pacoteId!==b.pacoteId);
+  const NAO=/não dá mais para desfazer por aqui/;
+  // A não é o último: o botão dele não desfaz B nem A.
+  const velho=await desfazer(a.pacoteId);assert.match(velho.resposta,NAO);assert.equal(velho.plano,undefined);
+  // Desfaz B; o resultado do desfazer não oferece A.
+  const u=await confirmar((await desfazer(b.pacoteId)).plano.id);
+  assert.equal(u.desfazivel,false);
+  assert.deepEqual(state().appointments.map(x=>x.staff_id),['P2','P2'],'B voltou, A continua');
+  for(const k of [u.pacoteId,b.pacoteId]){const r=await desfazer(k);assert.match(r.resposta,NAO);assert.equal(r.plano,undefined);}
+  assert.equal(state().assistente.planos.length,0,'nenhum plano de desfazer foi montado');
+  // Plano sem mudança (ninguém livre para cobrir a Nina): nada gravado, sem pacote e sem botão.
+  const t=state();t.staff[0].active=false;db.prepare("UPDATE rooms SET state=? WHERE id='flowagenda'").run(JSON.stringify(t));
+  gemini(chama('registrar_ausencia_profissional',{profissional:'Nina',data:DIA}));
+  const nada=await confirmar((await (await perguntar('A Nina vai faltar')).json()).plano.id);
+  assert.deepEqual([nada.pacoteId,nada.desfazivel],[null,false]);
+  assert.equal(state().assistente.pacotes.length,3,'o plano sem mudança não grava pacote');
+  assert.equal((await post({action:'desfazer'})).status,400);
+  assert.equal(state().assistente.planos.length,0);
+  // O botão do próprio A, agora o último que dá para desfazer, volta exatamente A.
+  const v=state();v.staff[0].active=true;db.prepare("UPDATE rooms SET state=? WHERE id='flowagenda'").run(JSON.stringify(v));
+  const volta=await desfazer(a.pacoteId);
+  assert.equal(volta.plano.desfaz,a.pacoteId);assert.deepEqual(volta.plano.linhas.map(l=>[l.cliente,l.para?.staff_id]),[['Ana Souza','P1']]);
  }finally{db.close();}
 });
 

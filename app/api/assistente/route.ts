@@ -2,7 +2,7 @@ import {env} from 'cloudflare:workers';
 import {requireAdmin,sameOrigin} from '../../../lib/admin-auth';
 import {today,upgrade} from '../../../lib/flowagenda.mjs';
 import {pedirAoGemini} from '../../../lib/assistente/gemini';
-import {FERRAMENTAS,executarFerramenta,instrucoes} from '../../../lib/assistente/ferramentas.mjs';
+import {FERRAMENTAS,desfazerPacote,executarFerramenta,instrucoes} from '../../../lib/assistente/ferramentas.mjs';
 import {aplicarPlano} from '../../../lib/assistente/planos.mjs';
 export const dynamic='force-dynamic';
 // Assistente do painel da gerência. Só "perguntar" chama o Gemini (1 vez) e conta no teto do dia, e só
@@ -91,7 +91,8 @@ export async function POST(req:Request){
     return await comCadastro(room,conta,s=>{
      const plano=s.assistente?.planos?.find((x:any)=>x.id===planoId&&now<=x.validoAte);
      if(!plano)return {corpo:{resposta:SUMIU}};
-     try{const {avisos}=aplicarPlano(s,plano,now,semLinhas);return {corpo:{aplicado:{titulo:plano.titulo,avisos}},gravar:true};}
+     // pacoteId e desfazivel dizem à tela se esta confirmação ganha o botão Desfazer (e de qual pacote).
+     try{const {avisos,pacoteId,desfazivel}=aplicarPlano(s,plano,now,semLinhas);return {corpo:{aplicado:{titulo:plano.titulo,avisos,pacoteId,desfazivel}},gravar:true};}
      catch(e){return {corpo:{resposta:(e as Error).message}};}
     });
    }
@@ -100,11 +101,16 @@ export async function POST(req:Request){
     if(resto.length===planos.length)return {corpo:{resposta:'Tudo bem, nada foi mudado.'}};
     s.assistente.planos=resto;return {corpo:{resposta:'Tudo bem, nada foi mudado.'},gravar:true};
    });
-   // Mesmo caminho da ferramenta desfazer_ultima_acao: planoDesfazer e o plano guardado como os outros.
-   case 'desfazer':return await comCadastro(room,conta,s=>{
-    const x=executarFerramenta(s,'desfazer_ultima_acao',{},now);
+   // Desfaz exatamente o pacote da mensagem (pacoteId); se ele não é mais o último que dá para desfazer, responde
+   // em vez de cair num pacote mais antigo. O plano é guardado como os outros e passa pelo Confirmar.
+   case 'desfazer':{
+    const pacoteId=typeof p.pacoteId==='string'?p.pacoteId:'';
+    if(!pacoteId)return json({error:'Confira os dados do pedido.'},400);
+    return await comCadastro(room,conta,s=>{
+    const x=desfazerPacote(s,pacoteId,now);
     return x.tipo==='plano'?{corpo:{plano:x.plano},gravar:true}:{corpo:{resposta:x.texto}};
-   });
+    });
+   }
    default:return json({error:'Operação desconhecida.'},400);
   }
  }catch{return json({resposta:FALHA},503);}
