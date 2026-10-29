@@ -5,6 +5,7 @@ import {moverAtendimento} from '../lib/assistente/mover.mjs';
 import {slots} from '../lib/agendamento.mjs';
 import {acharProfissional,acharCliente,acharAtendimento,consultarAgenda,consultarHorariosLivres,consultarHistoricoCliente,consultarResumoDia} from '../lib/assistente/consultas.mjs';
 import {planoRemarcar,planoTrocarProfissional,planoAusencia,planoDesfazer,aplicarPlano} from '../lib/assistente/planos.mjs';
+import {FERRAMENTAS,executarFerramenta,instrucoes} from '../lib/assistente/ferramentas.mjs';
 
 // Segunda-feira, 26/10/2026, 8h em Brasília: a terça é o primeiro dia útil.
 const now=Date.parse('2026-10-26T08:00:00-03:00');
@@ -455,4 +456,78 @@ test('falta: cliente com duas linhas recebe um aviso só, com as duas frases',()
   assert.equal(texto,'Oi, Ana! Seu horário de 27/10 às 09:00 continua, mas agora com a Nina no lugar da Lia. A Lia não vai poder atender 27/10 às 09:45. Quer que a gente procure outro horário para você? Qualquer dúvida, é só responder. Equipe Santa Cor');
   assert.equal(texto.split('Oi,').length-1,1);
   assert.equal(texto.split('Equipe Santa Cor').length-1,1);
+});
+
+// ---- Ferramentas do Gemini e despachante ----
+const EXEMPLOS={
+  consultar_agenda:{data:TERCA},
+  consultar_horarios_livres:{data:TERCA,servico:'Manicure'},
+  buscar_cliente:{busca:'Ana'},
+  consultar_historico_cliente:{cliente:'Ana'},
+  consultar_resumo_dia:{data:TERCA},
+  remarcar_atendimento:{cliente:'Ana',data:TERCA,nova_hora:'14:00'},
+  trocar_profissional:{cliente:'Ana',data:TERCA,nova_profissional:'Nina'},
+  registrar_ausencia_profissional:{profissional:'Lia',data:TERCA},
+  desfazer_ultima_acao:{},
+};
+const SEM_FUNCAO='Ainda não sei fazer isso por aqui. Você encontra em Agenda.';
+
+test('ferramentas: todas as declaradas têm executor e o JSON é enxuto',()=>{
+  assert.deepEqual(FERRAMENTAS.map(f=>f.name).sort(),Object.keys(EXEMPLOS).sort());
+  for(const f of FERRAMENTAS){
+    assert.equal(f.parameters.type,'OBJECT');
+    for(const p of Object.values(f.parameters.properties))assert.equal(p.type,'STRING');
+    const r=executarFerramenta(comAna(),f.name,EXEMPLOS[f.name],now);
+    assert.notEqual(r.texto,SEM_FUNCAO,f.name);
+    assert.ok(['resposta','pergunta','plano'].includes(r.tipo),f.name);
+  }
+  assert.ok(JSON.stringify(FERRAMENTAS).length<6000);
+});
+
+test('ferramentas: nome desconhecido e data inválida',()=>{
+  const s=comAna();
+  assert.deepEqual(executarFerramenta(s,'apagar_tudo',{},now),{tipo:'resposta',texto:SEM_FUNCAO});
+  for(const nome of ['consultar_agenda','consultar_horarios_livres','remarcar_atendimento','registrar_ausencia_profissional']){
+    for(const data of ['amanhã','2026-13-01']){
+      const r=executarFerramenta(s,nome,{...EXEMPLOS[nome],data},now);
+      assert.equal(r.tipo,'pergunta',nome);assert.match(r.texto,/qual dia/i);
+    }
+  }
+  const h=executarFerramenta(s,'remarcar_atendimento',{cliente:'Ana',data:TERCA,nova_hora:'duas da tarde'},now);
+  assert.equal(h.tipo,'pergunta');assert.match(h.texto,/hora/i);
+  const longo=executarFerramenta(s,'buscar_cliente',{busca:'a'.repeat(101)},now);
+  assert.equal(longo.tipo,'pergunta');
+  assert.equal(executarFerramenta(s,'consultar_resumo_dia',{},now).tipo,'resposta','data é opcional no resumo');
+});
+
+test('ferramentas: ausência guarda o plano, descarta vencidos e mantém 5',()=>{
+  const s=comFalta();
+  const r=executarFerramenta(s,'registrar_ausencia_profissional',{profissional:'Lia',data:TERCA},now);
+  assert.equal(r.tipo,'plano');
+  assert.equal(s.assistente.planos.at(-1),r.plano);
+  const velho={id:'Qv',validoAte:now-1};s.assistente.planos.unshift(velho);
+  for(let i=0;i<6;i++)executarFerramenta(s,'registrar_ausencia_profissional',{profissional:'Lia',data:TERCA},now+i);
+  assert.equal(s.assistente.planos.length,5);
+  assert.ok(!s.assistente.planos.includes(velho));
+  assert.ok(Array.isArray(s.assistente.pacotes));
+});
+
+test('ferramentas: buscar_cliente responde com a ficha ou pergunta quando há dúvida',()=>{
+  const s=comAna();s.clients.push({id:'C2',name:'Ana Lima',phone:''});
+  const dup=executarFerramenta(s,'buscar_cliente',{busca:'Ana'},now);
+  assert.equal(dup.tipo,'pergunta');assert.match(dup.texto,/mais de uma/);
+  const um=executarFerramenta(s,'buscar_cliente',{busca:'Souza'},now);
+  assert.equal(um.tipo,'resposta');assert.match(um.texto,/Ana Souza/);
+});
+
+test('ferramentas: chaves extras vindas do modelo não passam',()=>{
+  const s=comAna();
+  const r=executarFerramenta(s,'trocar_profissional',{cliente:'Ana',data:TERCA,nova_profissional:'Nina',nova_hora:'15:00',nova_data:'2026-10-28'},now);
+  assert.equal(r.tipo,'plano');assert.equal(r.plano.linhas[0].para.hora,'09:00');assert.equal(r.plano.linhas[0].para.data,TERCA);
+});
+
+test('instruções: salão, dia da semana, data e equipe',()=>{
+  const t=instrucoes(salao(),now);
+  assert.match(t,/^Você é o assistente do painel da gerência da Santa Cor\. Hoje é segunda-feira, 2026-10-26\. Equipe: Lia, Nina, Rafa\. /);
+  assert.match(t,/mudanças viram um plano que a gerência confirma\.$/);
 });
