@@ -1,5 +1,5 @@
 {
-  "name": "encaixa-esmalteria",
+  "name": "flowagenda-ai",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -16,7 +16,6 @@
     "exemplos:local": "node scripts/casos-locais.mjs --local",
     "exemplos:check": "node scripts/casos-locais.mjs --check",
     "exemplos:semana": "node scripts/semana-ficticia.mjs",
-    "agenda-falsa": "node scripts/agenda-falsa.mjs",
     "typecheck": "tsc --noEmit",
     "db:init": "node scripts/init-local-db.mjs",
     "setup": "npm run install:ci && npm run build && npm run db:init",

@@ -33,8 +33,7 @@ yarn-error.log*
 !.dev.vars.example
 *.pem
 *.key
-# credenciais do Google Agenda
-credenciais/
+# credenciais baixadas de serviços externos
 *credentials*.json
 *token*.json
 client_secret*.json

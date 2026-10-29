@@ -13,7 +13,7 @@ Também atende a gerência em português comum: *"quem a Lili atende amanhã?"*,
 
 Não é protótipo: o sistema roda hoje na **Santa Cor Esmalteria**, com cerca de **300 atendimentos por mês**.
 
-> 224 testes automatizados · regras de decisão auditáveis · nenhuma mudança na agenda sem aprovação humana
+> 206 testes automatizados · regras de decisão auditáveis · nenhuma mudança na agenda sem aprovação humana
 
 ---
 

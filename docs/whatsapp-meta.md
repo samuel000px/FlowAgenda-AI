@@ -13,7 +13,7 @@ Integração direta com a Cloud API da Meta. O painel Santa Cor fica em `/painel
 
 ## Preparar o servidor
 
-No PowerShell do VS Code, dentro de `encaixa-online`, use `npm.cmd` se `npm.ps1` estiver bloqueado:
+No PowerShell do VS Code, na pasta do projeto, use `npm.cmd` se `npm.ps1` estiver bloqueado:
 
 ```powershell
 npm.cmd run build
