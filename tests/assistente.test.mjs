@@ -184,3 +184,12 @@ test('histórico da cliente: visitas, última, preferida, faltas, gasto e próxi
   const nova=consultarHistoricoCliente({...s,appointments:[],payments:[]},{cliente:'C1'},now);
   assert.doesNotMatch(nova.texto,/NaN|undefined/);
 });
+
+test('data impossível vira pergunta, não erro',()=>{
+  const s=comAna();
+  for(const data of ['2026-13-01','2026-00-10','2026-10-32','2026-02-30','texto','']){
+    assert.equal(consultarAgenda(s,{data}).tipo,'pergunta',data);
+    assert.equal(consultarHorariosLivres(s,{data,servico:'Manicure'},now).tipo,'pergunta',data);
+    assert.equal(consultarResumoDia(s,{data},now).tipo,data?'pergunta':'resposta',data);
+  }
+});
