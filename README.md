@@ -1,5 +1,10 @@
 # FlowAgenda-AI
 
+<p align="right">
+  <a href="README.md"><img alt="Português" src="https://img.shields.io/badge/Português-selecionado-2ea44f?style=for-the-badge"></a>
+  <a href="README.en.md"><img alt="English" src="https://img.shields.io/badge/English-read-555555?style=for-the-badge"></a>
+</p>
+
 **Um horário cancelado é dinheiro que some da agenda. O FlowAgenda-AI devolve esse dinheiro.**
 
 FlowAgenda-AI é a plataforma de gestão de uma esmalteria com um **AI Agent** no centro. O agente faz quatro coisas:
