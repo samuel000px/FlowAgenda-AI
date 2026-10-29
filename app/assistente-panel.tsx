@@ -135,7 +135,7 @@ export default function AssistentePanel({onRefresh,onAbrirAba,visivel=true}:Prop
   // (na falta, também quem ficou sem vaga), pela mesma regra do servidor.
   const mudam=vivas.filter(l=>l.para).length,afetadas=new Set(vivas.filter(l=>l.para||p.tipo==='ausencia').map(l=>l.cliente)).size;
   const total=linhas.filter(l=>l.para).length;
-  const impacto=tiradas.length?`Com as linhas tiradas: ${mudam} de ${total} ${total===1?'mudança':'mudanças'} ·${plural(afetadas,'cliente afetada','clientes afetadas')}. Valores não mudam.`:p.impacto;
+  const impacto=tiradas.length?`Com as linhas tiradas: ${mudam} de ${total} ${total===1?'mudança':'mudanças'} · ${plural(afetadas,'cliente afetada','clientes afetadas')}. Valores não mudam.`:p.impacto;
   // Falta (M+ na spec) mostra os avisos em vermelho.
   return <div className={'assistente-cartao'+(aberto?'':' is-fechado')+(p.tipo==='ausencia'?' is-grande':'')}>
    <h3>{p.titulo}</h3>
