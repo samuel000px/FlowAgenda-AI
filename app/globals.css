@@ -175,3 +175,4 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .acoes-linha.is-hoje{background:#fdf1f3}
 @media(max-width:560px){.acoes-linha{flex-wrap:wrap}.acoes-linha button{width:100%}.acoes-partes button{flex:1}}
 .support-horario{color:#8a5a2c!important;font-weight:600}
+.acoes-motivo{margin:6px 0 0;font-size:13px;color:#5e4a4d;font-style:italic;white-space:normal}

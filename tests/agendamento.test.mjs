@@ -140,13 +140,15 @@ test('cancelar pelo link: pedido vira desistência; confirmado vira vaga para o 
   const s=salao(),[a,b]=requestBooking(s,{cart:{items:[{service:'S1'},{service:'S12'}],staff:{'Mãos e pés':'P2',Cabelo:'P3'}},date:TERCA,start:540,name:'Ana',phone:'83999990000'},now);
   assert.equal(byToken(s,a.token).id,a.id);
   assert.throws(()=>byToken(s,'x'.repeat(32)),/não encontrado/);
-  cancelByToken(s,a.token,now);
+  assert.throws(()=>cancelByToken(s,a.token,now),/motivo/,'sem motivo não cancela');
+  cancelByToken(s,a.token,now,'Viagem de última hora.');
+  assert.equal(s.cancellations.at(-1).reason,'Viagem de última hora.');
   assert.equal(a.status,'withdrawn');assert.equal(b.status,'withdrawn');
   const [c]=pedido(s,{start:585});actAdmin(s,'request_accept',{id:c.id},now);
-  cancelByToken(s,c.token,now);
+  cancelByToken(s,c.token,now,'Fiquei doente.');
   assert.equal(c.status,'cancelled');
   assert.equal(s.gaps.at(-1).cancelled_id,c.id);
-  assert.throws(()=>cancelByToken(s,c.token,now),/não pode/);
+  assert.throws(()=>cancelByToken(s,c.token,now,'De novo.'),/não pode/);
 });
 
 test('a parte pública não mostra telefone nem outras clientes',()=>{
@@ -228,7 +230,7 @@ test('a proposta criada pelo cancelamento no link entra na fila do WhatsApp',()=
   const [a]=pedido(s,{name:'Zé',phone:'83988887777',earlier:false});actAdmin(s,'request_accept',{id:a.id},now);
   const config={enabled:true,verified:true,mode:'business',restricted:false,allowed:[],phoneId:'1',templates:{enabled:false}};
   s.whatsappLastInbound=Object.fromEntries(s.clients.map(c=>[c.phone,now-1000]));
-  changeWithWhatsApp(s,st=>cancelByToken(st,a.token,now),config,now);
+  changeWithWhatsApp(s,st=>cancelByToken(st,a.token,now,'Mudou minha agenda.'),config,now);
   const proposta=s.messages.find(m=>m.offer_id);
   assert.ok(proposta,'o cancelamento preparou uma proposta');
   assert.equal(proposta.whatsapp?.status,'queued');

@@ -8,6 +8,7 @@ import {linkWhatsapp} from '../../lib/vitrine.mjs';
 import {MAX_ITENS,prices} from '../../lib/agendamento.mjs';
 import {salao} from '../salao';
 import {fotoUrl} from '../avatar';
+import {Hand,Gem,Scissors,Eye,Sparkles,ShoppingBag,Gift,CheckCircle2,CalendarClock,type LucideIcon} from 'lucide-react';
 
 type Opcao={name:string,duration:number,price:number};
 export type Servico={id:string,name:string,duration:number,price:number,group:string,variants:Opcao[]};
@@ -20,7 +21,9 @@ export type Catalogo={groups:string[],services:Servico[],addons:Adicional[],staf
 type Item={service:string,variant?:number,addons:string[]};
 const SEMANA=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 const POR_PAGINA=6;
-export const ICONE_AREA:Record<string,string>={'Mãos e pés':'💅','Alongamento e gel':'💎',Cabelo:'💇','Sobrancelha e depilação':'✨'};
+const ICONES:Record<string,LucideIcon>={'Mãos e pés':Hand,'Alongamento e gel':Gem,Cabelo:Scissors,'Sobrancelha e depilação':Eye};
+/** Ícone de cada área num círculo, no lugar dos antigos emojis. */
+export function IconeArea({area}:{area:string}){const Desenho=ICONES[area]||Sparkles;return <span className="area-icone" aria-hidden="true"><Desenho size={16} strokeWidth={1.8}/></span>;}
 const dia=(d:string)=>d.split('-').reverse().slice(0,2).join('/');
 const semana=(d:string)=>SEMANA[new Date(d+'T12:00:00Z').getUTCDay()];
 const hora=(m:number)=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
@@ -51,6 +54,7 @@ export default function Agendar(){
   const [horarios,setHorarios]=useState<Horario[]|null>(null),[pedido,setPedido]=useState<Record<string,any>|null>(null);
   // Data cheia: a cliente pode deixar nome e celular para entrar na lista de espera do dia.
   const [querEspera,setQuerEspera]=useState(false),[naEspera,setNaEspera]=useState<Record<string,any>|null>(null);
+  const [carrinhoVisivel,setCarrinhoVisivel]=useState(false);
 
   useEffect(()=>{
     fetch('/api/agendar').then(r=>r.json()).then((d:any)=>{
@@ -73,6 +77,13 @@ export default function Agendar(){
     fetch(`/api/agendar?cart=${encodeURIComponent(chave)}&date=${data}`).then(r=>r.json()).then((d:any)=>{if(valido){if(d.error)setErro(d.error);setHorarios(d.slots||[]);}});
     return()=>{valido=false};
   },[chave,data]);
+
+  // Botão redondo do carrinho: aparece quando o carrinho sai da tela e leva até ele num toque.
+  const temItens=itens.length>0;
+  useEffect(()=>{
+    if(!temItens)return;const el=document.getElementById('carrinho');if(!el)return;
+    const o=new IntersectionObserver(([e])=>setCarrinhoVisivel(e.isIntersecting),{threshold:0.15});o.observe(el);return()=>o.disconnect();
+  },[temItens]);
 
   function abrir(id:string){setAberto(aberto===id?'':id);setOpcao(undefined);setExtras([]);setErro('');}
   function adicionar(service:string,variant?:number,addons:string[]=[]){setItens([...itens,{service,variant,addons}]);setAberto('');setOpcao(undefined);setExtras([]);}
@@ -99,7 +110,7 @@ export default function Agendar(){
   }
 
   if(naEspera)return <div className="sucesso">
-    <div className="selo-ok" aria-hidden="true">🗓️</div>
+    <div className="selo-ok" aria-hidden="true"><CalendarClock size={30} strokeWidth={1.6}/></div>
     <header className="titulo-pagina"><h1>Você está na lista de espera</h1></header>
     <p>Obrigada, {naEspera.name}! {semana(naEspera.date)}, {dia(naEspera.date)} está cheio, mas você entrou na lista de espera com prioridade. Se abrir um horário, a gente chama você.</p>
     <a className="botao" href={linkWhatsapp(salao.whatsapp,`Olá! Sou ${naEspera.name} e entrei na lista de espera de ${dia(naEspera.date)} (${naEspera.services.join(' + ')}).`)} target="_blank" rel="noopener">Falar com a gente no WhatsApp</a>
@@ -111,7 +122,7 @@ export default function Agendar(){
     const lista=(pedido.items as any[]).map(x=>`${x.name} às ${x.time} com ${x.staff}`).join('; ');
     const texto=`Olá! Sou ${pedido.name} e agendei para ${semana(pedido.date).toLowerCase()}, ${dia(pedido.date)}: ${lista}. Meu agendamento: ${link}`;
     return <div className="sucesso">
-      <div className="selo-ok" aria-hidden="true">💅</div>
+      <div className="selo-ok" aria-hidden="true"><CheckCircle2 size={32} strokeWidth={1.6}/></div>
       <header className="titulo-pagina"><h1>Pedido recebido!</h1></header>
       <p>Obrigada, {pedido.name}! Recebemos seu pedido e vamos confirmar o horário com você em breve.</p>
       <p className="resumo-dia">{semana(pedido.date)}, {dia(pedido.date)}</p>
@@ -141,7 +152,7 @@ export default function Agendar(){
     <div className="passo">
       <span className="rotulo">1 · Serviços</span>
       {cheio?<p className="vazio">Seu carrinho está completo ({MAX_ITENS} serviços).</p>:dados.groups.map(g=><div key={g} className="area">
-        <h3>{ICONE_AREA[g]||'✨'} {g}</h3>
+        <h3 className="area-titulo"><IconeArea area={g}/>{g}</h3>
         {dados.services.filter(v=>v.group===g&&!itens.some(x=>x.service===v.id)).map(v=><div key={v.id} id={'svc-'+v.id} className={'escolha-caixa'+(aberto===v.id?' marcada':'')}>
           <button className="escolha" aria-expanded={aberto===v.id} onClick={()=>abrir(v.id)}><div><strong>{v.name}</strong><small>{v.variants.length?'Várias opções':duracao(v.duration)}</small></div><span className="preco">{v.variants.length?'a partir de ':''}{reais(aPartirDe(v))}</span></button>
           {aberto===v.id&&config(v)}
@@ -149,8 +160,10 @@ export default function Agendar(){
       </div>)}
     </div>
 
-    {itens.length>0&&<div className="passo carrinho">
-      <span className="rotulo">🛒 Seu carrinho</span>
+    {itens.length>0&&!carrinhoVisivel&&<button className="carrinho-flutuante" aria-label={`Ver carrinho: ${itens.length} serviço(s), ${reais(total)}`} onClick={()=>document.getElementById('carrinho')?.scrollIntoView({behavior:'smooth',block:'start'})}><ShoppingBag size={22} strokeWidth={1.8}/><b>{itens.length}</b></button>}
+
+    {itens.length>0&&<div className="passo carrinho" id="carrinho">
+      <span className="rotulo rotulo-icone"><ShoppingBag size={14}/>Seu carrinho</span>
       {calculados.map((x,i)=><div className="linha" key={x.svc.id}>
         <div><strong>{x.svc.name}{x.variant?` · ${x.variant.name}`:''}</strong>
           {x.addons.map(a=><small key={a.id}>+ {a.name} ({reais(a.price)})</small>)}
@@ -160,7 +173,7 @@ export default function Agendar(){
         <button className="tirar" aria-label={`Tirar ${x.svc.name}`} onClick={()=>tirar(i)}>×</button>
       </div>)}
       {oferta&&<div className="oferta">
-        <p><strong>✨ Pegue também: {oferta.alvo.name}</strong></p>
+        <p className="oferta-titulo"><Gift size={17} strokeWidth={1.8}/><strong>Pegue também: {oferta.alvo.name}</strong></p>
         <p>{oferta.alvo.variants.length?'a partir de ':''}<s>{reais(oferta.base)}</s> <b>{reais(oferta.base-oferta.desconto)}</b> · você economiza {reais(oferta.desconto)}</p>
         <button className="botao claro" onClick={()=>{if(!oferta.alvo.variants.length)return adicionar(oferta.alvo.id);abrir(oferta.alvo.id);setTimeout(()=>document.getElementById('svc-'+oferta.alvo.id)?.scrollIntoView({behavior:'smooth',block:'center'}),50);}}>+ {oferta.alvo.variants.length?'Escolher opção':'Adicionar'}</button>
       </div>}
@@ -170,7 +183,7 @@ export default function Agendar(){
     {areas.length>0&&<div className="passo">
       <span className="rotulo">2 · Profissional</span>
       {areas.map(g=>{const fazem=dados.staff.filter(p=>itens.every(x=>{const v=dados.services.find(v=>v.id===x.service)!;return v.group!==g||p.services.includes(v.id);}));
-        return <div key={g} className="area-equipe"><p className="mini">{ICONE_AREA[g]||'✨'} {g}</p><div className="chips">
+        return <div key={g} className="area-equipe"><p className="mini area-titulo"><IconeArea area={g}/>{g}</p><div className="chips">
           <button className="chip" aria-pressed={equipe[g]===''} onClick={()=>setEquipe({...equipe,[g]:''})}>Sem preferência</button>
           {fazem.map(p=><button key={p.id} className={'chip'+(p.photo?' chip-foto':'')} aria-pressed={equipe[g]===p.id} onClick={()=>setEquipe({...equipe,[g]:p.id})}>{p.photo&&<img src={fotoUrl(p.photo)} alt="" loading="lazy"/>}{p.name}</button>)}
         </div>{!fazem.length&&<p className="aviso">Nenhuma profissional faz todos os serviços de {g} juntos. Tire um deles do carrinho.</p>}</div>;})}

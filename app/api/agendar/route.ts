@@ -41,7 +41,7 @@ export async function POST(req:Request){
   if(!quota)return json({error:'Muitas tentativas. Aguarde um pouco ou fale com a gente pelo WhatsApp.'},429);
   const p=JSON.parse(raw);
   if(p.action==='cancel'){
-   const {state,result}=await change(s=>cancelByToken(s,String(p.token||'')));
+   const {state,result}=await change(s=>cancelByToken(s,String(p.token||''),Date.now(),String(p.reason||'').slice(0,600)));
    await flushWhatsApp(env,ROOM);
    return json(publicView(state,result));
   }
