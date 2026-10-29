@@ -7,7 +7,12 @@ export const RESERVA='gemini-3.1-flash-lite';
 const ESPERA=9000;
 const corta=(t:unknown)=>String(t??'').slice(0,500);
 export async function pedirAoGemini({key,model='gemini-3.5-flash-lite',instrucoes,historico,texto,ferramentas,fetcher=fetch}:Entrada):Promise<Saida>{
- const contents=[...historico.map(h=>({role:h.de==='gerente'?'user':'model',parts:[{text:corta(h.texto)}]})),{role:'user',parts:[{text:corta(texto)}]}];
+ // O Gemini espera falas alternadas: duas seguidas do mesmo lado viram uma só.
+ const contents:{role:string,parts:{text:string}[]}[]=[];
+ for(const [role,t] of [...historico.map(h=>[h.de==='gerente'?'user':'model',corta(h.texto)]),['user',corta(texto)]]){
+  const ultima=contents[contents.length-1];
+  if(ultima?.role===role)ultima.parts.push({text:t});else contents.push({role,parts:[{text:t}]});
+ }
  const body=JSON.stringify({
   systemInstruction:{parts:[{text:instrucoes}]},contents,tools:[{functionDeclarations:ferramentas}],toolConfig:{functionCallingConfig:{mode:'AUTO'}}
  });

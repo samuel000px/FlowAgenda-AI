@@ -637,3 +637,21 @@ test('estoque: busca por lugar ou item, avisa o que repor e o que não achou',()
   delete s.stock;
   assert.match(executarFerramenta(s,'consultar_estoque',{},now).texto,/Ainda não há itens/);
 });
+
+test('estoque: entende pelo sentido (painel = expositor, plural) e as instruções levam os lugares',()=>{
+  const s=comAna();
+  s.stock=[
+    {id:'K1',name:'Vermelho Paixão',place:'Expositor 1 da entrada (esmalte em gel)',qty:4,min:0},
+    {id:'K2',name:'Nude Rosé',place:'Expositor 2 de gel, perto da recepção',qty:3,min:0},
+    {id:'K3',name:'Algodão',place:'Mesa início da sala, perto da porta (Edilene)',qty:9,min:0},
+  ];
+  const r=executarFerramenta(s,'consultar_estoque',{busca:'esmaltes no painel da entrada'},now).texto;
+  assert.match(r,/^1 item no estoque\.\nExpositor 1 da entrada \(esmalte em gel\): Vermelho Paixão \(4\)$/);
+  assert.match(executarFerramenta(s,'consultar_estoque',{busca:'expositores'},now).texto,/^2 itens/);
+  assert.match(executarFerramenta(s,'consultar_estoque',{busca:'mesa da Edilene'},now).texto,/Algodão \(9\)/);
+  const ins=instrucoes(s,now);
+  assert.match(ins,/Lugares do estoque: Expositor 1 da entrada \(esmalte em gel\); Expositor 2 de gel, perto da recepção; Mesa início/);
+  assert.match(ins,/pelo sentido/);
+  delete s.stock;
+  assert.doesNotMatch(instrucoes(s,now),/Lugares do estoque/);
+});

@@ -65,8 +65,8 @@ export default function AssistentePanel({onRefresh,onAbrirAba,visivel=true}:Prop
 
  async function enviar(t:string){
   const q=t.trim();if(!q||ocupado||bloqueado)return;
-  // As 6 mensagens anteriores seguem junto para o assistente entender "e amanhã?".
-  const historico=msgs.slice(-6).map(m=>({de:m.de,texto:m.texto}));
+  // As 8 mensagens anteriores seguem junto para o assistente entender "e amanhã?".
+  const historico=msgs.slice(-8).map(m=>({de:m.de,texto:m.texto}));
   add({de:'gerente',texto:q});setTexto('');setOcupado(true);setPensando(true);
   try{
    const {status,ok,d}=await chamar({action:'perguntar',texto:q,historico});

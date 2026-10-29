@@ -41,7 +41,17 @@ async function comCadastro(room:string,conta:string,mudar:(s:any)=>Feito,primeir
  return json({resposta:'A agenda foi atualizada em outra tela. Tente de novo em instantes.',restante:corpo.restante},409);
 }
 // Histórico vindo da tela: só mensagens bem formadas, as 6 últimas (o cliente do Gemini corta cada uma em 500).
-const historicoDe=(h:unknown)=>(Array.isArray(h)?h:[]).filter((m:any)=>m&&(m.de==='gerente'||m.de==='assistente')&&typeof m.texto==='string').slice(-6).map((m:any)=>({de:m.de as 'gerente'|'assistente',texto:m.texto as string}));
+// Conversa para o Gemini: sem os avisos de falha, com falas seguidas da mesma pessoa juntas e começando
+// pela gerente, para uma resposta curta ("expositor da entrada") completar o pedido anterior.
+const AVISOS=new Set([FALHA,NAO_ENTENDI,TETO,TETO_GEMINI]);
+type Fala={de:'gerente'|'assistente',texto:string};
+const historicoDe=(h:unknown)=>{
+ const lista=(Array.isArray(h)?h:[]).filter((m:any)=>m&&(m.de==='gerente'||m.de==='assistente')&&typeof m.texto==='string'&&m.texto.trim()&&!(m.de==='assistente'&&AVISOS.has(m.texto))).slice(-8);
+ const falas:Fala[]=[];
+ for(const m of lista as Fala[]){const ultima=falas[falas.length-1];if(ultima?.de===m.de)ultima.texto+='\n'+m.texto;else falas.push({de:m.de,texto:m.texto});}
+ while(falas[0]?.de==='assistente')falas.shift();
+ return falas;
+};
 
 async function perguntar(room:string,p:any,now:number){
  const texto=typeof p.texto==='string'?p.texto.trim():'';

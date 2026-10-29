@@ -253,14 +253,25 @@ test('resposta em texto do Gemini volta como resposta e conta',async()=>{
  }finally{db.close();}
 });
 
-test('histórico: só as últimas 6 mensagens válidas vão para o Gemini',async()=>{
+test('histórico: só as últimas 8 mensagens válidas vão para o Gemini',async()=>{
  const {db}=setup();try{
   const chamadas=gemini([{text:'Ok'}]);
-  const historico=[...Array.from({length:8},(_,i)=>({de:i%2?'assistente':'gerente',texto:'m'+i})),{de:'sistema',texto:'x'},{de:'gerente',texto:5},'lixo',null];
+  const historico=[...Array.from({length:10},(_,i)=>({de:i%2?'assistente':'gerente',texto:'m'+i})),{de:'sistema',texto:'x'},{de:'gerente',texto:5},'lixo',null];
   await perguntar('E agora?',historico);
   const contents=chamadas[0].body.contents;
-  assert.deepEqual(contents.map(c=>c.parts[0].text),['m2','m3','m4','m5','m6','m7','E agora?']);
-  assert.deepEqual(contents.map(c=>c.role),['user','model','user','model','user','model','user']);
+  assert.deepEqual(contents.map(c=>c.parts[0].text),['m2','m3','m4','m5','m6','m7','m8','m9','E agora?']);
+  assert.deepEqual(contents.map(c=>c.role),['user','model','user','model','user','model','user','model','user']);
+ }finally{db.close();}
+});
+
+test('histórico: avisos de falha saem, falas seguidas se juntam e a conversa começa pela gerente',async()=>{
+ const {db}=setup();try{
+  const chamadas=gemini([{text:'Ok'}]);
+  const historico=[{de:'assistente',texto:'Olá'},{de:'gerente',texto:'quais são os esmaltes no painel da entrada?'},{de:'assistente',texto:FALHA}];
+  await perguntar('Expositor da entrada',historico);
+  const contents=chamadas[0].body.contents;
+  assert.deepEqual(contents.map(c=>c.role),['user']);
+  assert.deepEqual(contents[0].parts.map(p=>p.text),['quais são os esmaltes no painel da entrada?','Expositor da entrada']);
  }finally{db.close();}
 });
 
