@@ -16,7 +16,7 @@ FlowAgenda-AI é a plataforma de gestão de uma esmalteria com um **AI Agent** n
 
 Também atende a gerência em português comum: *"quem a Lili atende amanhã?"*, *"a Ester vai faltar sexta, redistribui a agenda dela"*, *"o que tem no expositor da entrada?"*.
 
-Não é protótipo: o sistema roda hoje na **Santa Cor Esmalteria**, com cerca de **300 atendimentos por mês**.
+É um sistema que está entrando em prática atualmente na **Santa Cor Esmalteria**, um salão de verdade com cerca de **300 atendimentos por mês**.
 
 > 206 testes automatizados · regras de decisão auditáveis · nenhuma mudança na agenda sem aprovação humana
 

@@ -16,7 +16,7 @@ FlowAgenda-AI is a management platform for a nail salon, with an **AI Agent** at
 
 It also takes requests from the manager in plain language: *"who is Lili seeing tomorrow?"*, *"Ester is off on Friday, redistribute her schedule"*, *"what's on the display by the entrance?"*.
 
-This is not a prototype: the system runs today at **Santa Cor Esmalteria**, a real nail salon with about **300 appointments a month**.
+It is a system currently being put into practice at **Santa Cor Esmalteria**, a real nail salon with about **300 appointments a month**.
 
 > 206 automated tests · auditable decision rules · no schedule change without human approval
 
