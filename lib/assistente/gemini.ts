@@ -9,9 +9,14 @@ export async function pedirAoGemini({key,model='gemini-3.5-flash-lite',instrucoe
  try{response=await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{
   method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},signal:AbortSignal.timeout(15000),body:JSON.stringify({
    systemInstruction:{parts:[{text:instrucoes}]},contents,tools:[{functionDeclarations:ferramentas}],toolConfig:{functionCallingConfig:{mode:'AUTO'}}
-  })});}catch{throw Error(FALHA);}
+  })});}catch(e){console.error('gemini: sem resposta',(e as Error)?.name);throw Error(FALHA);}
  if(response.status===429)throw Error('limite-gemini');
- if(!response.ok)throw Error(FALHA);
+ if(!response.ok){
+  // Só o código e a mensagem do Gemini vão para o log, nunca a chave.
+  const erro=await response.text().catch(()=>'');
+  console.error('gemini:',response.status,model,corta(erro).slice(0,300));
+  throw Error(FALHA);
+ }
  let parts:any[];
  try{const data:any=await response.json();parts=data.candidates?.[0]?.content?.parts||[];}catch{throw Error(FALHA);}
  const chamada=parts.find(p=>p?.functionCall)?.functionCall;
