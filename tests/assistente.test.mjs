@@ -475,8 +475,11 @@ const SEM_FUNCAO='Ainda não sei fazer isso por aqui. Você encontra em Agenda.'
 test('ferramentas: todas as declaradas têm executor e o JSON é enxuto',()=>{
   assert.deepEqual(FERRAMENTAS.map(f=>f.name).sort(),Object.keys(EXEMPLOS).sort());
   for(const f of FERRAMENTAS){
-    assert.equal(f.parameters.type,'OBJECT');
-    for(const p of Object.values(f.parameters.properties))assert.equal(p.type,'STRING');
+    if(f.parameters){
+      assert.equal(f.parameters.type,'OBJECT');
+      assert.ok(Object.keys(f.parameters.properties).length>0,f.name+': properties vazio');
+    }
+    for(const p of Object.values(f.parameters?.properties||{}))assert.equal(p.type,'STRING');
     const r=executarFerramenta(comAna(),f.name,EXEMPLOS[f.name],now);
     assert.notEqual(r.texto,SEM_FUNCAO,f.name);
     assert.ok(['resposta','pergunta','plano'].includes(r.tipo),f.name);
