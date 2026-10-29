@@ -230,10 +230,10 @@ test('(e) Gemini com erro 500 devolve a falha e não conta',async()=>{
  }finally{db.close();}
 });
 
-test('Gemini sem função e sem texto (bloqueio) é falha e não conta',async()=>{
+test('Gemini sem função e sem texto pede outra forma e não conta',async()=>{
  const {db,usado}=setup();try{
   gemini([{text:''}]);
-  assert.deepEqual(await (await perguntar('Oi')).json(),{resposta:FALHA,restante:60});assert.equal(usado(),0);
+  assert.deepEqual(await (await perguntar('Oi')).json(),{resposta:'Não entendi esse pedido. Pode dizer de outro jeito? Eu vejo a agenda, as clientes, o resumo do dia e o estoque.',restante:60});assert.equal(usado(),0);
  }finally{db.close();}
 });
 

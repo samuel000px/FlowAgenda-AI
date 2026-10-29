@@ -26,11 +26,13 @@ export async function pedirAoGemini({key,model='gemini-3.5-flash-lite',instrucoe
    if(response.status!==429&&response.status!==404&&response.status<500)break;
    continue;
   }
-  let parts:any[];
-  try{const data:any=await response.json();parts=data.candidates?.[0]?.content?.parts||[];}catch{throw Error(FALHA);}
+  let parts:any[],motivo:unknown;
+  try{const data:any=await response.json();parts=data.candidates?.[0]?.content?.parts||[];motivo=data.candidates?.[0]?.finishReason??data.promptFeedback?.blockReason;}catch{throw Error(FALHA);}
   const chamada=parts.find(p=>p?.functionCall)?.functionCall;
   if(chamada)return {ferramenta:{nome:String(chamada.name),args:chamada.args&&typeof chamada.args==='object'?chamada.args:{}}};
-  return {texto:parts.map(p=>p?.text||'').join('')};
+  const texto=parts.map(p=>p?.text||'').join('');
+  if(!texto.trim())console.error('gemini: resposta vazia',modelo,String(motivo??''));
+  return {texto};
  }
  throw Error(limite?'limite-gemini':FALHA);
 }

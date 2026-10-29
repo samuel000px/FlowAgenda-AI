@@ -11,6 +11,7 @@ export const dynamic='force-dynamic';
 // Para os testes: globalThis.__assistenteFetch, quando existe, faz o papel do fetch; em produção não existe.
 const FALHA='O assistente não respondeu agora. Tente de novo em instantes ou use os botões do painel.';
 const TETO='O assistente chegou ao limite de hoje. Ele volta amanhã às 0h. Enquanto isso, tudo funciona pelos botões do painel.';
+const NAO_ENTENDI='Não entendi esse pedido. Pode dizer de outro jeito? Eu vejo a agenda, as clientes, o resumo do dia e o estoque.';
 const TETO_GEMINI=TETO.replace('Ele volta amanhã às 0h','Ele volta em alguns minutos');
 const SUMIU='Este plano não está mais disponível. Peça de novo.';
 const json=(body:unknown,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'}});
@@ -53,8 +54,8 @@ async function perguntar(room:string,p:any,now:number){
  let r:Awaited<ReturnType<typeof pedirAoGemini>>;
  try{r=await pedirAoGemini({key:env.GEMINI_API_KEY,model:env.GEMINI_MODEL||undefined,instrucoes:instrucoes(s,now),historico:historicoDe(p.historico),texto,ferramentas:FERRAMENTAS,fetcher:(globalThis as any).__assistenteFetch});}
  catch(e){return (e as Error).message==='limite-gemini'?json({resposta:TETO_GEMINI,restante:restante(row)},429):json({resposta:FALHA,restante:restante(row)});}
- // Sem função e sem texto (resposta bloqueada) também é falha: não conta.
- if('texto' in r&&!r.texto.trim())return json({resposta:FALHA,restante:restante(row)});
+ // Sem função e sem texto (o modelo não soube o que fazer ou foi bloqueado): pede outra forma e não conta.
+ if('texto' in r&&!r.texto.trim())return json({resposta:NAO_ENTENDI,restante:restante(row)});
  // Dois pedidos ao mesmo tempo podem passar juntos pela conferência; quem chegar depois do teto ainda recebe
  // a resposta (o Gemini já respondeu), com restante 0.
  const usado=await env.DB!.prepare('INSERT INTO limits(id,used) VALUES(?,1) ON CONFLICT(id) DO UPDATE SET used=used+1 WHERE used<? RETURNING used').bind(conta,limite).first<{used:number}>();

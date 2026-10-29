@@ -548,6 +548,7 @@ const EXEMPLOS={
   buscar_cliente:{busca:'Ana'},
   consultar_historico_cliente:{cliente:'Ana'},
   consultar_resumo_dia:{data:TERCA},
+  consultar_estoque:{busca:'painel da parede'},
   remarcar_atendimento:{cliente:'Ana',data:TERCA,nova_hora:'14:00'},
   trocar_profissional:{cliente:'Ana',data:TERCA,nova_profissional:'Nina'},
   registrar_ausencia_profissional:{profissional:'Lia',data:TERCA},
@@ -616,4 +617,23 @@ test('instruções: salão, dia da semana, data e equipe',()=>{
   const t=instrucoes(salao(),now);
   assert.match(t,/^Você é o assistente do painel da gerência da Santa Cor\. Hoje é segunda-feira, 2026-10-26\. Equipe: Lia, Nina, Rafa\. /);
   assert.match(t,/mudanças viram um plano que a gerência confirma\.$/);
+});
+
+test('estoque: busca por lugar ou item, avisa o que repor e o que não achou',()=>{
+  const s=comAna();
+  s.stock=[
+    {id:'K1',name:'Esmalte vermelho',place:'Painel da parede',qty:2,min:3},
+    {id:'K2',name:'Esmalte nude',place:'Painel da parede',qty:8,min:0},
+    {id:'K3',name:'Acetona',place:'Armário',qty:5,min:1},
+  ];
+  const lugar=executarFerramenta(s,'consultar_estoque',{busca:'painel da parede da loja'},now);
+  assert.equal(lugar.tipo,'resposta');
+  assert.match(lugar.texto,/^2 itens no estoque, 1 para repor\./);
+  assert.match(lugar.texto,/Painel da parede: Esmalte vermelho \(2, repor\), Esmalte nude \(8\)/);
+  assert.doesNotMatch(lugar.texto,/Acetona/);
+  assert.match(executarFerramenta(s,'consultar_estoque',{busca:'acetona'},now).texto,/Armário: Acetona \(5\)/);
+  assert.match(executarFerramenta(s,'consultar_estoque',{},now).texto,/^3 itens/);
+  assert.match(executarFerramenta(s,'consultar_estoque',{busca:'algodão'},now).texto,/Não achei "algodão".*Lugares cadastrados: Painel da parede, Armário\./);
+  delete s.stock;
+  assert.match(executarFerramenta(s,'consultar_estoque',{},now).texto,/Ainda não há itens/);
 });
