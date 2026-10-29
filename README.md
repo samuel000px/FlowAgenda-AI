@@ -1,8 +1,129 @@
 # FlowAgenda-AI
 
-Plataforma administrativa de esmalteria com agenda por data, cadastro de clientes, equipe, serviços, conversas, aprovação de remarcações e fechamento de atendimentos.
+**Um horário cancelado é dinheiro que some da agenda. O FlowAgenda-AI devolve esse dinheiro.**
 
-A interface web incorpora as regras do projeto Python [agente-remarcacao](agente-remarcacao/README.md), preservado neste repositório. A escolha da candidata é feita por regras e cálculos auditáveis; o Gemini interpreta respostas livres, sem autorização para modificar a agenda.
+FlowAgenda-AI é a plataforma de gestão de uma esmalteria com um **AI Agent** no centro. O agente faz quatro coisas:
+
+- Percebe a vaga quando alguém cancela.
+- Escolhe, com critério e números, quem tem mais chance de aceitar o horário.
+- Lê o que a cliente responde no WhatsApp, em texto livre.
+- Deixa tudo pronto para a gerência aprovar com um toque.
+
+Também atende a gerência em português comum: *"quem a Lili atende amanhã?"*, *"a Ester vai faltar sexta, redistribui a agenda dela"*, *"o que tem no expositor da entrada?"*.
+
+Não é protótipo: o sistema roda hoje na **Santa Cor Esmalteria**, com cerca de **300 atendimentos por mês**.
+
+> 224 testes automatizados · regras de decisão auditáveis · nenhuma mudança na agenda sem aprovação humana
+
+---
+
+## O problema: a cadeira vazia
+
+Todo salão conhece a cena. A cliente desmarca de manhã, o horário das 14h fica vago, e ninguém tem tempo de ligar para dez pessoas e perguntar quem quer vir mais cedo. A profissional fica parada, e aquele faturamento não volta.
+
+Os números do setor mostram o tamanho disso. São estimativas de empresas e publicações do ramo; os valores mudam de fonte para fonte:
+
+| Indicador | Estimativa do setor |
+|---|---|
+| Agendamentos perdidos para falta ou cancelamento de última hora em salões | **15% a 20%**, número atribuído à Professional Beauty Association ([Regulr](https://regulr.ai/tools/salon-no-show-calculator)). Em salões sem confirmação automática chega a **15% a 25%** ([BookrHub, 2026](https://www.bookrhub.com/en/no-show-report-2026)) |
+| Receita mensal que esmalterias perdem com faltas e cancelamentos tardios | **10% a 20%**, segundo a NAILS Magazine, citada pela [Rosper Tech](https://blog.rospertech.com/nail-salon-no-show-pos-check-in/) |
+| Cancelamentos que acontecem nas 24 horas antes do horário | **68%** ([BookrHub](https://www.bookrhub.com/en/no-show-report-2026)), justamente quando é mais difícil achar substituta |
+
+**Na Santa Cor.** Nos últimos 12 meses foram em média 270 atendimentos por mês (pico de 345), com ticket médio de R$ 77. Se 15% desses horários se perdessem, seriam cerca de **R$ 3.000 por mês** que ficariam na mesa. Esse valor é uma ilustração com a taxa do setor, não uma medição do salão. É esse dinheiro que o agente vai buscar.
+
+## A solução: o AI Agent do FlowAgenda
+
+Pense no agente como uma **recepcionista que nunca esquece ninguém**. Ela sabe de cabeça a ficha de cada cliente: quem costuma vir, quem já aceitou adiantar e quem costuma faltar. Faz as contas antes de ligar, e só remarca quando a dona do salão diz "pode".
+
+### 1. Coordena cancelamentos e preenche horários vagos
+
+```mermaid
+flowchart LR
+  A[Cliente cancela] --> B[Vaga aberta<br/>serviço · profissional · horário]
+  B --> C[Motor de pontuação<br/>chance de aceite × ganho − risco]
+  C --> D[Proposta pelo WhatsApp<br/>para a melhor candidata]
+  D --> E[Resposta em texto livre<br/>o agente interpreta]
+  E -->|aceitou| F[Gerência aprova<br/>com um toque]
+  E -->|recusou ou silêncio| C
+  F --> G[Horário antigo dela<br/>vira nova vaga]
+  G --> C
+```
+
+1. **Detecta a vaga** assim que um horário confirmado é cancelado, pelo painel, pelo link da cliente ou pelo site.
+2. **Analisa quem chamar.** Vale só quem já tem horário mais tarde para o mesmo serviço e autorizou ser avisada. Cada candidata recebe uma nota que combina três coisas:
+   - a chance de aceitar, aprendida com o histórico dela de aceites e recusas;
+   - a preferência pela profissional;
+   - o risco de falta.
+
+   A conta final é **ganho do horário liberado − risco do horário de origem**. Proposta sem benefício positivo nem sai.
+3. **Recomenda e envia** a proposta pelo WhatsApp oficial da Meta.
+4. **Entende a resposta.** "Pode ser sim, consigo ir mais cedo" e "hoje não dá, quem sabe semana que vem" são interpretadas pela IA. Se a resposta for ambígua, ela pede esclarecimento. Um "sim" ou "não" direto nem passa pela IA.
+5. **Cascata.** Quando a cliente adianta, o horário antigo dela vira uma nova vaga, e o ciclo recomeça (até dois desdobramentos por vaga original). Um único cancelamento pode reorganizar a tarde inteira.
+6. **Humano no comando.** O aceite da cliente espera a aprovação da gerência. Antes de gravar, o sistema confere de novo se houve conflito.
+
+A IA não escolhe quem chamar. Quem escolhe é o código, com regras que dá para auditar e testar. Esse desenho veio de uma avaliação no projeto original em Python ([agente-remarcacao](agente-remarcacao/README.md)): nos casos difíceis, o modelo de linguagem decidia pior que o cálculo. O resultado é um agente previsível, explicável e barato.
+
+### 2. Entende linguagem natural e opera o salão
+
+Na aba **Assistente**, a gerência escreve como falaria com uma colega, e o agente transforma o pedido em ação:
+
+| A gerência escreve | O agente faz |
+|---|---|
+| "como está a agenda da Lane amanhã?" | Lista os atendimentos do dia daquela profissional |
+| "tem horário pra escova longa sábado?" | Calcula os horários livres de verdade, com duração e opção do serviço |
+| "como anda a Maria Souza?" | Mostra visitas, faltas, quanto gastou e os próximos horários |
+| "resumo de hoje" | Mostra atendimentos, receita prevista, quanto já entrou e o que está pendente |
+| "acabou a acetona?" / "o que tem no painel da parede?" | Consulta o estoque pelo sentido, mesmo com apelido ou erro de digitação |
+| "passa a Joana das 10h pra sexta às 15h" | Monta o plano de remarcação com o antes e o depois |
+| "a Ester vai faltar sábado" | Redistribui a agenda dela entre quem faz o serviço e está livre, começando pela preferida de cada cliente |
+| "desfaz isso" | Prepara a volta da última mudança |
+
+Toda mudança vira um **cartão de confirmação**: antes e depois, avisos e validade de 10 minutos. A gravação é tudo ou nada. Depois de confirmar, aparece um botão por cliente afetada que abre o WhatsApp com o aviso já escrito. A IA nunca inventa horário, nome ou valor: ela só chama funções que leem os dados reais do salão.
+
+### 3. Mantém o relacionamento com a clientela
+
+- **Aniversários.** Mostra quem faz aniversário nos próximos 7 dias, com parabéns e cupom de desconto prontos para enviar. Quem já recebeu no ano fica marcada.
+- **Lembretes.** A rotina na nuvem prepara lembretes antes do horário, mesmo com o painel fechado. Silêncio nunca cancela uma reserva.
+- **Lista de espera.** Quem quis uma data cheia é avisada quando abre vaga para aquele serviço.
+
+## Um salão de verdade dentro do repositório
+
+Este repositório é o **processo inteiro de uma esmalteria real**, a Santa Cor, levado de uma planilha para um sistema:
+
+- Clientes migradas da planilha antiga, com telefone, aniversário e histórico.
+- A equipe atual e o catálogo com os preços praticados.
+- 24 meses de faturamento, custos fixos e estoque.
+
+Em volta do agente está tudo o que o salão usa no dia a dia:
+
+| Para quem | O que tem |
+|---|---|
+| **Clientes** | Site com agendamento em carrinho (serviços, adicionais, ofertas "Pegue também", profissional e horário), link pessoal para acompanhar ou cancelar, página de atendimento |
+| **Gerência** | Agenda em grade por profissional, aceitação de pedidos do site, remarcações, Assistente, finanças (fechamento semanal das parceiras, resultado do mês, previsão de faturamento com faixa de erro), estoque, aniversários |
+| **Equipe** | Área pelo celular para ver a agenda, marcar quem chegou na loja, fechar o atendimento com valor e forma de pagamento, e atender pedidos |
+
+## Guia rápido para quem está chegando
+
+Uma ordem de leitura que funciona bem:
+
+1. **Ver funcionando.** `npm run setup` e `npm run exemplos:local` criam uma área com clientes fictícias. Depois, `npm run dev` abre o painel em http://localhost:5173 (detalhes em [Executar no computador](#executar-no-computador)).
+2. **Entender o agente de remarcação.** Comece pelas [Regras incorporadas](#regras-incorporadas). No código, as funções `candidates`, `score` e `seek` ficam em `lib/flowagenda.mjs`. A interpretação das respostas está em `lib/response-agent.ts`.
+3. **Entender o Assistente.** Leia [Assistente do painel](#assistente-do-painel). Em `lib/assistente/`, `ferramentas.mjs` lista o que a IA pode pedir, `consultas.mjs` traz as leituras e `planos.mjs` monta e aplica as mudanças.
+4. **Ver as regras em ação.** Os testes em `tests/` mostram cada regra num exemplo pequeno. `npm test` roda todos.
+
+| Peça | Onde fica |
+|---|---|
+| Motor de remarcação (decide quem chamar) | `lib/flowagenda.mjs` |
+| Interpretação das respostas da cliente | `lib/response-agent.ts` |
+| Assistente em linguagem natural | `lib/assistente/`, `app/assistente-panel.tsx`, `app/api/assistente/` |
+| WhatsApp oficial (webhook, fila, lembretes) | `lib/whatsapp*.{ts,mjs}`, `worker/index.ts` |
+| Agendamento pelo site | `lib/agendamento.mjs`, `app/agendar/` |
+| Finanças e previsão | `lib/finance-core.mjs`, `lib/previsao.mjs` |
+| Projeto original em Python | `agente-remarcacao/` |
+
+O restante deste documento é o manual técnico: instalação, publicação, cada parte do painel e os limites atuais.
+
+---
 
 ## Executar no computador
 
