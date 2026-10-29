@@ -165,6 +165,17 @@ O servidor devolve apenas os dados necessários à agenda, ao cadastro presencia
 
 Arquivos principais: `app/staff-portal.tsx` (interface), `app/staff.css` (estilos da equipe), `app/staff-access-panel.tsx` (controle do link pela gerente), `app/[employeeEntry]/page.tsx`, `app/api/staff*/`, `lib/staff-auth.ts` e `lib/staff-core.mjs` (acesso e permissões). A configuração é armazenada no registro da agenda, sem nova migração de banco.
 
+## Assistente do painel
+
+A aba **Assistente**, só no painel da gerência, recebe pedidos escritos. Na primeira fase ele faz consultas (agenda do dia ou de uma profissional, horários livres, histórico de uma cliente e resumo do dia) e prepara mudanças: remarcar, trocar a profissional, redistribuir a agenda de quem faltou e desfazer a última mudança.
+
+- **Nada muda sem confirmar.** Toda mudança aparece num cartão com o antes e o depois de cada horário, os avisos e a validade de 10 minutos. Os botões são Confirmar, Corrigir e Cancelar, e dá para tirar uma linha antes de confirmar. Ao confirmar, ele grava tudo ou nada: se a agenda mudou nesse meio tempo, nada é gravado e ele pede para refazer.
+- **Falta de uma profissional:** cada horário dela vai para outra que faça o serviço e esteja livre no mesmo horário, com a preferida da cliente primeiro. Quem não couber fica onde está, com sugestões de horário. O horário de quem faltou não vira vaga para o motor de antecipação.
+- **Nenhuma mensagem sai sozinha.** Depois de confirmar, aparece um botão por cliente afetada que abre o WhatsApp com o aviso pronto.
+- **Limite diário:** 60 pedidos por dia, ajustável em Configurações (de 10 a 500). Só conta o pedido que o Gemini respondeu. Confirmar, cancelar e desfazer pelo botão não contam. No limite, a caixa de texto bloqueia e o painel continua funcionando pelos botões.
+- **Precisa de `GEMINI_API_KEY`** (e, se quiser trocar o modelo, `GEMINI_MODEL`; o padrão é `gemini-3.5-flash-lite`). Sem a chave, o assistente avisa que ainda não está configurado.
+- O código fica em `lib/assistente/` (consultas, planos, ferramentas e o cliente do Gemini) e em `app/api/assistente/route.ts`. O desenho está em `docs/superpowers/specs/2026-10-29-assistente-painel-design.md`.
+
 ## Ações e Finanças
 
 - **Agenda → Novo agendamento** permite escolher uma cliente existente ou cadastrar uma nova e salvar junto com o horário. A aba Clientes mantém consulta e edição.
