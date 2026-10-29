@@ -50,3 +50,22 @@ test('corpo e chamada seguem o padrão do Gemini; texto e histórico cortados em
  assert.deepEqual(corpo.tools,[{functionDeclarations:ferramentas}]);
  assert.deepEqual(corpo.toolConfig,{functionCallingConfig:{mode:'AUTO'}});
 });
+test('demora, queda ou 404 no modelo escolhido tentam o reserva uma vez',async()=>{
+ for(const primeiro of [async()=>{throw new DOMException('t','TimeoutError');},async()=>new Response('{}',{status:503}),async()=>new Response('{}',{status:404})]){
+  const vistas=[];let n=0;
+  const f=async(url,init)=>{vistas.push(url);return n++?resposta([{text:'ok'}]):primeiro();};
+  assert.deepEqual(await pedirAoGemini(base({fetcher:f})),{texto:'ok'});
+  assert.equal(vistas.length,2);
+  assert.match(vistas[1],/models\/gemini-3\.1-flash-lite:generateContent$/);
+ }
+});
+test('chave inválida não tenta o reserva',async()=>{
+ const vistas=[];
+ await assert.rejects(()=>pedirAoGemini(base({fetcher:falso(new Response('{}',{status:400}),vistas)})),e=>e.message===FALHA);
+ assert.equal(vistas.length,1);
+});
+test('limite no primeiro e resposta no reserva',async()=>{
+ let n=0;
+ const f=async()=>n++?resposta([{text:'ok'}]):new Response('{}',{status:429});
+ assert.deepEqual(await pedirAoGemini(base({fetcher:f})),{texto:'ok'});
+});
