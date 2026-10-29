@@ -150,3 +150,87 @@ textarea{font:inherit;padding:10px 12px;border-radius:7px;border:1px solid var(-
 .agenda-bloco.cancelado,.agenda-bloco.falta{opacity:.45;text-decoration:line-through}
 .agenda-agora{position:absolute;left:var(--hora);right:0;border-top:2px solid #d93025;z-index:2;pointer-events:none}
 .agenda-agora b{position:absolute;left:-6px;top:-6px;width:10px;height:10px;border-radius:50%;background:#d93025}
+
+/* Especialidades da profissional, por área */
+.staff-area{border:1px solid var(--line);border-radius:8px;padding:6px 14px 0;margin:0 0 12px}
+.staff-area legend{padding:0 6px}
+.staff-area legend .check-field{margin:0}
+
+/* Fotos de perfil da equipe */
+.avatar-foto{object-fit:cover;padding:0;display:inline-block}
+.staff-card-foto{position:relative;cursor:pointer;display:inline-grid;justify-items:center;gap:4px}
+.staff-card-foto span{font-size:10px;color:var(--muted)}
+.staff-card-foto:hover .avatar{box-shadow:0 0 0 3px #e7c3c9}
+
+/* Ações em duas partes */
+.acoes{display:grid;gap:18px}
+.acoes-partes{display:flex;gap:8px;flex-wrap:wrap}
+.acoes-partes button{gap:8px}
+.acoes-partes b{background:#fad5da;color:#4e3035;font-size:11px;border-radius:4px;padding:1px 6px}
+.acoes-cupom{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;padding:0 22px 6px}
+.acoes-cupom .field{margin:0;max-width:150px}
+.acoes-lista{display:grid}
+.acoes-linha{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 22px;border-top:1px solid var(--line)}
+.acoes-linha small{margin-top:4px}
+.acoes-linha.is-hoje{background:#fdf1f3}
+@media(max-width:560px){.acoes-linha{flex-wrap:wrap}.acoes-linha button{width:100%}.acoes-partes button{flex:1}}
+.support-horario{color:#8a5a2c!important;font-weight:600}
+.acoes-motivo{margin:6px 0 0;font-size:13px;color:#5e4a4d;font-style:italic;white-space:normal}
+
+/* Aba Assistente: conversa e cartão de confirmação */
+.assistente{display:grid;gap:12px;padding:18px;overflow:visible}
+.assistente-lista{display:flex;flex-direction:column;gap:12px;height:clamp(320px,56vh,640px);overflow-y:auto;padding:4px 2px}
+.assistente-intro{margin:auto;max-width:420px;text-align:center;display:grid;justify-items:center;gap:8px;color:var(--muted);font-size:13px;line-height:1.6}
+.assistente-intro svg{color:var(--green)}
+.assistente-intro strong{color:var(--ink);font-size:16px}
+.assistente-msg{display:flex;max-width:100%}
+.assistente-msg.is-gerente{justify-content:flex-end}
+.assistente-balao{max-width:min(560px,88%);padding:11px 14px;border-radius:12px;font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.assistente-balao p{margin:0}
+.is-gerente .assistente-balao{background:var(--green);color:#fff;border-bottom-right-radius:4px}
+.is-assistente .assistente-balao{background:var(--green-light);color:var(--ink);border-bottom-left-radius:4px}
+.assistente-pensando{color:var(--muted);font-style:italic}
+.assistente-feito{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;white-space:normal}
+.assistente-feito .button,.assistente-feito button{font-size:13px;text-decoration:none}
+.assistente-cartao{width:min(620px,100%);background:#fff;border:1px solid #ead7da;border-radius:10px;padding:16px;display:grid;gap:10px}
+.assistente-cartao.is-fechado{opacity:.7}
+.assistente-cartao h3{margin:0;font-size:15px}
+.assistente-linha{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:start;padding-top:10px;border-top:1px solid var(--line)}
+.assistente-quando{display:grid;font-size:14px}
+.assistente-quando small{color:var(--muted);font-size:11px}
+.assistente-mudanca{display:grid;gap:3px;font-size:13px;min-width:0;overflow-wrap:anywhere}
+.assistente-mudanca span{color:#5e4a4d}
+.assistente-mudanca em{font-style:normal;color:var(--muted);margin-left:10px;font-size:12px}
+.assistente-aviso{color:#8a5a2c;background:#fdf3e4;border-radius:5px;padding:4px 8px;font-size:12px;font-weight:600}
+.assistente-mudanca .assistente-aviso{color:#8a5a2c}
+.is-grande .assistente-aviso,.is-grande .assistente-mudanca .assistente-aviso{color:#a84642;background:#fff3f1}
+.assistente-tirar{background:transparent;color:var(--muted);border:1px solid var(--line);padding:0;width:32px;height:32px;min-width:32px;justify-content:center}
+.assistente-tirar:hover{background:#f9f2f3;color:var(--ink)}
+.assistente-tiradas,.assistente-vazio{margin:0;font-size:12px;color:var(--muted)}
+.assistente-link{background:none;border:0;padding:0;color:var(--green);text-decoration:underline;font-size:12px;min-height:0;display:inline}
+.assistente-link:hover{background:none}
+.assistente-impacto{margin:0;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--ink)}
+.assistente-botoes{display:flex;flex-wrap:wrap;gap:8px}
+.assistente-validade{color:var(--muted);font-size:12px}
+.assistente-resta{margin:0;font-size:12px;color:#8a5a2c}
+.assistente-teto{display:grid;gap:10px;padding:14px 16px;background:#faeff1;border:1px solid #f4dfe2;border-radius:8px;font-size:13px;color:#826267;line-height:1.6}
+.assistente-teto p{margin:0}
+.assistente-atalhos{display:flex;flex-wrap:wrap;gap:8px}
+.assistente-atalhos button{font-size:13px}
+.assistente-caixa{display:flex;gap:10px;align-items:flex-end}
+.assistente-caixa textarea{flex:1;resize:none;min-height:46px}
+@media(max-width:650px){
+ .assistente{padding:12px}
+ .assistente-lista{height:clamp(300px,52vh,560px)}
+ .assistente-balao{max-width:94%}
+ .assistente-linha{grid-template-columns:1fr auto}
+ .assistente-quando{grid-column:1 / -1;display:flex;gap:8px;align-items:baseline}
+ .assistente-mudanca em{display:block;margin:2px 0 0}
+ .assistente-botoes{flex-direction:column}
+ .assistente-botoes button,.assistente-atalhos button,.assistente-feito .button,.assistente-feito button,.assistente-caixa button{min-height:44px;width:100%}
+ .assistente-atalhos button{width:auto;flex:1 1 140px}
+ .assistente-tirar{width:44px;height:44px;min-width:44px;min-height:44px}
+ .assistente-link{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}
+ .assistente-caixa{flex-direction:column;align-items:stretch}
+ .assistente-caixa textarea{font-size:16px}
+}

@@ -1,12 +1,20 @@
 import {env} from 'cloudflare:workers';
 import {sameOrigin} from '../../../lib/admin-auth';
-import {requireStaff,staffCookie} from '../../../lib/staff-auth';
+import {requireStaff,staffCookie,staffCookieData} from '../../../lib/staff-auth';
 import {staffView,staffSlots,staffClients,applyStaffAction} from '../../../lib/staff-core.mjs';
 import {connection,updateRoom,flushWhatsApp} from '../../../lib/whatsapp';
-import {syncCalendar} from '../../../lib/google-calendar';
 export const dynamic='force-dynamic';
 const json=(body:unknown,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'}});
+// Como no painel da gerência: a agenda do dia fica guardada (por cópia do servidor) enquanto a versão do
+// cadastro não muda, para não reprocessar mais de 300 KB a cada atualização (plano grátis: 10 ms).
+let guardada:{chave:string,version:number,ate:number,corpo:string}|null=null;
 export async function GET(req:Request){
+ const q0=new URL(req.url).searchParams,simples=!q0.has('clientes')&&!q0.get('cart');let antes:number|undefined;
+ if(simples){try{
+  const d=await staffCookieData(req,env),v=await env.DB!.prepare('SELECT version FROM rooms WHERE id=?').bind(d.room).first<any>();
+  const chave=[d.room,d.staffId,d.grant,q0.get('date')||''].join('|');antes=v?.version;
+  if(guardada&&v&&guardada.chave===chave&&guardada.version===v.version&&Date.now()<guardada.ate&&d.expires-Date.now()>6*3600000)return new Response(guardada.corpo,{headers:{'Content-Type':'application/json','Cache-Control':'no-store','Referrer-Policy':'no-referrer'}});
+ }catch{/* sem cookie válido: segue o caminho normal, que responde o erro */}}
  let s;try{s=await requireStaff(req,env);}catch(e){return json({error:(e as Error).message},401);}
  try{
   const q=new URL(req.url).searchParams,cart=q.get('cart');
@@ -15,6 +23,8 @@ export async function GET(req:Request){
   if(cart){if(cart.length>2000)throw Error('Carrinho grande demais.');return json(staffSlots(s.state,s.staffId,JSON.parse(cart),String(q.get('date')||'')));}
   // Como no painel da gerência, o acesso é renovado enquanto a funcionária está usando.
   const body=staffView(s.state,s.staffId,q.get('date')||undefined);
+  // A versão lida antes do cadastro: se alguém gravou no meio, a próxima leitura já não bate e refaz.
+  if(simples&&antes!==undefined)guardada={chave:[s.room,s.staffId,s.grant,q.get('date')||''].join('|'),version:antes,ate:Date.now()+60000,corpo:JSON.stringify(body)};
   if(s.expires-Date.now()>6*3600000)return json(body);
   return Response.json(body,{headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer','Set-Cookie':await staffCookie(env,s.room,s.staffId,s.grant,new URL(req.url).protocol==='https:')}});
  }catch(e){return json({error:(e as Error).message},400);}
@@ -27,7 +37,7 @@ export async function POST(req:Request){
    if(s.staffAccess?.hash!==session.grant)throw Error('O link foi desativado. Entre novamente.');
    applyStaffAction(s,session.staffId,p);
   },config);
-  let warning='';try{await syncCalendar(env,session.room);await flushWhatsApp(env,session.room);}catch{warning='A alteração foi salva. A sincronização externa será retomada; não repita o cadastro.';}
+  let warning='';try{await flushWhatsApp(env,session.room);}catch{warning='A alteração foi salva. O envio pelo WhatsApp será retomado; não repita o cadastro.';}
   return json({ok:true,warning});
  }catch(e){return json({error:(e as Error).message},403);}
 }

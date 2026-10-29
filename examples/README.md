@@ -13,7 +13,7 @@ O primeiro comando cria uma área local separada com **50 clientes, 3 profission
 
 Abra o link apresentado. Se já estiver no painel, clique em **Sair**, abra o link novamente e entre com a senha administrativa local. A parte `#room=exemplos-...` seleciona a área de exemplos após o login. A senha continua obrigatória; o link não dá acesso sozinho.
 
-O script acessa somente `.wrangler/state`, não aceita `--remote` e não copia conexões Google ou WhatsApp. Os exemplos não são importados pelo deploy. Os telefones ficam vazios. O resultado da execução fica em `.sites-runtime/casos-locais.json`, fora do Git.
+O script acessa somente `.wrangler/state`, não aceita `--remote` e não copia a conexão do WhatsApp. Os exemplos não são importados pelo deploy. Os telefones ficam vazios. O resultado da execução fica em `.sites-runtime/casos-locais.json`, fora do Git.
 
 ## O que testar
 
@@ -24,7 +24,7 @@ O script acessa somente `.wrangler/state`, não aceita `--remote` e não copia c
 | Fechamento | Elisa Martins foi atendida e está sem pagamento: registre o recebimento. Fernanda Melo tem uma falta registrada. |
 | Aceitações | Existem dois pedidos futuros para aceitar ou recusar. |
 | Remarcações | Aprove a proposta que já foi aceita; veja a cliente que recusou e a próxima proposta preparada; selecione a terceira vaga e prepare outra proposta. |
-| Atendimento | Acompanhe as mensagens locais do agente e as respostas de aceite e recusa. Não são mensagens reais do WhatsApp. |
+| Remarcações → Ver conversa | Acompanhe as mensagens locais do agente e as respostas de aceite e recusa. Não são mensagens reais do WhatsApp. |
 | Ações | Assuma ou encerre os dois pedidos de conversa. Isso preserva os agendamentos. |
 | Estoque | Compare produto suficiente, acetona abaixo do mínimo e lixas esgotadas; registre uma entrada. |
 
@@ -37,3 +37,5 @@ npm.cmd run exemplos:check
 ```
 
 Para voltar à área principal, saia do painel e entre por `http://localhost:5173/painel#room=flowagenda`.
+
+O formulário público `/atendimento` envia pedidos à agenda principal (`flowagenda`), como a página pública de agendamento. Para testar esse fluxo, entre na área principal; a área isolada de exemplos mantém apenas seus próprios pedidos fictícios.

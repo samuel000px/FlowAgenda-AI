@@ -90,7 +90,6 @@ if(args.includes('--local')){
   // A fresh isolated workspace on every run: never replaces existing clients or integrations.
   const room='exemplos-'+randomBytes(8).toString('hex');
   db.prepare('INSERT INTO rooms(id,manager,client,state,version,created,updated) VALUES(?,?,?,?,0,?,?)').run(room,randomBytes(24).toString('hex'),randomBytes(24).toString('hex'),JSON.stringify(s),now,now);
-  assert.equal(db.prepare('SELECT count(*) n FROM calendar_connections WHERE room=?').get(room).n,0);
   assert.equal(db.prepare('SELECT count(*) n FROM whatsapp_connections WHERE room=?').get(room).n,0);
   db.close();
   report.room=room;report.url='http://localhost:5173/painel#room='+room;

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import ts from 'typescript';
-const source=readFileSync(new URL('../lib/admin-auth.ts',import.meta.url),'utf8').replace("'./calendar-core.mjs'",JSON.stringify(new URL('../lib/calendar-core.mjs',import.meta.url).href));
+const source=readFileSync(new URL('../lib/admin-auth.ts',import.meta.url),'utf8').replace("'./cripto.mjs'",JSON.stringify(new URL('../lib/cripto.mjs',import.meta.url).href));
 const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
 const {sessionCookie,requireAdmin,renewSession,sameOrigin,clearSession}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
 const env={APP_SENHA:'only-for-unit-tests',CALENDAR_ENCRYPTION_KEY:'ab'.repeat(32)};

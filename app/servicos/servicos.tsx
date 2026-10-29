@@ -1,7 +1,7 @@
 "use client";
 // Os serviços vêm do painel (Equipe e serviços), os mesmos que aparecem no agendamento.
 import {useEffect,useState} from 'react';
-import {ICONE_AREA,aPartirDe,duracao,reais,type Catalogo} from '../agendar/agendar';
+import {IconeArea,aPartirDe,duracao,reais,type Catalogo} from '../agendar/agendar';
 
 export default function Servicos(){
   const [dados,setDados]=useState<Catalogo|null>(null),[erro,setErro]=useState('');
@@ -10,7 +10,7 @@ export default function Servicos(){
   if(!dados)return <p className="vazio">Carregando…</p>;
   if(!dados.services.length)return <p className="vazio">A lista de serviços ainda está sendo preparada.</p>;
   return <div className="servicos-lista">{dados.groups.map(g=>{const extras=dados.addons.filter(a=>a.group===g);return <div className="area" key={g}>
-    <h3>{ICONE_AREA[g]||'✨'} {g}</h3>
+    <h3 className="area-titulo"><IconeArea area={g}/>{g}</h3>
     {dados.services.filter(v=>v.group===g).map(v=><div className="escolha" key={v.id}>
       <div><strong>{v.name}</strong><small>{v.variants.length?v.variants.map(o=>`${o.name} ${reais(o.price)}`).join(' · '):duracao(v.duration)}</small></div>
       <span className="preco">{v.variants.length?'a partir de ':''}{reais(aPartirDe(v))}</span>

@@ -140,13 +140,15 @@ test('cancelar pelo link: pedido vira desistência; confirmado vira vaga para o 
   const s=salao(),[a,b]=requestBooking(s,{cart:{items:[{service:'S1'},{service:'S12'}],staff:{'Mãos e pés':'P2',Cabelo:'P3'}},date:TERCA,start:540,name:'Ana',phone:'83999990000'},now);
   assert.equal(byToken(s,a.token).id,a.id);
   assert.throws(()=>byToken(s,'x'.repeat(32)),/não encontrado/);
-  cancelByToken(s,a.token,now);
+  assert.throws(()=>cancelByToken(s,a.token,now),/motivo/,'sem motivo não cancela');
+  cancelByToken(s,a.token,now,'Viagem de última hora.');
+  assert.equal(s.cancellations.at(-1).reason,'Viagem de última hora.');
   assert.equal(a.status,'withdrawn');assert.equal(b.status,'withdrawn');
   const [c]=pedido(s,{start:585});actAdmin(s,'request_accept',{id:c.id},now);
-  cancelByToken(s,c.token,now);
+  cancelByToken(s,c.token,now,'Fiquei doente.');
   assert.equal(c.status,'cancelled');
   assert.equal(s.gaps.at(-1).cancelled_id,c.id);
-  assert.throws(()=>cancelByToken(s,c.token,now),/não pode/);
+  assert.throws(()=>cancelByToken(s,c.token,now,'De novo.'),/não pode/);
 });
 
 test('a parte pública não mostra telefone nem outras clientes',()=>{
@@ -228,7 +230,7 @@ test('a proposta criada pelo cancelamento no link entra na fila do WhatsApp',()=
   const [a]=pedido(s,{name:'Zé',phone:'83988887777',earlier:false});actAdmin(s,'request_accept',{id:a.id},now);
   const config={enabled:true,verified:true,mode:'business',restricted:false,allowed:[],phoneId:'1',templates:{enabled:false}};
   s.whatsappLastInbound=Object.fromEntries(s.clients.map(c=>[c.phone,now-1000]));
-  changeWithWhatsApp(s,st=>cancelByToken(st,a.token,now),config,now);
+  changeWithWhatsApp(s,st=>cancelByToken(st,a.token,now,'Mudou minha agenda.'),config,now);
   const proposta=s.messages.find(m=>m.offer_id);
   assert.ok(proposta,'o cancelamento preparou uma proposta');
   assert.equal(proposta.whatsapp?.status,'queued');
@@ -321,7 +323,7 @@ test('catálogo em quatro áreas, com os preços da planilha do salão',()=>{
   const c=catalog(s);
   assert.deepEqual(c.groups,['Mãos e pés','Alongamento e gel','Cabelo','Sobrancelha e depilação']);
   const preco=n=>c.services.find(v=>v.name===n).price;
-  assert.equal(preco('Manicure + Pedicure'),50);assert.equal(preco('Manutenção de alongamento'),100);assert.equal(preco('Sobrancelha'),35);
+  assert.equal(preco('Manicure + Pedicure'),50);assert.equal(preco('Manutenção de alongamento'),120);assert.equal(preco('Sobrancelha'),35);
   assert.ok(c.addons.some(a=>a.name==='Reposição de unha'&&a.group==='Alongamento e gel'));
 });
 
@@ -365,10 +367,10 @@ test('catálogo antigo ganha os serviços da planilha uma vez, já com quem faz 
   Object.assign(s.services.find(v=>v.id==='S20'),{price:65});Object.assign(s.services.find(v=>v.id==='S24'),{name:'Pó ou efeito sereia',price:20});
   delete s.catalogVersion;
   const nova=upgrade(s);
-  assert.equal(nova.catalogVersion,2);
+  assert.equal(nova.catalogVersion,3);
   for(const nome of ['Esmaltação permanente no pé','Esmaltação simples','Postiça','Ajuste de unha','Nariz','Orelha','Queixo','Brow lamination'])assert.ok(nova.services.some(v=>v.name===nome),nome);
   assert.equal(nova.services.find(v=>v.id==='S20').price,35);
-  assert.equal(nova.services.find(v=>v.id==='S24').price,30);
+  assert.equal(nova.services.find(v=>v.id==='S24').price,10,'pó: 20 → 30 (versão 2) → 10 (versão 3)');
   assert.ok(nova.staff.find(p=>p.id==='P1').services.includes('S36'),'quem faz mãos e pés ganha os novos de mãos e pés');
   assert.ok(!nova.staff.find(p=>p.id==='P3').services.includes('S36'),'quem só faz cabelo não');
   assert.ok(nova.staff.find(p=>p.id==='P4').services.includes('S40'));
@@ -376,4 +378,69 @@ test('catálogo antigo ganha os serviços da planilha uma vez, já com quem faz 
   assert.ok(site.includes('Postiça')&&site.includes('Nariz')&&site.includes('Esmaltação simples'));
   const total=nova.services.length;upgrade(nova);
   assert.equal(nova.services.length,total,'rodar de novo não duplica');
+});
+
+test('preços de jun/2026 em agendas já em uso: só muda o que ainda está no valor antigo',()=>{
+  const s=salao();const v=n=>s.services.find(x=>x.name===n);
+  Object.assign(v('Manutenção de alongamento'),{price:100});Object.assign(v('Banho de gel'),{price:110});
+  v('Escova').variants.forEach((o,i)=>{o.price=[35,45,60,70][i];});s.catalogVersion=2;
+  const nova=upgrade(s),w=n=>nova.services.find(x=>x.name===n);
+  assert.equal(nova.catalogVersion,3);assert.equal(w('Manutenção de alongamento').price,120);
+  assert.equal(w('Banho de gel').price,110,'preço editado no painel fica');
+  assert.deepEqual(w('Escova').variants.map(o=>o.price),[45,50,60,70]);
+  assert.equal(catalog(nova).services.find(x=>x.name==='Manutenção de alongamento')?.price??120,120);
+});
+
+test('painel não marca com quem não faz o serviço',()=>{
+  const s=salao();s.clients.push({id:'C1',name:'Ana',phone:'',consent:true,visits:0,missed:0,proposals:0,accepted:0});
+  assert.throws(()=>actAdmin(s,'book',{client_id:'C1',service_id:'S11',staff_id:'P1',date:TERCA,start:540},now),/Lia não faz Escova/);
+});
+
+test('agenda com o catálogo inicial antigo recebe o catálogo inteiro e a equipe se completa pela planilha',async()=>{
+  const {completeStaff}=await import('../lib/importacao.mjs');
+  const s=seedAdmin();delete s.catalogVersion;s.promos=[];
+  s.services=[{id:'S1',name:'Manicure',duration:45,price:45,group:'Mãos e pés',addon:false},{id:'S2',name:'Pedicure',duration:45,price:45,group:'Mãos e pés',addon:false},{id:'S3',name:'Pé e mão',duration:90,price:85,group:'Mãos e pés',addon:false}];
+  s.staff=['Lili','Ester','Avyllen'].map((name,i)=>({id:'P'+i,name,services:['S1','S2','S3'],start:480,end:1080,break_start:0,break_end:0,active:true}));
+  s.appointments=[{id:'A1',client_id:'C1',service_id:'S3',staff_id:'P0',date:'2026-11-03',start:540,end:630,price:85,status:'booked'}];
+  const nova=upgrade(s);
+  assert.equal(nova.catalogVersion,3);assert.ok(nova.services.length>40);
+  assert.equal(nova.services.find(v=>v.id==='S3').name,'Manicure + Pedicure','o horário marcado continua ligado ao mesmo serviço');
+  assert.ok(nova.staff.every(p=>p.services.includes('S36')),'quem fazia só os três faz toda a área de mãos e pés');
+  assert.ok(nova.promos.length>0);
+  assert.deepEqual(catalog(nova).groups,['Mãos e pés']);
+  const pacote=JSON.stringify({versao:1,origem:'teste',gerado:'1',staff:[{name:'Lili',areas:['Mãos e pés','Alongamento e gel']},{name:'Ester',areas:['Mãos e pés','Cabelo','Sobrancelha e depilação']},{name:'Avyllen',areas:['Mãos e pés']}]});
+  assert.equal(completeStaff(nova,pacote),2);
+  assert.deepEqual(catalog(nova).groups,['Mãos e pés','Alongamento e gel','Cabelo','Sobrancelha e depilação']);
+  assert.ok(nova.staff[1].services.includes('S11')&&!nova.staff[2].services.includes('S11'));
+  nova.staff[1].services=nova.staff[1].services.filter(k=>k!=='S11');
+  assert.equal(completeStaff(nova,pacote),0,'uma vez só: o que a gerência desmarcou não volta');
+  assert.ok(!nova.staff[1].services.includes('S11'));
+});
+
+test('aniversariantes dos próximos 7 dias, mensagem com cupom e marca para não repetir',async()=>{
+  const {aniversariantes,mensagemAniversario,cupom}=await import('../lib/aniversario.mjs');
+  const s=salao();
+  s.clients=[{id:'C1',name:'Ana Souza',phone:'5583999990000',birthday:'10-26'},{id:'C2',name:'Bia',phone:'',birthday:'10-30'},{id:'C3',name:'Carla',birthday:'12-25'},{id:'C4',name:'Duda',birthday:''}];
+  const lista=aniversariantes(s,now);
+  assert.deepEqual(lista.map(a=>[a.name,a.inDays]),[['Ana Souza',0],['Bia',4]]);
+  assert.deepEqual(cupom(s),{percent:10,days:7});
+  actAdmin(s,'birthday_settings',{percent:15,days:5},now);
+  assert.match(mensagemAniversario(s,lista[0]),/Ana! .*15% de desconto em qualquer serviço até 31\/10/);
+  actAdmin(s,'birthday_wished',{client_id:'C1',year:'2026'},now);
+  assert.equal(aniversariantes(s,now)[0].wished,true);
+  assert.throws(()=>actAdmin(s,'birthday_settings',{percent:0,days:5},now),/desconto/);
+});
+
+test('pedido de cancelamento pelo site vira pedido em Ações, acha o horário e não cancela nada',async()=>{
+  const {requestCancellation,supportView}=await import('../lib/support-core.mjs');
+  const s=salao();pedido(s);const a=s.appointments[0];actAdmin(s,'request_accept',{id:a.id},now);
+  const base={name:'Ana Souza',phone:'(83) 99999-0000',service:'Manicure',date:TERCA,time:'09:00',reason:'Fiquei doente.',consent:true,requestId:crypto.randomUUID()};
+  requestCancellation(s,base,now);requestCancellation(s,base,now);
+  const t=supportView(s);
+  assert.equal(t.length,1,'repetir o mesmo envio não duplica');
+  assert.equal(t[0].kind,'cancel');assert.match(t[0].text,/cancelamento: Manicure, 27\/10\/2026 às 09:00\. Motivo: Fiquei doente\./);
+  assert.match(t[0].appointment,/Manicure com Lia, 27\/10\/2026 às 09:00/);
+  assert.equal(a.status,'booked','o horário continua até a equipe confirmar');
+  assert.throws(()=>requestCancellation(s,{...base,reason:'',requestId:crypto.randomUUID()},now),/motivo/);
+  assert.throws(()=>requestCancellation(s,{...base,time:'9h',requestId:crypto.randomUUID()},now),/horário/);
 });

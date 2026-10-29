@@ -11,7 +11,7 @@ export async function POST(req:Request){try{
  const {room,state,grant}=await roomByStaffToken(env,String(p.token||''));
  if(p.action==='list'){
   let selected='';try{const current=await requireStaff(req,env);if(current.room===room&&current.grant===grant)selected=current.staffId;}catch{}
-  return json({salon:state.salon.name,staff:state.staff.filter((s:any)=>s.active).map((s:any)=>({id:s.id,name:s.name})),selected});
+  return json({salon:state.salon.name,staff:state.staff.filter((s:any)=>s.active).map((s:any)=>({id:s.id,name:s.name,photo:s.photo||''})),selected});
  }
  const staff=activeStaff(state,String(p.staffId||''));
  return json({selected:staff.id},200,{'Set-Cookie':await staffCookie(env,room,staff.id,grant,secure)});

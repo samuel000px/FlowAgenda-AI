@@ -10,7 +10,7 @@ Requer Node.js 22.13 ou superior. Na primeira instalação:
 
 ```sh
 npm run setup
-npm run calendar:setup
+npm run chave:local
 ```
 
 Configure `APP_SENHA` em `.dev.vars` e mantenha `CALENDAR_ENCRYPTION_KEY` gerada pelo comando acima. Depois:
@@ -37,7 +37,7 @@ O único caminho da página para o painel é a linha "Acesso da equipe", no roda
 
 ### Como funciona o agendamento pelo site
 
-1. O catálogo fica em **Equipe e serviços**, separado por área (Unhas, Cabelo). Cada serviço pode ter **opções** com tempo e valor próprios (o comprimento da escova) e **adicionais** da mesma área, que somam só no preço (francesinha, babyliss). São quatro áreas: Mãos e pés, Alongamento e gel, Cabelo, e Sobrancelha e depilação. O catálogo traz todos os serviços que aparecem sozinhos na planilha do salão; combinações como "manutenção + pedicure" viram dois itens no carrinho. Os preços iniciais são os mais cobrados na planilha (ago/2025 a out/2026); os tempos são estimativas. "Importar serviços das fichas" acrescenta o que faltar, sem duplicar nem mudar o que já existe. Agendas que já estavam em uso recebem uma vez os serviços que faltavam (esmaltação no pé, esmaltação simples, postiça, ajuste de unha, nariz, orelha, queixo e brow lamination), já com as profissionais que fazem a área. Um serviço só aparece no site se alguma profissional ativa o faz; no catálogo do painel, o que está fora do site vem marcado.
+1. O catálogo fica em **Equipe e serviços**, separado por área (Unhas, Cabelo). Cada serviço pode ter **opções** com tempo e valor próprios (o comprimento da escova) e **adicionais** da mesma área, que somam só no preço (francesinha, babyliss). São quatro áreas: Mãos e pés, Alongamento e gel, Cabelo, e Sobrancelha e depilação. O catálogo traz todos os serviços que aparecem sozinhos na planilha do salão; combinações como "manutenção + pedicure" viram dois itens no carrinho. Os preços são os que a equipe atual cobra desde jun/2026 na planilha (manutenção R$ 120, aplicação R$ 140, escova de R$ 45 a R$ 70 conforme o comprimento); os tempos são estimativas. Agendas já em uso recebem esses preços uma vez, só onde o valor ainda era o antigo: o que o salão editou no painel fica. O painel e o `/agendar` leem o mesmo catálogo, então um preço mudado em Equipe e serviços vale nos dois na hora. "Importar serviços das fichas" acrescenta o que faltar, sem duplicar nem mudar o que já existe. Agendas que já estavam em uso recebem uma vez os serviços que faltavam (esmaltação no pé, esmaltação simples, postiça, ajuste de unha, nariz, orelha, queixo e brow lamination), já com as profissionais que fazem a área. Um serviço só aparece no site se alguma profissional ativa o faz; no catálogo do painel, o que está fora do site vem marcado. As especialidades de cada profissional (os serviços que ela faz, marcados por área no cadastro dela) valem em todo lugar: no `/agendar`, na área da equipe e no agendamento do painel só aparece quem faz o serviço escolhido, e o servidor recusa o resto.
 2. O carrinho aceita até 3 serviços. Eles ficam **em sequência**, um começando quando o outro termina, com **uma profissional por área**: unhas com quem faz unhas, escova com quem faz escova.
 3. **Ofertas "Pegue também"**: em Equipe e serviços, cada oferta diz quem escolher o gatilho (um serviço ou qualquer serviço de uma área) ganha desconto, em % ou R$, no alvo. A cliente vê a oferta de maior desconto. O desconto vale só no item que entrou depois no carrinho, então duas ofertas cruzadas não somam.
 4. Os horários seguem uma grade de blocos (45 minutos por padrão) dentro do funcionamento de cada dia, definido em **Configurações** (padrão: terça a sexta 9h–18h, sábado 8h–17h). Só aparecem inícios em que o carrinho inteiro cabe, fora do intervalo das profissionais e sem bater em outro atendimento.
@@ -61,7 +61,7 @@ Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o ap
 ## Painel da gerência
 
 - **Receita prevista** soma o valor de cada atendimento confirmado do dia escolhido na agenda (o valor gravado na hora de marcar, com desconto e adicionais) e tira as faltas registradas. Pedidos do site ainda não aceitos não entram.
-- **Responder WhatsApp** conta as conversas cuja última mensagem é da cliente e que o atendimento automático não resolveu (por exemplo, quem pediu para falar com alguém). Com uma ou mais, o cartão fica em alerta e aparece um aviso que leva ao Atendimento; some quando alguém da equipe responde.
+- **Pedidos de atendimento** conta os pedidos abertos na fila compartilhada. O cartão e o aviso levam à aba **Ações**.
 - **Lista de espera** fica numa faixa acima da agenda, que usa a largura toda. Quem demonstrou interesse numa data cheia aparece primeiro, marcado como prioridade, e cada entrada avisa quando abre uma vaga daquele serviço no dia.
 
 ## Organizar a operação
@@ -72,7 +72,7 @@ Na primeira vez o comando cria o banco `santa-cor-db` e as tabelas, publica o ap
 4. Em **Clientes**, cadastre contato, profissional preferida e se ela gostaria de antecipar caso apareça um horário mais cedo (sim ou não).
 5. Cadastre horários em **Agenda → Novo agendamento**.
 6. Um cancelamento libera uma vaga e prepara uma proposta quando há candidata elegível e benefício esperado positivo.
-7. Em **Atendimento**, acompanhe o WhatsApp conectado em Integrações ou registre retornos de outros canais. Na conexão Meta, propostas novas são enviadas aos participantes autorizados quando existe uma janela de conversa ativa. Uma resposta ambígua gera um pedido de esclarecimento; uma segunda ambiguidade encerra aquela proposta.
+7. Em **Remarcações**, acompanhe propostas e abra o histórico em **Ver conversa**. Pedidos de ajuda ficam em **Ações**, compartilhados com as funcionárias. A integração oficial continua processando as respostas de remarcação pelo WhatsApp.
 8. O aceite da cliente aguarda **Remarcações → Aprovar alteração**. Só então o horário muda; a vaga de origem pode gerar até dois desdobramentos. Recusas e encerramento sem resposta podem preparar a próxima proposta.
 9. Em **Fechamento**, registre presenças e faltas após o atendimento. O histórico alimenta os cálculos e pode ser exportado em CSV.
 
@@ -89,18 +89,6 @@ Sem chave Gemini, respostas diretas e botões de aceite/recusa continuam funcion
 - Estimativa de horas vagas nos horários envolvidos no fluxo, sem apresentar esse cálculo como economia realizada.
 
 A versão web acrescenta verificação de conflitos de cliente/profissional e persistência com controle de versão para evitar que duas telas sobrescrevam a agenda.
-
-## Google Agenda
-
-A administração acessa **Configurações → Integrações → Conectar conta Google**, escolhe a conta e autoriza. O retorno abre a mesma seção, com o progresso e o botão para abrir a agenda. A instalação precisa das credenciais do aplicativo uma única vez; cada administrador não precisa criar um projeto Google.
-
-- Agenda dedicada à esmalteria: título com serviço, cliente e profissional; uma cor estável por profissional; início e fim reais do atendimento, incluindo opções e adicionais. Cada serviço de um pedido com vários serviços tem seu próprio evento.
-- Horários confirmados, atuais e futuros, são sincronizados. Pedidos aguardando aceite não ocupam o Google antes da aprovação. Remarcações aprovadas atualizam o evento existente; cancelamentos o removem.
-- Mudanças são enviadas ao salvar e reavaliadas periodicamente. A rotina da hospedagem trabalha com o painel fechado, independentemente da ativação do WhatsApp. Importações iniciais seguem em lotes de até 20 alterações; o painel informa o que falta. Em instalações com várias agendas, a rotina prioriza a menos recentemente sincronizada.
-
-A sincronização é **do painel para o Google**; edições diretamente no Google não são importadas. Dados locais permanecem salvos em caso de falha. Tokens são criptografados; autorização e renovação ficam no servidor. A permissão se limita às agendas criadas pelo aplicativo. Trocar a conta verifica o acesso à agenda anterior e cria outra quando necessário; a antiga permanece na conta anterior. Desconectar interrompe a sincronização, sem excluir os eventos já enviados.
-
-A configuração inicial do responsável técnico, a publicação e a conferência com uma conta real estão no [guia Google Agenda](docs/google-agenda.md).
 
 ## WhatsApp oficial da Meta
 
@@ -135,7 +123,7 @@ Agendas antigas abertas com o link de gerente são preservadas após login. Os d
 | `lib/response-agent.ts` | Interpretação limitada das respostas |
 | `lib/admin-auth.ts`, `app/api/session/route.ts` | Acesso administrativo |
 | `app/api/room/route.ts` | API e persistência com controle de versão |
-| `lib/google-calendar.ts`, `lib/calendar-core.mjs` | OAuth e sincronização |
+| `lib/cripto.mjs` | Hash e cifra do login, do link da equipe e da conexão do WhatsApp |
 | `app/whatsapp-panel.tsx`, `app/whatsapp-chat.tsx` | Configuração Meta e central de atendimento |
 | `lib/whatsapp-core.mjs`, `lib/whatsapp.ts`, `lib/whatsapp-inbox.ts` | Transporte, fila, assinatura e processamento de respostas |
 | `lib/whatsapp-templates.mjs`, `lib/whatsapp-scheduler.ts`, `worker/index.ts` | Modelos e lembretes automáticos na hospedagem |
@@ -177,16 +165,31 @@ O servidor devolve apenas os dados necessários à agenda, ao cadastro presencia
 
 Arquivos principais: `app/staff-portal.tsx` (interface), `app/staff.css` (estilos da equipe), `app/staff-access-panel.tsx` (controle do link pela gerente), `app/[employeeEntry]/page.tsx`, `app/api/staff*/`, `lib/staff-auth.ts` e `lib/staff-core.mjs` (acesso e permissões). A configuração é armazenada no registro da agenda, sem nova migração de banco.
 
+## Assistente do painel
+
+A aba **Assistente**, só no painel da gerência, recebe pedidos escritos. Na primeira fase ele faz consultas (agenda do dia ou de uma profissional, horários livres, histórico de uma cliente e resumo do dia) e prepara mudanças: remarcar, trocar a profissional, redistribuir a agenda de quem faltou e desfazer a última mudança.
+
+- **Nada muda sem confirmar.** Toda mudança aparece num cartão com o antes e o depois de cada horário, os avisos e a validade de 10 minutos. Os botões são Confirmar, Corrigir e Cancelar, e dá para tirar uma linha antes de confirmar. Ao confirmar, ele grava tudo ou nada: se a agenda mudou nesse meio tempo, nada é gravado e ele pede para refazer.
+- **Falta de uma profissional:** cada horário dela vai para outra que faça o serviço e esteja livre no mesmo horário, com a preferida da cliente primeiro. Quem não couber fica onde está, com sugestões de horário. O horário de quem faltou não vira vaga para o motor de antecipação.
+- **Nenhuma mensagem sai sozinha.** Depois de confirmar, aparece um botão por cliente afetada que abre o WhatsApp com o aviso pronto.
+- **Limite diário:** 60 pedidos por dia, ajustável em Configurações (de 10 a 500). Só conta o pedido que o Gemini respondeu. Confirmar, cancelar e desfazer pelo botão não contam. No limite, a caixa de texto bloqueia e o painel continua funcionando pelos botões.
+- **Precisa de `GEMINI_API_KEY`** (e, se quiser trocar o modelo, `GEMINI_MODEL`; o padrão é `gemini-3.5-flash-lite`). Sem a chave, o assistente avisa que ainda não está configurado.
+- O código fica em `lib/assistente/` (consultas, planos, ferramentas e o cliente do Gemini) e em `app/api/assistente/route.ts`. O desenho está em `docs/superpowers/specs/2026-10-29-assistente-painel-design.md`.
+
 ## Ações e Finanças
 
 - **Agenda → Novo agendamento** permite escolher uma cliente existente ou cadastrar uma nova e salvar junto com o horário. A aba Clientes mantém consulta e edição.
-- **Ações → Testar conversa** demonstra as opções Agendar, Cancelar e Falar com atendente sem enviar mensagens. Cancelar no exemplo apenas orienta sobre o link exclusivo do agendamento; não cancela uma reserva. Falar com atendente cria um pedido de exemplo compartilhado com a equipe.
-- O webhook oficial já encaminha mensagens que exigem intervenção humana à fila de pedidos. A demonstração não ativa envio automático do menu inicial. O menu automático de saudação mencionado pelo colaborador não constava no código recebido nesta atualização.
-- Cada pedido pode ser assumido por uma pessoa. Outra funcionária não pode assumir ou encerrar o pedido ocupado; a administração pode encerrá-lo. Novas mensagens após o encerramento abrem um novo pedido. Não se trata de encaminhar mensagens automaticamente para um WhatsApp pessoal: o botão abre a conversa na conta conectada ao aparelho.
+- **/atendimento** é a página pública para a cliente informar nome, WhatsApp com DDD e motivo do contato, autorizando a resposta. O botão **Falar com a equipe** da página inicial leva a ela.
+- O formulário cria um pedido real em **Ações** e no **Atendimento** das funcionárias, na agenda principal (`flowagenda`). A resposta pública contém apenas a confirmação de envio. A API valida os dados, limita a frequência, evita repetição em tentativas do mesmo pedido e protege gravações simultâneas. Não cria clientes, altera reservas nem dispara mensagens. O webhook oficial também alimenta essa fila.
+- **Cancelar pelo link do agendamento** (/a/...) passa por uma confirmação ("Tem certeza? Talvez não encontre mais vaga nesse dia") e, se a cliente confirmar, leva ao /cancelar já com o horário preenchido. Ali o motivo é obrigatório; o cancelamento acontece e o motivo fica registrado em **Ações → Cancelamentos**, só para a gerência, para acompanhar o que se repete.
+- **/cancelar** sem o link é a página pública para pedir o cancelamento de um horário: nome, WhatsApp, procedimento (da lista de serviços), dia, horário e motivo. O pedido não cancela nada sozinho: entra em **Ações → Atendimento ao cliente** marcado como "Cancelamento" e, se o celular e o dia batem com um horário marcado, já mostra qual é. A cliente vê que a equipe vai entrar em contato pelo WhatsApp para confirmar. Mesmas proteções do /atendimento.
+- **Ações** tem duas partes, no painel e na área das funcionárias: **Atendimento ao cliente** (os pedidos acima) e **Aniversários**, com quem faz aniversário nos próximos 7 dias e um botão que abre o WhatsApp com os parabéns e um cupom de desconto. A gerência define a porcentagem e a validade; quem já recebeu no ano fica marcado. O desconto é dado na hora do pagamento.
+- **Foto de perfil**: a funcionária troca a dela em **Meu perfil** (tocando na foto ou no nome no topo); a gerência troca a de qualquer uma no cartão em Equipe e serviços. A foto aparece no /agendar, no painel e na área da equipe. Ela é reduzida no aparelho (quadrada, uns 20 KB) e fica numa tabela própria (`fotos`), fora do cadastro.
+- Cada pedido pode ser assumido por uma pessoa. Outra funcionária não pode assumir ou encerrar o pedido ocupado; a administração pode assumir ou encerrar o pedido. Novas mensagens após o encerramento abrem um novo pedido. Não se trata de encaminhar mensagens automaticamente para um WhatsApp pessoal: o botão abre a conversa na conta conectada ao aparelho.
 - **Finanças**, exclusiva da administração, separa receita prevista de pagamentos registrados. Após marcar comparecimento em Fechamento, confirme o recebimento por Pix, dinheiro ou cartão. O pagamento entra na data local em que foi registrado, mesmo que o serviço seja de outro dia.
 - Registre as despesas do dia para obter o saldo recebido menos despesas. Esse saldo não é uma demonstração de lucro e não inclui despesas ainda não lançadas. Registros ficam no banco da agenda, sem nova migração.
 
-As conexões Google Agenda e WhatsApp ficam em **Configurações → Integrações**. Os atalhos da central de atendimento abrem essa mesma seção.
+A conexão do WhatsApp fica em **Configurações → Integrações**. O sistema não sincroniza mais com o Google Agenda: a própria Agenda do painel, em grade, faz esse papel. A antiga aba Atendimento da administração foi retirada; a equipe responde aos pedidos em Ações.
 
 ## Finanças
 
@@ -207,7 +210,11 @@ Perguntas em aberto para o salão: `docs/perguntas-para-o-salao.md`.
 
 ## Exemplos fictícios no localhost
 
-Execute `npm run exemplos:local` para criar uma área separada com 50 clientes fictícias, 3 profissionais e casos de agenda, remarcação, atendimento, finanças e estoque. O comando mostra o link e preserva os dados existentes. Não acessa o banco publicado nem conecta os exemplos ao WhatsApp ou Google Agenda. Veja o roteiro completo em [examples/README.md](examples/README.md). Para validar sem gravar: `npm run exemplos:check`.
+Execute `npm run exemplos:local` para criar uma área separada com 50 clientes fictícias, 3 profissionais e casos de agenda, remarcação, atendimento, finanças e estoque. O comando mostra o link e preserva os dados existentes. Não acessa o banco publicado nem conecta os exemplos ao WhatsApp. Veja o roteiro completo em [examples/README.md](examples/README.md). Para validar sem gravar: `npm run exemplos:check`.
+
+Para ver uma semana inteira funcionando junto, `npm run exemplos:semana` cria outra área separada com 5 profissionais fictícias e cerca de 150 atendimentos de 25 a 31/10/2026 (`-- --inicio AAAA-MM-DD` muda a semana). Os dias que já passaram vêm fechados, com pagamentos, faltas e um sem pagamento; os próximos trazem pedidos do site em Aceitações, uma proposta de remarcação e outra para aprovar, sábado lotado com duas clientes na espera, duas conversas para responder no WhatsApp, aniversariantes e estoque baixo. Ninguém tem telefone e nada é enviado. O comando mostra o link (`/painel#room=...`); entre com a senha de `APP_SENHA` do `.dev.vars`. Com `npm run exemplos:semana -- --remote`, a mesma semana vai para o site publicado, numa área nova e separada: a agenda real, o `/agendar` e o WhatsApp não mudam. Entre pelo link mostrado com a senha do painel; para a área das funcionárias, crie o link em Equipe e serviços dentro dessa área.
+
+Para ver a agenda de verdade cheia, `npm run agenda-falsa -- --remote` coloca cerca de 150 atendimentos de 25 a 31/10/2026 na agenda do salão, com a equipe e o catálogo reais. As clientes se chamam "Cliente Falso 1", "Cliente Falso 2"... e não têm telefone, então nada é enviado. Não há cancelamentos nem propostas de remarcação, para o motor não chamar clientes reais. `npm run agenda-falsa -- --remote --apagar` tira tudo de uma vez (clientes, horários, lista de espera e avisos). Sem `--remote`, vale para o banco local.
 
 ## Dados da planilha antiga e estoque
 
@@ -228,7 +235,7 @@ O banco publicado aceita no máximo ~100 KB por comando; por isso `scripts/impor
 O plano grátis dá 10 ms de processamento por pedido, e o cadastro inteiro é lido a cada atualização do painel. Para caber:
 
 - `npm run limpar-clientes` (ou `node scripts/limpar-clientes.mjs --remote` no site publicado; `--simular` só mostra) tira as clientes da planilha que vieram uma vez e não deixaram celular nem aniversário, e junta nomes completos quase iguais ("Andrea Gomes" e "Andreia Gomes", somando as visitas). Só primeiro nome nunca é juntado. Quem já tem agendamento, mensagem ou histórico no sistema novo nunca é mexida. A importação já aplica a mesma limpeza.
-- O painel lê o cadastro uma vez por pedido e só relê quando o WhatsApp ou o Google Agenda gravaram algo.
+- O painel lê o cadastro uma vez por pedido e só relê quando o WhatsApp gravou algo.
 
 ### Sessões
 
@@ -236,4 +243,4 @@ O login da gerência e o das funcionárias duram 8 horas, mas são renovados enq
 
 ### Agenda em grade
 
-A Agenda do painel mostra o dia como no Google Agenda: uma coluna por profissional, horários de meia em meia hora e cada atendimento como um bloco na cor que a profissional tem no Google (a mesma regra da sincronização). As caixas acima da grade mostram ou escondem cada profissional, e a escolha fica guardada no navegador. Pedido aguardando aceite aparece listrado; cancelado e falta, riscados. Clicar num horário futuro abre "Gerenciar"; nos outros, abre a conversa da cliente. O botão "Lista" volta para a tabela.
+A Agenda do painel mostra o dia como no Google Agenda: uma coluna por profissional, horários de meia em meia hora e cada atendimento como um bloco na cor da profissional, sempre a mesma para cada uma. As caixas acima da grade mostram ou escondem cada profissional, e a escolha fica guardada no navegador. Pedido aguardando aceite aparece listrado; cancelado e falta, riscados. Clicar num horário futuro abre "Gerenciar"; nos outros, abre a conversa da cliente. O botão "Lista" volta para a tabela.

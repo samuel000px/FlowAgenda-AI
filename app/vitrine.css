@@ -179,3 +179,35 @@
 .vitrine .data-cheia p{font-size:.9rem;color:var(--malva-70)}
 .vitrine .data-cheia strong{color:var(--malva)}
 .vitrine .formulario .dica{font-size:.75rem;color:var(--malva-60)}
+
+/* Foto da profissional no botão de escolha */
+.chip.chip-foto{display:inline-flex;align-items:center;gap:8px;padding-left:5px}
+.chip.chip-foto img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+
+/* Ícones das áreas (no lugar dos emojis) */
+.area-titulo{display:flex;align-items:center;gap:.55rem}
+.area-icone{width:2rem;height:2rem;border-radius:50%;display:inline-grid;place-items:center;flex-shrink:0;background:oklch(1 0 0 / .75);color:var(--malva);box-shadow:0 0 0 1px oklch(0.68 0.08 40 / .25)}
+.mini.area-titulo .area-icone{width:1.6rem;height:1.6rem}
+.mini.area-titulo .area-icone svg{width:.85rem;height:.85rem}
+.rotulo-icone{display:inline-flex;align-items:center;gap:.4rem}
+.oferta-titulo{display:flex;align-items:center;gap:.45rem}
+.sucesso .selo-ok{color:var(--malva)}
+.sucesso .selo-ok svg{width:2rem;height:2rem}
+
+/* Botão redondo do carrinho: aparece quando o carrinho sai da tela */
+.carrinho-flutuante{position:fixed;right:1rem;bottom:1.25rem;z-index:40;width:3.6rem;height:3.6rem;border-radius:50%;display:grid;place-items:center;padding:0;border:0;background:var(--malva);color:#fff;box-shadow:0 10px 25px oklch(0.3 0.05 10 / .3);cursor:pointer}
+.carrinho-flutuante svg{width:1.45rem;height:1.45rem}
+.carrinho-flutuante b{position:absolute;top:-.2rem;right:-.2rem;min-width:1.35rem;height:1.35rem;border-radius:999px;background:#fff;color:var(--malva);font-size:.75rem;display:grid;place-items:center;padding:0 .3rem;box-shadow:0 0 0 2px var(--malva)}
+
+/* Pedido recebido: valores sem quebrar nem cortar */
+.detalhes li{align-items:baseline}
+.detalhes li>span{white-space:nowrap}
+.detalhes li:last-child strong{font-size:1.2rem;font-weight:600;white-space:nowrap;font-family:inherit}
+
+/* Cancelamento pelo link: confirmação e resumo do horário */
+.confirmar-cancelar{display:grid;gap:.75rem;margin-top:1rem;padding:1.1rem;border-radius:1rem;background:oklch(1 0 0 / .6)}
+.confirmar-cancelar p{margin:0}
+.cancelar-resumo{padding:14px 16px;border-radius:12px;background:#fbf4f5;display:grid;gap:4px;font-size:14px;color:#49343a}
+.cancelar-resumo p{margin:0}
+.passo .rotulo.rotulo-icone{display:flex;align-items:center;gap:.45rem}
+.passo .rotulo.rotulo-icone svg{width:.95rem;height:.95rem}
