@@ -24,7 +24,7 @@ O script acessa somente `.wrangler/state`, não aceita `--remote` e não copia a
 | Fechamento | Elisa Martins foi atendida e está sem pagamento: registre o recebimento. Fernanda Melo tem uma falta registrada. |
 | Aceitações | Existem dois pedidos futuros para aceitar ou recusar. |
 | Remarcações | Aprove a proposta que já foi aceita; veja a cliente que recusou e a próxima proposta preparada; selecione a terceira vaga e prepare outra proposta. |
-| Atendimento | Acompanhe as mensagens locais do agente e as respostas de aceite e recusa. Não são mensagens reais do WhatsApp. |
+| Remarcações → Ver conversa | Acompanhe as mensagens locais do agente e as respostas de aceite e recusa. Não são mensagens reais do WhatsApp. |
 | Ações | Assuma ou encerre os dois pedidos de conversa. Isso preserva os agendamentos. |
 | Estoque | Compare produto suficiente, acetona abaixo do mínimo e lixas esgotadas; registre uma entrada. |
 
@@ -37,3 +37,5 @@ npm.cmd run exemplos:check
 ```
 
 Para voltar à área principal, saia do painel e entre por `http://localhost:5173/painel#room=flowagenda`.
+
+O formulário público `/atendimento` envia pedidos à agenda principal (`flowagenda`), como a página pública de agendamento. Para testar esse fluxo, entre na área principal; a área isolada de exemplos mantém apenas seus próprios pedidos fictícios.
