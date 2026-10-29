@@ -30,7 +30,8 @@ export async function staffCookie(env:Cloudflare.Env,room:string,staffId:string,
  return `${cookieName}=${payload}.${sig}; Path=/; HttpOnly; SameSite=Lax; Max-Age=28800${secure?'; Secure':''}`;
 }
 export const clearStaffCookie=(secure:boolean)=>`${cookieName}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure?'; Secure':''}`;
-export async function requireStaff(req:Request,env:Cloudflare.Env){
+/** Só confere o cookie (assinatura e validade), sem ler o cadastro. */
+export async function staffCookieData(req:Request,env:Cloudflare.Env){
  try{
   const raw=req.headers.get('cookie')?.split(';').map(v=>v.trim()).find(v=>v.startsWith(cookieName+'='))?.slice(cookieName.length+1)||'';
   if(raw.length>2048)throw Error();
@@ -39,6 +40,12 @@ export async function requireStaff(req:Request,env:Cloudflare.Env){
   if(!await crypto.subtle.verify('HMAC',await key(env),bytes,new TextEncoder().encode(payload)))throw Error();
   const data=JSON.parse(decode(payload));
   if(data.role!=='staff'||!Number.isFinite(data.expires)||data.expires<Date.now())throw Error();
+  return data as {room:string,staffId:string,grant:string,expires:number};
+ }catch{throw Error('Abra o link da equipe e escolha seu nome para entrar.');}
+}
+export async function requireStaff(req:Request,env:Cloudflare.Env){
+ const data=await staffCookieData(req,env);
+ try{
   const row=await env.DB!.prepare('SELECT state FROM rooms WHERE id=?').bind(data.room).first<any>();if(!row)throw Error();
   const state=JSON.parse(row.state);if(!state.staffAccess||state.staffAccess.hash!==data.grant)throw Error();
   activeStaff(state,data.staffId);
