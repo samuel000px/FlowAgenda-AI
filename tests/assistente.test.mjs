@@ -436,3 +436,23 @@ test('desfazer uma remarcação fecha a vaga aberta e abre a do horário novo',(
   assert.equal(l.para,null);
   assert.match(l.aviso,/não está mais livre/);
 });
+
+test('falta: cliente com duas linhas recebe um aviso só, com as duas frases',()=>{
+  // Ana com Manicure 09:00 e Pedicure 09:45 com a Lia; a Nina está livre às 09:00 e ocupada às 09:45.
+  const s=comFalta();
+  Object.assign(s.appointments[1],{client_id:'C1',start:585,end:630});
+  s.clients.push({id:'C9',name:'Carla',phone:''});
+  s.appointments.push({...s.appointments[1],id:'A9',client_id:'C9',staff_id:'P2'});
+  const {plano}=planoAusencia(s,{profissional:'Lia',data:TERCA},now);
+  assert.deepEqual(plano.linhas.map(l=>l.para?.profissional??null),['Nina',null]);
+  assert.equal(plano.impacto,'1 cliente afetada. Valores não mudam.');
+  const r=aplicarPlano(s,plano,now);
+  assert.equal(r.avisos.length,1,'um botão por cliente');
+  assert.equal(r.avisos[0].cliente,'Ana Souza');
+  const texto=textoDoLink(r.avisos[0].link);
+  assert.match(texto,/continua, mas agora com a Nina no lugar da Lia/);
+  assert.match(texto,/Quer que a gente procure outro horário/);
+  assert.equal(texto,'Oi, Ana! Seu horário de 27/10 às 09:00 continua, mas agora com a Nina no lugar da Lia. A Lia não vai poder atender 27/10 às 09:45. Quer que a gente procure outro horário para você? Qualquer dúvida, é só responder. Equipe Santa Cor');
+  assert.equal(texto.split('Oi,').length-1,1);
+  assert.equal(texto.split('Equipe Santa Cor').length-1,1);
+});
