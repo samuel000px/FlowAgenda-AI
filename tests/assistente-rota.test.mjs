@@ -68,6 +68,32 @@ const chama=(name,args)=>[{functionCall:{name,args}}];
 const post=(body,origin='https://salon.test')=>api.POST(new Request('https://salon.test/api/assistente',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify(body)}));
 const perguntar=(texto,historico=[])=>post({action:'perguntar',texto,historico});
 
+test('sim após plano orienta usar o cartão, sem chamar Gemini nem gastar cota',async()=>{
+ const {db,state,usado}=setup();try{
+  const before=state(),calls=gemini(chama('desfazer_ultima_acao',{}));
+  const r=await (await perguntar('Sim, pode confirmar a remarcação',[{de:'gerente',texto:'Remarcar Ana'},{de:'assistente',texto:'Plano: Remarcar Ana'}])).json();
+  assert.match(r.resposta,/toque em Confirmar/);assert.equal(calls.length,0);assert.equal(usado(),0);assert.deepEqual(state(),before);
+ }finally{db.close();}
+});
+
+test('duas consultas chegam juntas à tela, contam uma pergunta e não gravam a agenda',async()=>{
+ const {db,state,usado}=setup();try{
+  const before=state();
+  gemini([...chama('consultar_agenda',{data:DIA}),...chama('consultar_estoque',{})]);
+  const r=await (await perguntar('Agenda e estoque')).json();
+  assert.match(r.resposta,/Ana Souza/);assert.match(r.resposta,/estoque/i);
+  assert.equal(usado(),1);assert.deepEqual(state(),before);
+ }finally{db.close();}
+});
+test('lote de alterações é recusado sem guardar nem aplicar plano parcial',async()=>{
+ const {db,state}=setup();try{
+  const before=state();
+  gemini([...chama('trocar_profissional',{cliente:'Ana Souza',data:DIA,nova_profissional:'Nina'}),...chama('desfazer_ultima_acao',{})]);
+  const r=await (await perguntar('Troca e desfaz')).json();
+  assert.match(r.resposta,/uma alteração por vez/);assert.equal(r.plano,undefined);assert.deepEqual(state(),before);
+ }finally{db.close();}
+});
+
 test('(a) perguntar que consulta a agenda responde com o horário e conta 1 no teto',async()=>{
  const {db,usado}=setup();try{
   const chamadas=gemini(chama('consultar_agenda',{data:DIA}));
@@ -237,11 +263,11 @@ test('Gemini sem função e sem texto pede outra forma e não conta',async()=>{
  }finally{db.close();}
 });
 
-test('limite do Gemini (429) avisa que volta em alguns minutos e não conta',async()=>{
+test('limite do Gemini (429) informa a cota sem prometer prazo e não conta',async()=>{
  const {db,usado}=setup();try{
   gemini(429);
   const r=await perguntar('Oi');assert.equal(r.status,429);
-  assert.deepEqual(await r.json(),{resposta:'O assistente chegou ao limite de hoje. Ele volta em alguns minutos. Enquanto isso, tudo funciona pelos botões do painel.',restante:60});
+  assert.deepEqual(await r.json(),{resposta:'O Gemini atingiu o limite de uso disponível. Tente mais tarde ou use os botões do painel. O prazo de liberação depende da cota do provedor.',restante:60});
   assert.equal(usado(),0);
  }finally{db.close();}
 });

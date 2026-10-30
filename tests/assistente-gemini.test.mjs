@@ -23,6 +23,11 @@ test('a primeira functionCall vence mesmo com texto antes',async()=>{
  const f=falso(resposta([{text:'vou ver'},{functionCall:{name:'consultar_agenda',args:{}}}]));
  assert.equal((await pedirAoGemini(base({fetcher:f}))).ferramenta.nome,'consultar_agenda');
 });
+
+test('preserva todas as funções de consultas múltiplas, sem perder a segunda',async()=>{
+ const parts=[{functionCall:{name:'consultar_agenda',args:{data:'2026-10-30'}}},{functionCall:{name:'consultar_estoque',args:{busca:'acetona'}}}];
+ assert.deepEqual(await pedirAoGemini(base({fetcher:falso(resposta(parts))})),{ferramentas:[{nome:'consultar_agenda',args:{data:'2026-10-30'}},{nome:'consultar_estoque',args:{busca:'acetona'}}]});
+});
 test('texto das partes é juntado',async()=>{
  const f=falso(resposta([{text:'Olá, '},{text:'tudo bem?'}]));
  assert.deepEqual(await pedirAoGemini(base({fetcher:f})),{texto:'Olá, tudo bem?'});

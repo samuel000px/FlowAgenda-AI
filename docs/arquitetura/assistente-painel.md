@@ -1,12 +1,12 @@
 # Assistente do painel da gerência — desenho
 
-Santa Cor Esmalteria · 29/10/2026 · em aprovação, nada construído ainda.
+Santa Cor Esmalteria · desenho original de 29/10/2026. Consulte o código e o README para o estado atual da implementação.
 
 ## 1. Para que serve
 
 A gerente escreve o que quer, do jeito que falaria com uma pessoa ("a Lili faltou hoje", "quanto entrou ontem?", "passa a Ana das 10h para as 15h"), e o assistente consulta ou prepara a mudança usando as mesmas regras do painel. Ele economiza cliques; não inventa regra nova nem substitui os botões, que continuam funcionando sempre.
 
-Decidido pelo usuário:
+Requisitos do produto:
 - Fica **só no painel da gerência** (não na área das funcionárias).
 - **Consultas respondem na hora. Mudanças só depois que a gerência confirma**, vendo antes o que vai mudar.
 - **Nenhuma mensagem sai sozinha**: avisos às clientes viram botões que abrem o WhatsApp com o texto pronto (sem custo).

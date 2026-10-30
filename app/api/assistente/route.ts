@@ -2,7 +2,7 @@ import {env} from 'cloudflare:workers';
 import {requireAdmin,sameOrigin} from '../../../lib/admin-auth';
 import {today,upgrade} from '../../../lib/flowagenda.mjs';
 import {pedirAoGemini} from '../../../lib/assistente/gemini';
-import {FERRAMENTAS,desfazerPacote,executarFerramenta,instrucoes} from '../../../lib/assistente/ferramentas.mjs';
+import {FERRAMENTAS,desfazerPacote,executarChamadas,instrucoes,orientarConfirmacao} from '../../../lib/assistente/ferramentas.mjs';
 import {aplicarPlano} from '../../../lib/assistente/planos.mjs';
 export const dynamic='force-dynamic';
 // Assistente do painel da gerência. Só "perguntar" chama o Gemini (1 vez) e conta no teto do dia, e só
@@ -12,7 +12,7 @@ export const dynamic='force-dynamic';
 const FALHA='O assistente não respondeu agora. Tente de novo em instantes ou use os botões do painel.';
 const TETO='O assistente chegou ao limite de hoje. Ele volta amanhã às 0h. Enquanto isso, tudo funciona pelos botões do painel.';
 const NAO_ENTENDI='Não entendi esse pedido. Pode dizer de outro jeito? Eu vejo a agenda, as clientes, o resumo do dia e o estoque.';
-const TETO_GEMINI=TETO.replace('Ele volta amanhã às 0h','Ele volta em alguns minutos');
+const TETO_GEMINI='O Gemini atingiu o limite de uso disponível. Tente mais tarde ou use os botões do painel. O prazo de liberação depende da cota do provedor.';
 const SUMIU='Este plano não está mais disponível. Peça de novo.';
 const json=(body:unknown,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'}});
 const limiteDe=(v:unknown)=>Number.isInteger(v)&&(v as number)>=10&&(v as number)<=500?v as number:60;
@@ -58,6 +58,8 @@ async function perguntar(room:string,p:any,now:number){
  if(!texto)return json({error:'Escreva o que você precisa.'},400);
  if(texto.length>500)return json({error:'Escreva o pedido em até 500 caracteres.'},400);
  const conta=contaDoDia(room,now),row=await ler(room,conta),limite=limiteDe(row.limite);
+ const orientacao=orientarConfirmacao(texto,historicoDe(p.historico));
+ if(orientacao)return json({resposta:orientacao,restante:restante(row)});
  if(!env.GEMINI_API_KEY)return json({resposta:'O assistente ainda não está configurado. Use os botões do painel.',restante:restante(row)});
  if((row.used||0)>=limite)return json({resposta:TETO,restante:0},429);
  const s=upgrade(JSON.parse(row.state));
@@ -71,10 +73,10 @@ async function perguntar(room:string,p:any,now:number){
  const usado=await env.DB!.prepare('INSERT INTO limits(id,used) VALUES(?,1) ON CONFLICT(id) DO UPDATE SET used=used+1 WHERE used<? RETURNING used').bind(conta,limite).first<{used:number}>();
  const sobra=usado?Math.max(0,limite-usado.used):0;
  if('texto' in r)return json({resposta:r.texto,restante:sobra});
- const {nome,args}=r.ferramenta;
+ const chamadas='ferramentas' in r?r.ferramentas:[r.ferramenta];
  // A ferramenta não chama o Gemini: num conflito de gravação ela roda de novo sobre o cadastro relido.
  return comCadastro(room,conta,st=>{
-  const x=executarFerramenta(st,nome,args,now);
+  const x=executarChamadas(st,chamadas,now);
   return x.tipo==='plano'?{corpo:{plano:x.plano,restante:sobra},gravar:true}:{corpo:{resposta:x.texto,restante:sobra}};
  },{row,s});
 }

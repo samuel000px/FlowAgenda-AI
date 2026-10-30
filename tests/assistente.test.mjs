@@ -615,8 +615,8 @@ test('ferramentas: chaves extras vindas do modelo não passam',()=>{
 
 test('instruções: salão, dia da semana, data e equipe',()=>{
   const t=instrucoes(salao(),now);
-  assert.match(t,/^Você é o assistente do painel da gerência da Santa Cor\. Hoje é segunda-feira, 2026-10-26\. Equipe: Lia, Nina, Rafa\. /);
-  assert.match(t,/mudanças viram um plano que a gerência confirma\.$/);
+  assert.match(t,/^Você é o assistente do painel da gerência da Santa Cor\. Hoje é segunda-feira, 2026-10-26\. Equipe: Lia, Nina, Rafa\.\s/);
+  assert.match(t,/Toda mudança depende do cartão e da confirmação da gerência/);
 });
 
 test('estoque: busca por lugar ou item, avisa o que repor e o que não achou',()=>{

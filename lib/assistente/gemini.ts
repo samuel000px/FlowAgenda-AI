@@ -1,6 +1,7 @@
 // Cliente do Gemini com chamada de funções: devolve a ferramenta escolhida ou o texto da resposta.
 type Entrada={key:string,model?:string,instrucoes:string,historico:{de:'gerente'|'assistente',texto:string}[],texto:string,ferramentas:any[],fetcher?:typeof fetch};
-type Saida={ferramenta:{nome:string,args:Record<string,any>}}|{texto:string};
+type Chamada={nome:string,args:Record<string,any>};
+type Saida={ferramenta:Chamada}|{ferramentas:Chamada[]}|{texto:string};
 const FALHA='O assistente não respondeu agora. Tente de novo em instantes ou use os botões do painel.';
 // Se o modelo escolhido demorar, cair ou estiver no limite, tenta uma vez este.
 export const RESERVA='gemini-3.1-flash-lite';
@@ -33,8 +34,9 @@ export async function pedirAoGemini({key,model='gemini-3.5-flash-lite',instrucoe
   }
   let parts:any[],motivo:unknown;
   try{const data:any=await response.json();parts=data.candidates?.[0]?.content?.parts||[];motivo=data.candidates?.[0]?.finishReason??data.promptFeedback?.blockReason;}catch{throw Error(FALHA);}
-  const chamada=parts.find(p=>p?.functionCall)?.functionCall;
-  if(chamada)return {ferramenta:{nome:String(chamada.name),args:chamada.args&&typeof chamada.args==='object'?chamada.args:{}}};
+  const chamadas=parts.filter(p=>p?.functionCall).map(p=>({nome:String(p.functionCall.name),args:p.functionCall.args&&typeof p.functionCall.args==='object'?p.functionCall.args:{}}));
+  if(chamadas.length===1)return {ferramenta:chamadas[0]};
+  if(chamadas.length>1)return {ferramentas:chamadas};
   const texto=parts.map(p=>p?.text||'').join('');
   if(!texto.trim())console.error('gemini: resposta vazia',modelo,String(motivo??''));
   return {texto};
