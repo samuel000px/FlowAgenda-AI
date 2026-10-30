@@ -24,9 +24,9 @@ export async function pedirAoGemini({key,model='gemini-3.5-flash-lite',instrucoe
    method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},signal:AbortSignal.timeout(ESPERA),body});}
   catch(e){console.error('gemini: sem resposta',modelo,(e as Error)?.name);limite=false;continue;}
   if(!response.ok){
-   // Só o código e a mensagem do Gemini vão para o log, nunca a chave.
-   const erro=await response.text().catch(()=>'');
-   console.error('gemini:',response.status,modelo,corta(erro).slice(0,300));
+   // O corpo do erro pode incluir dados do pedido; registre apenas status e modelo.
+   await response.body?.cancel().catch(()=>{});
+   console.error('gemini:',response.status,modelo);
    limite=response.status===429;
    // Chave errada ou pedido recusado não melhoram trocando de modelo.
    if(response.status!==429&&response.status!==404&&response.status<500)break;

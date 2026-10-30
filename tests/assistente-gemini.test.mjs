@@ -19,9 +19,18 @@ test('functionCall sem args devolve args vazio',async()=>{
  const f=falso(resposta([{functionCall:{name:'desfazer_ultima_acao'}}]));
  assert.deepEqual(await pedirAoGemini(base({fetcher:f})),{ferramenta:{nome:'desfazer_ultima_acao',args:{}}});
 });
-test('a primeira functionCall vence mesmo com texto antes',async()=>{
+test('a chamada de função tem prioridade sobre o texto introdutório',async()=>{
  const f=falso(resposta([{text:'vou ver'},{functionCall:{name:'consultar_agenda',args:{}}}]));
  assert.equal((await pedirAoGemini(base({fetcher:f}))).ferramenta.nome,'consultar_agenda');
+});
+
+test('erros do provedor não expõem o corpo da resposta nos logs',async(t)=>{
+ const logs=[];
+ t.mock.method(console,'error',(...args)=>logs.push(args));
+ const segredo='chave-ficticia-de-teste';
+ const f=falso(new Response(JSON.stringify({error:{message:`Pedido de Cliente Privada usando ${segredo}`}}),{status:400}));
+ await assert.rejects(()=>pedirAoGemini(base({key:segredo,fetcher:f})),e=>e.message===FALHA);
+ assert.deepEqual(logs,[['gemini:',400,'modelo-x']]);
 });
 
 test('preserva todas as funções de consultas múltiplas, sem perder a segunda',async()=>{

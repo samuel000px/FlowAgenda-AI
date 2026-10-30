@@ -1,8 +1,8 @@
 # Auditoria do código existente (Fase 0)
 
-27/10/2026. Projeto analisado: Encaixa · Esmalteria, do Samuel Almeida, que está na raiz
-deste repositório (`github.com/samuel000px/FlowAgenda-AI`, commit `c50278a`). O código dele
-não foi alterado. O nosso projeto fica em `agente-remarcacao/`.
+Análise histórica de 27/10/2026 do Encaixa · Esmalteria, de Samuel Almeida
+(`github.com/samuel000px/FlowAgenda-AI`, commit `c50278a`), para a implementação
+Python em `agente-remarcacao/`. Os resultados abaixo descrevem aquela versão.
 
 ## Visão geral
 
@@ -29,7 +29,7 @@ bem, reescritas em Python.
 - Procurei no histórico (`git log -p`) por `api_key`, `secret`, `AIza` e `sk-ant`. Nenhuma chave.
   Só existe `GEMINI_API_KEY=""`, vazio, no `.dev.vars.example`.
 - O `.gitignore` dele já ignora `.env*` e `.dev.vars*`.
-- `.openai/hosting.json` tem um `project_id` da hospedagem dele. Não é segredo, mas não vamos copiar.
+- A configuração de hospedagem contém um identificador público de projeto, não uma credencial.
 
 ## Comparação com as decisões do plano (seção 2)
 
@@ -60,7 +60,7 @@ bem, reescritas em Python.
 | `app/api/room/route.ts` | API, salas com chave, cotas, banco | Descartar | Não teremos servidor nem vários usuários. |
 | `db/`, `drizzle/` | Tabelas do banco | Descartar | Usamos JSON. |
 | `tests/salon.test.mjs` | 16 testes | Adaptar a ideia | Alguns casos viram teste em Python: recusa passa para outra pessoa, texto livre não confirma nada, sem oferta duplicada na mesma vaga. |
-| `scripts/`, `worker/`, `vite.config.ts`, `.openai/` | Instalação, build e hospedagem | Descartar | Infra de outro stack. |
+| Infraestrutura de instalação, build e hospedagem do site | Execução da aplicação web | Não reutilizar no módulo Python | Ambiente de execução diferente. |
 | `.gitignore` | Ignora chaves, builds e bancos | Reaproveitar | Copiamos os padrões de chave. |
 
 ## O que aproveitamos (vai para os Créditos do README)
